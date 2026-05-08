@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MMH Hospital Booking</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--t:#1A8A8A;--td:#146868;--tl:#E8F5F5;--tb:#A8D5D5;--bg:#F5FAFA;--s:#fff;--txt:#1A1A1A;--m:#6B7280;--br:rgba(26,138,138,.18);--r:12px;--r2:8px}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;direction:rtl}
+nav{background:var(--s);border-bottom:.5px solid var(--br);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand img{height:36px;width:auto}
+.brand-nm{font-size:13px;font-weight:600;color:var(--td)}
+.ntabs{display:flex;gap:2px}
+.ntab{padding:6px 12px;border-radius:var(--r2);border:none;background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit}
+.ntab.on{background:var(--tl);color:var(--td);font-weight:600}
+.ntab:hover:not(.on){background:#F0F9F9}
+.rbadge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r2);font-size:11px;font-weight:600;border:.5px solid var(--br)}
+.rbadge.sup{background:var(--tl);color:var(--td);border-color:var(--tb)}
+.rbadge.doc{background:#FFF8E8;color:#8B6914;border-color:#E8D5A0}
+.lbtn,.obtn{padding:7px 14px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit}
+.lbtn:hover{background:var(--tl);color:var(--td)}
+.obtn{padding:6px 12px;font-size:12px}
+.obtn:hover{color:#B91C1C;background:#FEF2F2}
+.drawer{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:18px;max-width:270px;margin:0 0 14px auto;display:none}
+.drawer.on{display:block}
+.drawer h3{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.mbt{flex:1;padding:8px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--m)}
+.mbt.on{background:var(--tl);border-color:var(--tb);color:var(--td)}
+main{padding:22px 20px;max-width:900px;margin:0 auto}
+.pg{display:none}.pg.on{display:block}
+.card{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.clbl{font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.07em;margin-bottom:13px}
+.fg{margin-bottom:11px}
+.fl{font-size:13px;color:var(--m);margin-bottom:4px;display:block}
+input,select,textarea{width:100%;padding:9px 12px;border:.5px solid rgba(0,0,0,.18);border-radius:var(--r2);font-size:14px;background:var(--s);color:var(--txt);outline:none;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--t);box-shadow:0 0 0 3px rgba(26,138,138,.1)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bp{padding:10px 22px;border-radius:var(--r2);background:var(--t);border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.bp:hover{background:var(--td)}
+.bs{padding:9px 18px;border-radius:var(--r2);background:#EBEBEB;border:none;font-size:14px;color:var(--txt);cursor:pointer;font-family:inherit}
+.xb{background:none;border:none;cursor:pointer;color:var(--m);font-size:18px;padding:0 2px;line-height:1}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sh h2{font-size:18px;font-weight:600}
+.hero{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:36px 20px 28px;margin-bottom:18px;text-align:center}
+.hero img{height:78px;width:auto;margin:0 auto 16px;display:block}
+.hero h1{font-size:20px;font-weight:700;margin-bottom:6px}
+.hero p{font-size:14px;color:var(--m);line-height:1.6;margin-bottom:14px}
+.lpill{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--td);background:var(--tl);border:.5px solid var(--tb);border-radius:20px;padding:6px 16px;text-decoration:none}
+.lpill:hover{background:var(--tb);color:#fff}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-top:14px}
+.dcard{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer}
+.dcard:hover{border-color:var(--t);background:var(--tl)}
+.dav{width:56px;height:56px;border-radius:50%;background:var(--tl);border:2px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--td);margin:0 auto 12px;overflow:hidden}
+.dav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.dn{font-size:14px;font-weight:700;margin-bottom:4px}
+.ds{font-size:12px;color:var(--m);margin-bottom:12px}
+.bkpill{display:inline-block;padding:6px 20px;border-radius:20px;background:var(--t);color:#fff;font-size:13px;font-weight:600}
+.dcard:hover .bkpill{background:var(--td)}
+.bbk{padding:8px 16px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit;margin-bottom:14px;display:inline-block}
+.bkhero{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:24px 20px 20px;margin-bottom:14px;text-align:center}
+.bhav{width:64px;height:64px;border-radius:50%;background:var(--tl);border:2px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:var(--td);margin:0 auto 12px;overflow:hidden}
+.bhav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.spill{display:inline-block;font-size:12px;color:var(--m);background:#F0F0F0;border-radius:20px;padding:4px 12px;margin-bottom:8px}
+.gsep{border-top:.5px solid var(--br);margin:14px 0;padding-top:14px}
+.gyes{padding:10px 26px;border-radius:var(--r2);background:var(--t);border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-left:10px}
+.gno{padding:10px 26px;border-radius:var(--r2);border:.5px solid rgba(0,0,0,.15);background:none;font-size:14px;color:var(--m);cursor:pointer;font-family:inherit}
+.gno:hover{background:#FEF2F2;color:#B91C1C}
+.noiv{display:none;background:#FFFBEB;border:.5px solid #FCD34D;border-radius:var(--r);padding:24px;text-align:center;margin-bottom:14px}
+.fw{display:none}
+.bg2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.svgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sc{padding:12px 8px;border:.5px solid rgba(0,0,0,.12);border-radius:var(--r2);cursor:pointer;text-align:center}
+.sc.on,.sc:hover{border-color:var(--t);background:var(--tl)}
+.si{font-size:22px;margin-bottom:5px}.sn{font-size:13px;font-weight:600}.sd{font-size:11px;color:var(--m)}
+.slts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.slt{padding:9px 4px;border:.5px solid rgba(0,0,0,.12);border-radius:var(--r2);text-align:center;font-size:13px;cursor:pointer}
+.slt:hover:not(.off):not(.bkd){border-color:var(--t);background:var(--tl)}
+.slt.on{background:var(--t);border-color:var(--t);color:#fff;font-weight:600}
+.slt.off{opacity:.35;cursor:not-allowed;pointer-events:none}
+.slt.bkd{background:#FEF2F2;color:#B91C1C;cursor:not-allowed;pointer-events:none;font-size:11px}
+.remb{background:#FFFBEB;border:.5px solid #FCD34D;border-radius:var(--r2);padding:12px 14px;margin-bottom:12px}
+.remt{font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px}
+.reml{list-style:none}
+.reml li{font-size:12px;color:#92400E;padding:3px 0;border-bottom:.5px solid rgba(146,64,14,.1)}
+.reml li:last-child{border:none}
+.subbtn{width:100%;padding:13px;border-radius:var(--r2);background:var(--t);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.succ{display:none;text-align:center;padding:44px 16px}
+.succ.on{display:block}
+.sicn{width:64px;height:64px;border-radius:50%;background:#ECFDF5;border:2px solid #6EE7B7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:30px}
+.rpill{display:inline-block;background:var(--tl);border:.5px solid var(--tb);border-radius:var(--r2);padding:10px 28px;font-size:22px;font-weight:700;color:var(--td);margin:12px 0}
+.dnote{background:#FFFBEB;border:.5px solid #FCD34D;border-radius:var(--r2);padding:9px 14px;font-size:13px;color:#92400E;margin:10px auto;max-width:340px}
+.nbtn{padding:10px 24px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit;margin-top:8px}
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat{background:#F0FAFA;border:.5px solid var(--br);border-radius:var(--r2);padding:14px}
+.sl{font-size:11px;color:var(--m);margin-bottom:6px}
+.sv{font-size:26px;font-weight:700}
+.sv.tc{color:var(--td)}.sv.rc{color:#B91C1C}.sv.gc{color:#065F46}
+.ss{font-size:11px;color:var(--m);margin-top:3px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px;margin-bottom:18px}
+.ccard{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:16px}
+.ccard:hover{border-color:var(--tb)}
+.cch{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ccav{width:40px;height:40px;border-radius:50%;background:var(--tl);border:.5px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--td);flex-shrink:0;overflow:hidden}
+.ccav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.ccn{font-size:14px;font-weight:700}.ccs{font-size:11px;color:var(--m);margin-top:2px}
+.ccst{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.ccsi{background:var(--tl);border-radius:6px;padding:8px;text-align:center}
+.ccsn{font-size:18px;font-weight:700;color:var(--td)}.ccsl{font-size:10px;color:var(--m);margin-top:2px}
+.ccsi.w .ccsn{color:#B91C1C}
+.ccf{display:flex;align-items:center;justify-content:space-between}
+.ccslug{font-family:monospace;font-size:11px;color:var(--td);background:var(--tl);border:.5px solid var(--tb);border-radius:5px;padding:2px 8px}
+.cca{display:flex;gap:6px}
+.ib{background:none;border:.5px solid rgba(0,0,0,.12);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--m);font-family:inherit}
+.ib:hover{background:#F0F9F9;color:var(--td)}
+.ib.del:hover{background:#FEF2F2;color:#B91C1C}
+.cdet{display:none;background:#F0FAFA;border:.5px solid var(--br);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.cdet.on{display:block}
+.cdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cdh h3{font-size:14px;font-weight:700}
+.tw{overflow-x:auto;border:.5px solid var(--br);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{font-size:11px;font-weight:700;color:var(--m);text-align:right;padding:9px 12px;border-bottom:.5px solid var(--br);background:#F0FAFA;white-space:nowrap}
+td{padding:10px 12px;font-size:13px;border-bottom:.5px solid rgba(26,138,138,.08);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#F0FAFA}
+.bdg{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.bc{background:#ECFDF5;color:#065F46}.bp2{background:#FFFBEB;color:#92400E}.bx{background:#FEF2F2;color:#B91C1C}
+.scard{background:var(--tl);border:.5px solid var(--tb);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.surl{font-family:monospace;font-size:13px;color:var(--td);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cbtn{padding:7px 14px;border-radius:var(--r2);border:.5px solid var(--tb);background:var(--s);font-size:13px;cursor:pointer;color:var(--td);font-family:inherit;font-weight:700}
+.cbtn:hover{background:var(--t);color:#fff}
+.afw{display:none}.afw.on{display:block}
+.dtab{padding:6px 14px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;cursor:pointer;color:var(--m);font-family:inherit}
+.dtab.on{background:var(--tl);border-color:var(--tb);color:var(--td);font-weight:700}
+.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:#1A1A1A;color:#fff;padding:10px 22px;border-radius:var(--r2);font-size:14px;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}
+.notif.on{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<nav>
+  <div class="brand" onclick="goHome()">
+    <img src="logo.png" alt="MMH" onerror="this.style.display='none'">
+    <span class="brand-nm">Medina Medical Hospital</span>
+  </div>
+  <div class="ntabs" id="ntabs" style="display:none"></div>
+  <div style="display:flex;align-items:center;gap:7px">
+    <div class="rbadge" id="rbadge" style="display:none"></div>
+    <button class="lbtn" id="ltgl" onclick="toggleDrawer()">دخول</button>
+    <button class="obtn" id="obtn" onclick="doLogout()" style="display:none">خروج</button>
+  </div>
+</nav>
+<main>
+<div class="drawer" id="drawer">
+  <h3>تسجيل الدخول <button class="xb" onclick="toggleDrawer()">&#x2715;</button></h3>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button class="mbt on" onclick="setMode(this,'dr.noura')">دكتورة</button>
+    <button class="mbt" onclick="setMode(this,'mmh.admin')">مدير</button>
+  </div>
+  <div class="fg"><label class="fl">اسم المستخدم</label><input type="text" id="lu" placeholder="dr.noura" autocomplete="username"></div>
+  <div class="fg"><label class="fl">كلمة المرور</label><input type="password" id="lp" placeholder="كلمة المرور" autocomplete="current-password"></div>
+  <button class="bp" style="width:100%" onclick="doLogin()">دخول</button>
+</div>
+<div class="pg on" id="pg-home">
+  <div class="hero">
+    <img src="logo.png" alt="MMH" onerror="this.style.display='none'">
+    <h1>Medina Medical Hospital</h1>
+    <p>مستشفى المدينة الطبي &mdash; احجزي موعدك مع أطباء المستشفى مباشرة</p>
+    <a class="lpill" href="https://maps.app.goo.gl/43rLwpCrHxd8vB9t8?g_st=ic" target="_blank">موقع المستشفى على الخريطة</a>
+  </div>
+  <div class="card">
+    <div class="clbl">الأطباء المتاحون للحجز</div>
+    <div class="dgrid" id="dgrid"></div>
+  </div>
+</div>
+<div class="pg" id="pg-book">
+  <button class="bbk" onclick="goHome()">&#8592; الرئيسية</button>
+  <div class="bkhero" id="bkhero">
+    <div class="bhav" id="bhav"></div>
+    <h2 style="font-size:18px;font-weight:700;margin-bottom:6px" id="bhnm"></h2>
+    <div class="spill" id="bhsp"></div>
+    <p style="font-size:13px;color:var(--m);line-height:1.65;max-width:360px;margin:8px auto" id="bhds"></p>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:8px 0">
+      <span style="font-size:12px;color:var(--m);background:#F0F0F0;border-radius:20px;padding:4px 12px" id="bhlc"></span>
+      <a href="https://maps.app.goo.gl/43rLwpCrHxd8vB9t8?g_st=ic" target="_blank" style="font-size:12px;color:var(--td);background:var(--tl);border:.5px solid var(--tb);border-radius:20px;padding:4px 14px;text-decoration:none">الخريطة</a>
+    </div>
+    <div class="gsep">
+      <p style="font-size:14px;color:var(--m);margin-bottom:14px;font-weight:500">هل لديك فاتورة من العيادة؟</p>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button class="gyes" onclick="hasInv(true)">نعم عندي فاتورة</button>
+        <button class="gno" onclick="hasInv(false)">لا ما عندي</button>
+      </div>
+    </div>
+  </div>
+  <div class="noiv" id="noiv">
+    <h3 style="font-size:16px;font-weight:700;color:#92400E;margin-bottom:8px">تحتاجين فاتورة للحجز</h3>
+    <p style="font-size:13px;color:#92400E;margin-bottom:14px">يرجى المرور على العيادة اولاً</p>
+    <a href="https://maps.app.goo.gl/43rLwpCrHxd8vB9t8?g_st=ic" target="_blank" class="lpill" style="display:inline-flex;margin-bottom:14px">موقع المستشفى</a><br>
+    <button class="bbk" onclick="resetGate()" style="margin-top:12px">&#8592; العودة</button>
+  </div>
+  <div class="fw" id="fw">
+    <div class="bg2">
+      <div>
+        <div class="card">
+          <div class="clbl">معلومات العميلة</div>
+          <div class="fg"><label class="fl">الاسم الكامل</label><input type="text" id="inm" placeholder="اكتبي اسمك هنا"></div>
+          <div class="fg"><label class="fl">رقم الجوال</label><input type="tel" id="iph" placeholder="05XXXXXXXX"></div>
+        </div>
+        <div class="card">
+          <div class="clbl">نوع الخدمة</div>
+          <div class="svgrid">
+            <div class="sc on" onclick="pickSvc(this,'حقن','inj')"><div class="si">&#128137;</div><div class="sn">حقن</div><div class="sd">15 دقيقة</div></div>
+            <div class="sc" onclick="pickSvc(this,'أجهزة','dev')"><div class="si">&#128300;</div><div class="sn">أجهزة</div><div class="sd">10 دقائق</div></div>
+            <div class="sc" onclick="pickSvc(this,'استشارة','con')"><div class="si">&#128172;</div><div class="sn">استشارة</div><div class="sd">20 دقيقة</div></div>
+            <div class="sc" onclick="pickSvc(this,'رتوش','ret')"><div class="si">&#10024;</div><div class="sn">رتوش</div><div class="sd">10 دقائق</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="clbl">التاريخ والوقت</div>
+          <div class="fg"><label class="fl">التاريخ</label><input type="date" id="idt" onchange="renderSlots()"></div>
+          <div class="clbl" style="margin-top:6px">الأوقات المتاحة</div>
+          <div class="slts" id="slts"><div style="grid-column:1/-1;text-align:center;font-size:13px;color:var(--m);padding:14px">اختاري التاريخ اولاً</div></div>
+        </div>
+        <div class="card">
+          <div class="clbl">ملاحظات</div>
+          <textarea id="ino" rows="2" style="resize:none" placeholder="اي استفسارات..."></textarea>
+          <div class="remb" style="margin-top:10px">
+            <div class="remt">تذكيرات مهمة قبل الموعد</div>
+            <ul class="reml">
+              <li>ممنوع تعريض منطقة الفيلر للحرارة او المشروبات الساخنة بعد الحقن</li>
+              <li>ممنوع الخروج بدون واقي شمس بعد جلسات التقشير</li>
+              <li>ممنوع الكريمات الدافئة والحمامات الساخنة بعد الجلسة</li>
+              <li>ممنوع وضع مكياج قبل جلسات الأجهزة</li>
+              <li>ابلغي الدكتورة عن اي حساسية او تحسس سابق</li>
+              <li>قد يطرأ تأخير بسبب مرضى المستشفى</li>
+            </ul>
+          </div>
+          <button class="subbtn" onclick="submitBooking()">تأكيد الحجز</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="succ" id="succ">
+    <div class="sicn">&#9989;</div>
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">تم الحجز بنجاح</h2>
+    <p style="font-size:13px;color:var(--m)">سيتم التواصل معك للتأكيد</p>
+    <div class="rpill" id="rpill">MMH-0000</div>
+    <div class="dnote">قد يطرأ تأخير بسبب مرضى المستشفى</div>
+    <button class="nbtn" onclick="resetForm()">حجز جديد</button>
+  </div>
+</div>
+<div class="pg" id="pg-admin">
+  <div class="sh"><h2>لوحة الإدارة</h2><div style="padding:5px 13px;border-radius:var(--r2);background:var(--tl);border:.5px solid var(--tb);font-size:12px;color:var(--td);font-weight:600" id="tlbl"></div></div>
+  <div class="srow">
+    <div class="stat"><div class="sl">اجمالي الحجوزات</div><div class="sv tc" id="gst">0</div><div class="ss">كل العيادات</div></div>
+    <div class="stat"><div class="sl">حجوزات اليوم</div><div class="sv tc" id="gsd">0</div><div class="ss">كل العيادات</div></div>
+    <div class="stat"><div class="sl">بانتظار التأكيد</div><div class="sv rc" id="gsp">0</div><div class="ss">يحتاج مراجعة</div></div>
+    <div class="stat"><div class="sl">عدد العيادات</div><div class="sv gc" id="gsc">0</div><div class="ss">مفعلة</div></div>
+  </div>
+  <div class="sh" style="margin-bottom:12px">
+    <div style="font-size:14px;font-weight:600">العيادات</div>
+    <button class="bp" onclick="toggleAF()">+ إضافة دكتور</button>
+  </div>
+  <div class="afw" id="afw">
+    <div class="card" style="border-color:var(--tb);margin-bottom:16px">
+      <div class="clbl" style="margin-bottom:12px">دكتور جديد</div>
+      <div class="g2">
+        <div class="fg"><label class="fl">الاسم الكامل</label><input type="text" id="nun" placeholder="د. سارة الأحمد"></div>
+        <div class="fg"><label class="fl">التخصص</label><input type="text" id="nus" placeholder="جلدية، عظام..."></div>
+        <div class="fg"><label class="fl">الوصف للمريض</label><input type="text" id="nud" placeholder="متخصصة في..."></div>
+        <div class="fg"><label class="fl">الموقع داخل المستشفى</label><input type="text" id="nul" placeholder="الدور الثالث، غرفة 301"></div>
+        <div class="fg"><label class="fl">اسم المستخدم</label><input type="text" id="nuu" placeholder="dr.sara"></div>
+        <div class="fg"><label class="fl">كلمة المرور</label><input type="password" id="nup" placeholder="كلمة المرور"></div>
+        <div class="fg" style="grid-column:1/-1">
+          <label class="fl">الرابط الخاص</label>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:12px;color:var(--m);white-space:nowrap">mmh-booking.com/</span>
+            <input type="text" id="nusl" placeholder="dr-sara" style="flex:1">
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="bp" onclick="addDoc()">اضافة</button>
+        <button class="bs" onclick="toggleAF()">الغاء</button>
+      </div>
+    </div>
+  </div>
+  <div class="cgrid" id="cgrid"></div>
+  <div class="cdet" id="cdet">
+    <div class="cdh"><h3 id="cdtl">حجوزات</h3><button class="xb" onclick="closeDet()">&#x2715;</button></div>
+    <div class="tw"><table><thead><tr><th style="width:80px">رقم</th><th style="width:110px">الاسم</th><th style="width:100px">الجوال</th><th style="width:70px">الخدمة</th><th style="width:90px">التاريخ</th><th style="width:65px">الوقت</th><th style="width:75px">الحالة</th></tr></thead><tbody id="cdtb"></tbody></table></div>
+  </div>
+</div>
+<div class="pg" id="pg-doc">
+  <div class="sh"><h2 id="dtl">لوحة التحكم</h2><div style="padding:5px 13px;border-radius:var(--r2);background:#FFF8E8;border:.5px solid #E8D5A0;font-size:12px;color:#8B6914;font-weight:600" id="dtlbl"></div></div>
+  <div class="scard">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:11px;color:var(--m);margin-bottom:3px">رابط الحجز الخاص</div>
+      <div class="surl" id="myl">mmh-booking.com/dr-noura</div>
+    </div>
+    <button class="cbtn" onclick="copyLink()">نسخ الرابط</button>
+  </div>
+  <div class="srow">
+    <div class="stat"><div class="sl">اليوم</div><div class="sv tc" id="dt">0</div><div class="ss" id="dts">-</div></div>
+    <div class="stat"><div class="sl">الاجمالي</div><div class="sv" id="dtt">0</div><div class="ss">كل الحجوزات</div></div>
+    <div class="stat"><div class="sl">بانتظار</div><div class="sv rc" id="dp">0</div><div class="ss">يحتاج مراجعة</div></div>
+    <div class="stat"><div class="sl">مؤكدة</div><div class="sv gc" id="dc">0</div><div class="ss">هذا الشهر</div></div>
+  </div>
+  <div class="card">
+    <div class="clbl">الحجوزات</div>
+    <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+      <input type="text" id="dsrch" placeholder="ابحثي بالاسم..." oninput="renderDT()" style="flex:1;min-width:130px">
+      <button class="dtab on" onclick="setDF('all',this)">الكل</button>
+      <button class="dtab" onclick="setDF('pending',this)">بانتظار</button>
+      <button class="dtab" onclick="setDF('confirmed',this)">مؤكد</button>
+    </div>
+    <div class="tw"><table><thead><tr><th style="width:80px">رقم</th><th style="width:100px">الاسم</th><th style="width:100px">الجوال</th><th style="width:70px">الخدمة</th><th style="width:90px">التاريخ</th><th style="width:65px">الوقت</th><th style="width:75px">الحالة</th><th style="width:80px">اجراء</th></tr></thead><tbody id="dtb"></tbody></table></div>
+  </div>
+  <div class="card">
+    <div class="clbl">صورة الدكتورة</div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div id="phprev" style="width:76px;height:76px;border-radius:50%;background:var(--tl);border:2px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:var(--td);overflow:hidden;flex-shrink:0"></div>
+      <div style="flex:1">
+        <label class="fl">اختاري صورة PNG او JPG</label>
+        <input type="file" id="phf" accept="image/*" onchange="uploadPhoto(this)" style="font-size:13px">
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="clbl">اعدادات العيادة</div>
+    <div class="g2">
+      <div class="fg"><label class="fl">الوصف</label><textarea id="myd" rows="2" style="resize:none" placeholder="متخصصة في..."></textarea></div>
+      <div class="fg"><label class="fl">الموقع</label><input type="text" id="mylc" placeholder="الدور الثاني، أول يمين"></div>
+    </div>
+    <button class="bp" onclick="saveSettings()">حفظ الاعدادات</button>
+  </div>
+</div>
+</main>
+<div class="notif" id="notif"></div>
+<script>
+var H='mmh9';
+function lg(k,d){try{var v=localStorage.getItem(H+'_'+k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function ls(k,v){try{localStorage.setItem(H+'_'+k,JSON.stringify(v));}catch(e){}}
+var ADMIN={u:'mmh.admin',p:'admin123'};
+var defDocs=[{u:'dr.noura',p:'1234',n:'د. نورا راشد',sp:'جلدية وتجميل',d:'متخصصة في الجلدية والتجميل',l:'الدور الثاني، أول يمين',sl:'dr-noura',ph:''}];
+var docs=lg('docs',defDocs);
+function saveDocs(){ls('docs',docs);}
+function getBK(u){return lg('bk_'+u,[]);}
+function setBK(u,d){ls('bk_'+u,d);}
+var defH={inj:{s:'16:00',e:'18:00',a:true},dev:{s:'09:00',e:'10:00',a:true},con:{s:'10:00',e:'12:00',a:true},ret:{s:'14:00',e:'15:00',a:true}};
+function getH(u){return lg('hr_'+u,JSON.parse(JSON.stringify(defH)));}
+var curRole=null,curDoc=null,curBU=null,dbk=[],dhr={};
+var curSvc={n:'حقن',k:'inj'},curSlt=null,df='all';
+function setMode(btn,ph){var b=document.querySelectorAll('.mbt');for(var i=0;i<b.length;i++)b[i].classList.remove('on');btn.classList.add('on');document.getElementById('lu').placeholder=ph;}
+function toggleDrawer(){document.getElementById('drawer').classList.toggle('on');}
+function doLogin(){
+  var u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
+  if(!u||!p){notify('ادخل بياناتك');return;}
+  if(u===ADMIN.u&&p===ADMIN.p){
+    curRole='sup';
+    var rb=document.getElementById('rbadge');rb.className='rbadge sup';rb.textContent='Super Admin';rb.style.display='flex';
+    document.getElementById('ntabs').style.display='flex';
+    document.getElementById('tlbl').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    showPg('admin');renderAdmin();
+  } else {
+    var d=null;
+    for(var i=0;i<docs.length;i++){if(docs[i].u===u&&docs[i].p===p){d=docs[i];break;}}
+    if(!d){notify('بيانات خاطئة');return;}
+    curRole='doc';curDoc=d;dbk=getBK(d.u);dhr=getH(d.u);
+    var rb=document.getElementById('rbadge');rb.className='rbadge doc';rb.textContent=d.n;rb.style.display='flex';
+    document.getElementById('ntabs').style.display='flex';
+    document.getElementById('dtl').textContent='لوحتي - '+d.n;
+    document.getElementById('dtlbl').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('myl').textContent='mmh-booking.com/'+(d.sl||d.u);
+    document.getElementById('myd').value=d.d||'';
+    document.getElementById('mylc').value=d.l||'';
+    var pp=document.getElementById('phprev');
+    pp.innerHTML=d.ph?('<img src="'+d.ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'):d.n[0];
+    showPg('doc');renderDash();
+  }
+  document.getElementById('drawer').classList.remove('on');
+  document.getElementById('ltgl').style.display='none';
+  document.getElementById('obtn').style.display='flex';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
+}
+function doLogout(){curRole=null;curDoc=null;document.getElementById('ltgl').style.display='flex';document.getElementById('obtn').style.display='none';document.getElementById('rbadge').style.display='none';document.getElementById('ntabs').style.display='none';goHome();}
+function goHome(){var p=document.querySelectorAll('.pg');for(var i=0;i<p.length;i++)p[i].classList.remove('on');document.getElementById('pg-home').classList.add('on');renderGrid();}
+function showPg(id){var p=document.querySelectorAll('.pg');for(var i=0;i<p.length;i++)p[i].classList.remove('on');document.getElementById('pg-'+id).classList.add('on');}
+function renderGrid(){
+  var h='';
+  for(var i=0;i<docs.length;i++){
+    var d=docs[i];
+    var av=d.ph?('<img src="'+d.ph+'">'):(d.n[0]||'د');
+    h+='<div class="dcard" onclick="openBook(\''+d.u+'\')">';
+    h+='<div class="dav">'+av+'</div>';
+    h+='<div class="dn">'+d.n+'</div>';
+    h+='<div class="ds">'+d.sp+'</div>';
+    h+='<div class="bkpill">احجزي موعداً</div>';
+    h+='</div>';
+  }
+  document.getElementById('dgrid').innerHTML=h||'<div style="color:var(--m);padding:20px;font-size:13px;grid-column:1/-1">لا يوجد أطباء متاحون</div>';
+}
+function openBook(uid){
+  var d=null;
+  for(var i=0;i<docs.length;i++){if(docs[i].u===uid){d=docs[i];break;}}
+  if(!d)return;
+  curBU=d;dbk=getBK(d.u);dhr=getH(d.u);
+  var bh=document.getElementById('bhav');
+  bh.innerHTML=d.ph?('<img src="'+d.ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'):(d.n[0]||'د');
+  document.getElementById('bhnm').textContent=d.n;
+  document.getElementById('bhsp').textContent=d.sp;
+  document.getElementById('bhds').textContent=d.d||'';
+  document.getElementById('bhlc').textContent=d.l||'مستشفى المدينة الطبي';
+  showPg('book');resetGate();
+}
+function hasInv(v){document.getElementById('bkhero').style.display='none';if(v){document.getElementById('fw').style.display='block';}else{document.getElementById('noiv').style.display='block';}}
+function resetGate(){document.getElementById('bkhero').style.display='block';document.getElementById('noiv').style.display='none';document.getElementById('fw').style.display='none';document.getElementById('succ').classList.remove('on');}
+function pickSvc(el,n,k){var s=document.querySelectorAll('.sc');for(var i=0;i<s.length;i++)s[i].classList.remove('on');el.classList.add('on');curSvc={n:n,k:k};curSlt=null;renderSlots();}
+function renderSlots(){
+  var date=document.getElementById('idt').value;if(!date)return;
+  var h=dhr[curSvc.k]||defH[curSvc.k];
+  if(!h||!h.a){document.getElementById('slts').innerHTML='<div style="grid-column:1/-1;text-align:center;font-size:13px;color:var(--m);padding:14px">غير متاحة</div>';return;}
+  var sh=parseInt(h.s),sm=0;
+  if(h.s.indexOf(':')>-1){sh=parseInt(h.s.split(':')[0]);sm=parseInt(h.s.split(':')[1]);}
+  var eh=parseInt(h.e);if(h.e.indexOf(':')>-1)eh=parseInt(h.e.split(':')[0]);
+  var dur={inj:15,dev:10,con:20,ret:10}[curSvc.k]||15;
+  var slots=[],cur=sh*60+sm,end=eh*60;
+  while(cur<end){var hh=Math.floor(cur/60),mm=cur%60;var per=hh<12?'ص':'م';var dh=hh>12?hh-12:(hh===0?12:hh);slots.push(dh+':'+(mm<10?'0'+mm:mm)+' '+per);cur+=dur;}
+  var booked=[];for(var i=0;i<dbk.length;i++){if(dbk[i].date===date&&dbk[i].svc===curSvc.n)booked.push(dbk[i].time);}
+  var out='';
+  for(var i=0;i<slots.length;i++){var s=slots[i];out+=booked.indexOf(s)>=0?('<div class="slt bkd">محجوز<br>'+s+'</div>'):('<div class="slt" onclick="pickSlt(this,\''+s+'\')">'+s+'</div>');}
+  document.getElementById('slts').innerHTML=out;curSlt=null;
+}
+function pickSlt(el,t){var s=document.querySelectorAll('.slt');for(var i=0;i<s.length;i++)s[i].classList.remove('on');el.classList.add('on');curSlt=t;}
+function submitBooking(){
+  var nm=document.getElementById('inm').value.trim(),ph=document.getElementById('iph').value.trim(),dt=document.getElementById('idt').value;
+  if(!nm||!ph||!dt||!curSlt){notify('يرجى تعبئة جميع الحقول واختيار وقت');return;}
+  var ref='MMH-'+Math.floor(1000+Math.random()*9000);
+  dbk.unshift({id:ref,name:nm,phone:ph,svc:curSvc.n,date:dt,time:curSlt,status:'pending',notes:document.getElementById('ino').value.trim()});
+  setBK(curBU.u,dbk);document.getElementById('fw').style.display='none';document.getElementById('succ').classList.add('on');document.getElementById('rpill').textContent=ref;
+}
+function resetForm(){document.getElementById('succ').classList.remove('on');resetGate();var ids=['inm','iph','idt','ino'];for(var i=0;i<ids.length;i++)document.getElementById(ids[i]).value='';curSlt=null;}
+function uploadPhoto(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(e){var data=e.target.result;document.getElementById('phprev').innerHTML='<img src="'+data+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';if(curDoc){curDoc.ph=data;saveDocs();renderGrid();notify('تم حفظ الصورة');}};r.readAsDataURL(f);}
+function saveSettings(){if(!curDoc)return;curDoc.d=document.getElementById('myd').value.trim();curDoc.l=document.getElementById('mylc').value.trim();saveDocs();notify('تم حفظ الاعدادات');}
+function copyLink(){var u='mmh-booking.com/'+(curDoc?curDoc.sl||curDoc.u:'');if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){notify('تم نسخ الرابط');}).catch(function(){notify(u);});}else{notify(u);}}
+function renderAdmin(){var today=new Date().toISOString().split('T')[0];var tot=0,tod=0,pnd=0;for(var i=0;i<docs.length;i++){var bks=getBK(docs[i].u);tot+=bks.length;for(var j=0;j<bks.length;j++){if(bks[j].date===today)tod++;if(bks[j].status==='pending')pnd++;}}document.getElementById('gst').textContent=tot;document.getElementById('gsd').textContent=tod;document.getElementById('gsp').textContent=pnd;document.getElementById('gsc').textContent=docs.length;renderCards();}
+function renderCards(){var today=new Date().toISOString().split('T')[0];var h='';for(var i=0;i<docs.length;i++){var d=docs[i];var bks=getBK(d.u);var tc=0,pc=0;for(var j=0;j<bks.length;j++){if(bks[j].date===today)tc++;if(bks[j].status==='pending')pc++;}var av=d.ph?('<img src="'+d.ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'):(d.n[0]||'د');h+='<div class="ccard"><div class="cch"><div class="ccav">'+av+'</div><div><div class="ccn">'+d.n+'</div><div class="ccs">'+d.sp+'</div></div></div><div class="ccst"><div class="ccsi"><div class="ccsn">'+bks.length+'</div><div class="ccsl">اجمالي</div></div><div class="ccsi"><div class="ccsn">'+tc+'</div><div class="ccsl">اليوم</div></div><div class="ccsi '+(pc>0?'w':'')+'"><div class="ccsn">'+pc+'</div><div class="ccsl">بانتظار</div></div></div><div class="ccf"><span class="ccslug">/'+(d.sl||d.u)+'</span><div class="cca"><button class="ib" onclick="showDet(\''+d.u+'\')">عرض</button><button class="ib del" onclick="delDoc('+i+')">حذف</button></div></div></div>';}document.getElementById('cgrid').innerHTML=h||'<div style="color:var(--m);font-size:13px">لا توجد عيادات</div>';}
+function showDet(uid){var d=null;for(var i=0;i<docs.length;i++){if(docs[i].u===uid){d=docs[i];break;}}if(!d)return;var bks=getBK(uid);document.getElementById('cdtl').textContent='حجوزات '+d.n;var sm={confirmed:'<span class="bdg bc">مؤكد</span>',pending:'<span class="bdg bp2">بانتظار</span>',cancelled:'<span class="bdg bx">ملغي</span>'};var h='';if(!bks.length){h='<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--m)">لا توجد حجوزات</td></tr>';}else{for(var i=0;i<bks.length;i++){var b=bks[i];h+='<tr><td style="font-weight:700;color:var(--td)">'+b.id+'</td><td>'+b.name+'</td><td style="direction:ltr;text-align:right">'+b.phone+'</td><td>'+b.svc+'</td><td>'+b.date+'</td><td>'+b.time+'</td><td>'+(sm[b.status]||b.status)+'</td></tr>';}}document.getElementById('cdtb').innerHTML=h;document.getElementById('cdet').classList.add('on');document.getElementById('cdet').scrollIntoView({behavior:'smooth',block:'nearest'});}
+function closeDet(){document.getElementById('cdet').classList.remove('on');}
+function toggleAF(){document.getElementById('afw').classList.toggle('on');}
+function addDoc(){var n=document.getElementById('nun').value.trim(),sp=document.getElementById('nus').value.trim(),d=document.getElementById('nud').value.trim(),l=document.getElementById('nul').value.trim(),u=document.getElementById('nuu').value.trim(),p=document.getElementById('nup').value,sl=document.getElementById('nusl').value.trim()||u.replace('.','-');if(!n||!u||!p){notify('الاسم واسم المستخدم وكلمة المرور مطلوبة');return;}for(var i=0;i<docs.length;i++){if(docs[i].u===u){notify('اسم المستخدم موجود');return;}}docs.push({u:u,p:p,n:n,sp:sp||'طبيب',d:d,l:l||'مستشفى المدينة الطبي',sl:sl,ph:''});saveDocs();var ids=['nun','nus','nud','nul','nuu','nup','nusl'];for(var i=0;i<ids.length;i++)document.getElementById(ids[i]).value='';document.getElementById('afw').classList.remove('on');renderAdmin();renderGrid();notify('تم اضافة '+n);}
+function delDoc(i){var n=docs[i].n;docs.splice(i,1);saveDocs();closeDet();renderAdmin();renderGrid();notify('تم حذف '+n);}
+function renderDash(){var today=new Date().toISOString().split('T')[0];var td=[];for(var i=0;i<dbk.length;i++){if(dbk[i].date===today)td.push(dbk[i]);}document.getElementById('dt').textContent=td.length;var sc={};for(var i=0;i<td.length;i++){sc[td[i].svc]=(sc[td[i].svc]||0)+1;}var sub=[];for(var k in sc){sub.push(sc[k]+' '+k);}document.getElementById('dts').textContent=sub.length?sub.join(' - '):'لا يوجد';document.getElementById('dtt').textContent=dbk.length;var pnd=0,cnf=0;for(var i=0;i<dbk.length;i++){if(dbk[i].status==='pending')pnd++;if(dbk[i].status==='confirmed')cnf++;}document.getElementById('dp').textContent=pnd;document.getElementById('dc').textContent=cnf;renderDT();}
+function setDF(v,btn){df=v;var t=document.querySelectorAll('.dtab');for(var i=0;i<t.length;i++)t[i].classList.remove('on');btn.classList.add('on');renderDT();}
+function renderDT(){var q=document.getElementById('dsrch')?document.getElementById('dsrch').value.toLowerCase():'';var data=[];for(var i=0;i<dbk.length;i++){var b=dbk[i];if(df!=='all'&&b.status!==df)continue;if(q&&b.name.indexOf(q)<0&&b.id.toLowerCase().indexOf(q)<0)continue;data.push(b);}var sm={confirmed:'<span class="bdg bc">مؤكد</span>',pending:'<span class="bdg bp2">بانتظار</span>',cancelled:'<span class="bdg bx">ملغي</span>'};var h='';if(!data.length){h='<tr><td colspan="8" style="text-align:center;padding:18px;color:var(--m)">لا توجد حجوزات</td></tr>';}else{for(var i=0;i<data.length;i++){var b=data[i];h+='<tr><td style="font-weight:700;color:var(--td)">'+b.id+'</td><td>'+b.name+'</td><td style="direction:ltr;text-align:right">'+b.phone+'</td><td>'+b.svc+'</td><td>'+b.date+'</td><td>'+b.time+'</td><td>'+(sm[b.status]||b.status)+'</td><td><button class="ib" onclick="chSt(\''+b.id+'\',\'confirmed\')" style="margin-left:4px">تاكيد</button><button class="ib del" onclick="chSt(\''+b.id+'\',\'cancelled\')">الغاء</button></td></tr>';}}document.getElementById('dtb').innerHTML=h;}
+function chSt(id,s){if(!curDoc)return;for(var i=0;i<dbk.length;i++){if(dbk[i].id===id){dbk[i].status=s;break;}}setBK(curDoc.u,dbk);renderDash();notify(s==='confirmed'?'تم التاكيد':'تم الالغاء');}
+function notify(msg){var n=document.getElementById('notif');n.textContent=msg;n.classList.add('on');setTimeout(function(){n.classList.remove('on');},2600);}
+document.getElementById('idt').min=new Date().toISOString().split('T')[0];
+renderGrid();
+</script>
+</body>
+</html>
