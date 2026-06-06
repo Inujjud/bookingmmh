@@ -1,993 +1,1220 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MMH Hospital Booking</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Skin Care — نظام الحجز الطبي</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--t:#1A8A8A;--td:#146868;--tl:#E8F5F5;--tb:#A8D5D5;--bg:#F5FAFA;--s:#fff;--txt:#1A1A1A;--m:#6B7280;--br:rgba(26,138,138,.18);--r:12px;--r2:8px}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;direction:rtl}
-nav{background:var(--s);border-bottom:.5px solid var(--br);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:sticky;top:0;z-index:200}
-.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
-.brand img{height:36px;width:auto}
-.brand-nm{font-size:13px;font-weight:600;color:var(--td)}
-.ntabs{display:flex;gap:2px}
-.ntab{padding:6px 12px;border-radius:var(--r2);border:none;background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit}
-.ntab.on{background:var(--tl);color:var(--td);font-weight:600}
-.ntab:hover:not(.on){background:#F0F9F9}
-.rbadge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r2);font-size:11px;font-weight:600;border:.5px solid var(--br)}
-.rbadge.sup{background:var(--tl);color:var(--td);border-color:var(--tb)}
-.rbadge.doc{background:#FFF8E8;color:#8B6914;border-color:#E8D5A0}
-.lbtn,.obtn{padding:7px 14px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit}
-.lbtn:hover{background:var(--tl);color:var(--td)}
-.obtn{padding:6px 12px;font-size:12px}
-.obtn:hover{color:#B91C1C;background:#FEF2F2}
+:root{
+  --t:#0F7B6C;--td:#0A5C50;--tl:#E8F5F3;--tb:#9DD4CC;
+  --ok:#059669;--warn:#D97706;--err:#DC2626;
+  --bg:#F5F7F7;--card:#fff;--text:#1A2332;--sub:#6B7280;--border:#E5E7EB;
+  --radius:14px;--radius-lg:20px;
+  --shadow:0 2px 12px rgba(15,123,108,.08);
+  --shadow-hover:0 6px 24px rgba(15,123,108,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Arial,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;font-weight:400;line-height:1.5}
 
-/* LOGIN MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.on{display:flex}
-.modal-box{background:var(--s);border-radius:24px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.25)}
-.modal-top{background:linear-gradient(135deg,var(--td) 0%,var(--t) 100%);padding:36px 28px 28px;text-align:center;position:relative}
-.modal-close{position:absolute;top:14px;left:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
-.modal-close:hover{background:rgba(255,255,255,.35)}
-.modal-logo-wrap{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-.modal-logo-wrap img{height:46px;width:auto;object-fit:contain;filter:brightness(10)}
-.modal-top h2{font-size:18px;font-weight:700;color:#fff;margin-bottom:3px}
-.modal-top p{font-size:13px;color:rgba(255,255,255,.75)}
-.modal-body{padding:24px 28px 28px}
-.modal-tabs{display:flex;gap:6px;margin-bottom:20px;background:#F0F9F9;border-radius:12px;padding:4px}
-.mtab{flex:1;padding:10px;border-radius:9px;border:none;background:none;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--m);transition:all .2s}
-.mtab.on{background:var(--s);color:var(--td);font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.mfg{margin-bottom:14px}
-.mfl{font-size:12px;color:var(--m);margin-bottom:5px;display:block;font-weight:600}
-.mfg input{width:100%;padding:12px 14px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:14px;background:#FAFAFA;color:var(--txt);outline:none;font-family:inherit;transition:all .15s}
-.mfg input:focus{border-color:var(--t);background:var(--s);box-shadow:0 0 0 3px rgba(26,138,138,.1)}
-.modal-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--t),var(--td));border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:6px}
-.modal-btn:hover{opacity:.9;transform:translateY(-1px)}
+/* HEADER */
+.hdr{background:#fff;border-bottom:1px solid var(--border);padding:0 18px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-mark{width:36px;height:36px;background:var(--t);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.brand-mark i{color:#fff;font-size:.95rem}
+.brand-name{font-size:1rem;font-weight:700;color:var(--text)}
+.brand-sub{font-size:.65rem;color:var(--sub);margin-top:-2px}
+.hdr-btn{background:none;border:1.5px solid var(--border);color:var(--sub);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.78rem;transition:all .2s;display:flex;align-items:center;gap:6px;font-family:inherit;font-weight:500}
+.hdr-btn:hover{border-color:var(--t);color:var(--t)}
+.hdr-btn.primary{background:var(--t);border-color:var(--t);color:#fff}
 
-/* MAIN */
-main{padding:20px 16px;max-width:900px;margin:0 auto}
-.pg{display:none}.pg.on{display:block}
-.card{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:18px;margin-bottom:14px}
-.clbl{font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.07em;margin-bottom:13px}
-.fg{margin-bottom:11px}
-.fl{font-size:13px;color:var(--m);margin-bottom:4px;display:block}
-input,select,textarea{width:100%;padding:9px 12px;border:.5px solid rgba(0,0,0,.18);border-radius:var(--r2);font-size:14px;background:var(--s);color:var(--txt);outline:none;font-family:inherit}
-input:focus,select:focus,textarea:focus{border-color:var(--t);box-shadow:0 0 0 3px rgba(26,138,138,.1)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:560px){.g2{grid-template-columns:1fr}}
-.bp{padding:10px 22px;border-radius:var(--r2);background:var(--t);border:none;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
-.bp:hover{background:var(--td)}
-.bs{padding:9px 18px;border-radius:var(--r2);background:#EBEBEB;border:none;font-size:14px;color:var(--txt);cursor:pointer;font-family:inherit}
-.xb{background:none;border:none;cursor:pointer;color:var(--m);font-size:18px;padding:0 2px;line-height:1}
-.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.sh h2{font-size:18px;font-weight:600}
+/* SCREENS */
+.screen{display:none;padding:18px;max-width:680px;margin:0 auto;animation:fadeUp .25s ease}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* HOME */
-.hero{background:linear-gradient(135deg,var(--td),var(--t));border-radius:16px;padding:36px 20px 28px;margin-bottom:18px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
-.hero img{height:68px;width:auto;margin:0 auto 14px;display:block;filter:brightness(10);position:relative;z-index:1}
-.hero h1{font-size:21px;font-weight:700;color:#fff;margin-bottom:5px;position:relative;z-index:1}
-.hero p{font-size:13px;color:rgba(255,255,255,.82);line-height:1.6;margin-bottom:14px;position:relative;z-index:1}
-.lpill{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:7px 18px;text-decoration:none;transition:all .2s;position:relative;z-index:1}
-.lpill:hover{background:rgba(255,255,255,.3)}
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--t),var(--td));border-radius:var(--radius-lg);padding:26px 22px;color:#fff;margin-bottom:18px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-40px;left:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06)}
+.hero-tag{font-size:.7rem;font-weight:500;background:rgba(255,255,255,.18);border-radius:20px;padding:4px 12px;display:inline-flex;align-items:center;gap:5px;margin-bottom:10px}
+.hero-title{font-size:1.35rem;font-weight:700;line-height:1.35;margin-bottom:5px}
+.hero-sub{font-size:.82rem;opacity:.88;line-height:1.6}
 
-/* ===== DOCTOR LIST (new style) ===== */
-.doc-search-bar{display:flex;align-items:center;gap:10px;background:var(--s);border:.5px solid var(--br);border-radius:12px;padding:10px 14px;margin-bottom:14px}
-.doc-search-bar input{border:none;background:none;outline:none;font-size:14px;flex:1;font-family:inherit;color:var(--txt)}
-.doc-search-bar input::placeholder{color:var(--m)}
-.doc-list{display:flex;flex-direction:column;gap:12px}
-.doc-list-card{background:var(--s);border:1px solid #E8E8E8;border-radius:16px;padding:16px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:14px}
-.doc-list-card:hover{border-color:var(--t);box-shadow:0 4px 16px rgba(26,138,138,.12);transform:translateY(-1px)}
-.doc-list-av{width:60px;height:60px;border-radius:50%;background:var(--tl);border:2px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--td);overflow:hidden;flex-shrink:0}
-.doc-list-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.doc-list-info{flex:1;min-width:0}
-.doc-list-name{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:3px}
-.doc-list-spec{font-size:12px;color:var(--m);margin-bottom:6px}
-.doc-list-next{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--td);font-weight:600}
-.doc-list-next-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;flex-shrink:0}
-.doc-list-btn{font-size:12px;color:var(--m);display:flex;align-items:center;gap:4px;margin-top:8px}
+/* SECTION */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-title{font-size:.82rem;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:6px}
+.sec-title i{color:var(--t)}
 
-/* ===== BOOKING - NEW STYLE ===== */
-.book-header{background:var(--s);border-radius:16px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;border:1px solid #E8E8E8}
-.book-header-av{width:56px;height:56px;border-radius:50%;background:var(--tl);border:2px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--td);overflow:hidden;flex-shrink:0}
-.book-header-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.book-header-name{font-size:16px;font-weight:700;margin-bottom:2px}
-.book-header-spec{font-size:12px;color:var(--m);margin-bottom:4px}
-.book-header-loc{font-size:11px;color:var(--m);display:flex;align-items:center;gap:4px}
+/* DEPT GRID — single color */
+.dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dept-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:16px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:13px}
+.dept-card:hover{border-color:var(--t);box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.dept-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1rem;background:var(--tl);color:var(--t);flex-shrink:0}
+.dept-name{font-size:.86rem;font-weight:600;color:var(--text);line-height:1.3}
+.dept-desc{font-size:.7rem;color:var(--sub);margin-top:2px;line-height:1.45}
+.dept-cnt{font-size:.65rem;font-weight:500;color:var(--t);background:var(--tl);border-radius:20px;padding:2px 9px;display:inline-flex;align-items:center;gap:3px;margin-top:5px}
 
-/* Date strip */
-.date-section{background:var(--s);border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid #E8E8E8}
-.date-section-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-.date-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+/* CHOICE SCREEN */
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.choice-btn{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px 14px;cursor:pointer;text-align:center;transition:all .22s;font-family:inherit}
+.choice-btn:hover{border-color:var(--t);box-shadow:var(--shadow-hover)}
+.choice-ico{width:56px;height:56px;border-radius:16px;background:var(--tl);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.3rem;color:var(--t);transition:all .2s}
+.choice-btn:hover .choice-ico{background:var(--t);color:#fff}
+.choice-lbl{font-size:.92rem;font-weight:600;color:var(--text)}
+.choice-sub{font-size:.72rem;color:var(--sub);margin-top:5px;line-height:1.5}
+
+/* BADGE */
+.badge{padding:3px 9px;border-radius:20px;font-size:.67rem;font-weight:500;display:inline-flex;align-items:center;gap:4px}
+.badge-ok{background:#D1FAE5;color:#065F46}
+.badge-warn{background:#FEF3C7;color:#92400E}
+.badge-err{background:#FEE2E2;color:#991B1B}
+.badge-info{background:var(--tl);color:var(--td)}
+.badge-blue{background:#DBEAFE;color:#1E40AF}
+
+/* STEPS */
+.steps-bar{display:flex;align-items:center;margin-bottom:18px;overflow-x:auto;padding:2px 0}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;position:relative;min-width:60px}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:13px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step-item.done::after,.step-item.active::after{background:var(--t)}
+.step-num{width:26px;height:26px;border-radius:50%;background:#E5E7EB;color:#9CA3AF;font-size:.7rem;font-weight:600;display:flex;align-items:center;justify-content:center;z-index:1;transition:all .25s}
+.step-item.done .step-num{background:var(--t);color:#fff}
+.step-item.active .step-num{background:var(--t);color:#fff;box-shadow:0 0 0 3px rgba(15,123,108,.15)}
+.step-lbl{font-size:.6rem;color:#9CA3AF;white-space:nowrap;font-weight:500}
+.step-item.active .step-lbl,.step-item.done .step-lbl{color:var(--t)}
+
+/* SERVICE CARDS */
+.svc-list{display:flex;flex-direction:column;gap:9px}
+.svc-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:13px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:11px}
+.svc-card:hover{border-color:var(--tb);box-shadow:var(--shadow)}
+.svc-card.selected{border-color:var(--t);background:var(--tl)}
+.svc-ico{width:40px;height:40px;border-radius:10px;background:var(--tl);display:flex;align-items:center;justify-content:center;font-size:.95rem;color:var(--t);flex-shrink:0}
+.svc-card.selected .svc-ico{background:var(--t);color:#fff}
+.svc-name{font-size:.86rem;font-weight:600;color:var(--text)}
+.svc-desc{font-size:.73rem;color:var(--sub);margin-top:2px;line-height:1.5}
+.svc-tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+
+/* DOCTOR CARDS */
+.doc-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:11px}
+.doc-card:hover{border-color:var(--tb);box-shadow:var(--shadow)}
+.doc-card.selected{border-color:var(--t);background:var(--tl)}
+.doc-av{width:50px;height:50px;border-radius:50%;background:var(--tl);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--t);flex-shrink:0;overflow:hidden;border:2px solid var(--border)}
+.doc-av img{width:100%;height:100%;object-fit:cover}
+.doc-card.selected .doc-av{border-color:var(--t)}
+.doc-name{font-size:.86rem;font-weight:600;color:var(--text)}
+.doc-spec{font-size:.73rem;color:var(--sub);margin-top:1px}
+.doc-avail{font-size:.7rem;color:var(--ok);margin-top:4px;display:flex;align-items:center;gap:4px;font-weight:500}
+.doc-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);display:inline-block}
+
+/* DATE STRIP */
+.date-strip{display:flex;gap:7px;overflow-x:auto;padding:3px 1px 9px;scrollbar-width:none}
 .date-strip::-webkit-scrollbar{display:none}
-.date-chip{flex-shrink:0;width:64px;padding:12px 8px;border-radius:12px;border:1.5px solid #E8E8E8;background:var(--s);text-align:center;cursor:pointer;transition:all .2s}
-.date-chip:hover{border-color:var(--t);background:var(--tl)}
-.date-chip.on{background:var(--td);border-color:var(--td);color:#fff}
-.date-chip.on .dc-num,.date-chip.on .dc-day{color:#fff}
-.dc-day{font-size:11px;color:var(--m);margin-bottom:4px;font-weight:500}
-.dc-num{font-size:20px;font-weight:700;color:var(--txt);line-height:1}
+.date-chip{min-width:54px;padding:8px 5px;border-radius:9px;background:var(--card);border:1.5px solid var(--border);cursor:pointer;text-align:center;transition:all .18s;flex-shrink:0}
+.date-chip:hover{border-color:var(--tb)}
+.date-chip.sel{background:var(--t);color:#fff;border-color:var(--t)}
+.dc-d{font-size:.6rem;font-weight:500;opacity:.75}
+.dc-n{font-size:1.05rem;font-weight:600;line-height:1.2}
+.dc-m{font-size:.58rem;opacity:.7}
 
-/* Time slots */
-.time-section{background:var(--s);border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid #E8E8E8;display:none}
-.time-section.on{display:block}
-.time-section-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:12px}
-.time-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.time-chip{padding:14px 10px;border-radius:12px;border:1.5px solid #E8E8E8;background:var(--s);text-align:center;cursor:pointer;transition:all .2s;font-size:13px;font-weight:600;color:var(--txt)}
-.time-chip:hover:not(.bkd){border-color:var(--t);background:var(--tl);color:var(--td)}
-.time-chip.on{background:var(--td);border-color:var(--td);color:#fff}
-.time-chip.bkd{background:#F5F5F5;color:#CCC;cursor:not-allowed;text-decoration:line-through}
+/* TIME GRID */
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.t-slot{padding:8px 3px;border-radius:8px;background:var(--card);border:1.5px solid var(--border);text-align:center;font-size:.76rem;font-weight:500;cursor:pointer;transition:all .18s;color:var(--text)}
+.t-slot:hover{border-color:var(--t);color:var(--t)}
+.t-slot.sel{background:var(--t);color:#fff;border-color:var(--t)}
+.t-slot.busy{background:#F9FAFB;color:#D1D5DB;cursor:not-allowed;text-decoration:line-through}
 
-/* Patient form */
-.patient-section{background:var(--s);border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid #E8E8E8;display:none}
-.patient-section.on{display:block}
+/* FORMS */
+.fld{margin-bottom:13px}
+.fld label{font-size:.76rem;font-weight:500;color:var(--sub);display:block;margin-bottom:4px}
+.inp,.sel,.ta{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.86rem;background:var(--card);color:var(--text);transition:border .18s;font-family:inherit;direction:rtl}
+.inp:focus,.sel:focus,.ta:focus{outline:none;border-color:var(--t)}
+.ta{min-height:76px;resize:vertical}
 
-/* No invoice */
-.noiv{display:none;background:#FFFBEB;border:1px solid #FCD34D;border-radius:16px;padding:28px;text-align:center;margin-bottom:14px}
+/* BUTTONS */
+.btn{width:100%;padding:12px;border-radius:var(--radius);border:none;font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;font-family:inherit}
+.btn-p{background:var(--t);color:#fff}.btn-p:hover{background:var(--td)}
+.btn-p:disabled{background:#9CA3AF;cursor:not-allowed}
+.btn-s{background:var(--tl);color:var(--t);border:1.5px solid var(--tb)}.btn-s:hover{background:var(--tb)}
+.btn-d{background:#FEF2F2;color:var(--err);border:1.5px solid #FECACA}.btn-d:hover{background:var(--err);color:#fff}
+.btn-sm{padding:6px 11px;font-size:.73rem;border-radius:7px;width:auto;display:inline-flex}
+.btn-back{background:none;border:none;color:var(--sub);font-size:.8rem;cursor:pointer;padding:3px 0;margin-bottom:14px;display:flex;align-items:center;gap:5px;font-family:inherit;font-weight:500;transition:color .18s}
+.btn-back:hover{color:var(--t)}
 
-/* Continue button */
-.cont-btn{width:100%;padding:15px;border-radius:14px;background:linear-gradient(135deg,var(--t),var(--td));border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 4px 14px rgba(26,138,138,.3);display:none}
-.cont-btn.on{display:block}
-.cont-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,138,138,.4)}
+/* ALERTS */
+.alert{padding:10px 13px;border-radius:var(--radius);font-size:.8rem;margin-bottom:11px;display:flex;align-items:flex-start;gap:8px;line-height:1.55}
+.alert i{margin-top:1px;flex-shrink:0}
+.al-info{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF}
+.al-warn{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E}
+.al-ok{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46}
+.al-err{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
 
-/* reminders */
-.remb{background:#FFFBEB;border:.5px solid #FCD34D;border-radius:12px;padding:14px 16px;margin-bottom:14px}
-.remt{font-size:12px;font-weight:700;color:#92400E;margin-bottom:10px}
-.reml{list-style:none}
-.reml li{font-size:12px;color:#92400E;padding:4px 0;border-bottom:.5px solid rgba(146,64,14,.08);display:flex;align-items:flex-start;gap:6px;line-height:1.5}
-.reml li::before{content:'•';color:var(--t);font-size:16px;line-height:1;flex-shrink:0}
-.reml li:last-child{border:none}
+/* CARD */
+.card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:15px;margin-bottom:12px}
+.card-title{font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.card-title i{color:var(--t)}
 
-/* Success */
-.succ{display:none;text-align:center;padding:48px 16px}
-.succ.on{display:block}
-.sicn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border:2px solid #6EE7B7;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:38px}
-.rpill{display:inline-block;background:var(--tl);border:1.5px solid var(--tb);border-radius:12px;padding:12px 32px;font-size:24px;font-weight:700;color:var(--td);margin:14px 0;letter-spacing:2px}
-.dnote{background:#FFFBEB;border:.5px solid #FCD34D;border-radius:10px;padding:10px 16px;font-size:13px;color:#92400E;margin:12px auto;max-width:360px}
-.nbtn{padding:11px 26px;border-radius:10px;border:1.5px solid var(--tb);background:none;font-size:13px;color:var(--td);cursor:pointer;font-family:inherit;margin-top:10px;font-weight:600}
+/* CONFIRM ROWS */
+.cf-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.cf-row:last-child{border-bottom:none}
+.cf-k{font-size:.76rem;color:var(--sub)}
+.cf-v{font-size:.8rem;font-weight:500;color:var(--text)}
+
+/* PAGE TITLE */
+.pg-title{font-size:1.02rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.pg-sub{font-size:.76rem;color:var(--sub);margin-bottom:14px;line-height:1.55}
+.sec-lbl{font-size:.68rem;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.sec-lbl i{color:var(--t);font-size:.7rem}
+
+/* ADMIN TABS */
+.a-tabs{display:flex;gap:5px;overflow-x:auto;padding:1px 0 10px;scrollbar-width:none;margin-bottom:4px}
+.a-tabs::-webkit-scrollbar{display:none}
+.a-tab{padding:7px 13px;border-radius:8px;background:var(--card);border:1.5px solid var(--border);color:var(--sub);font-size:.76rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .18s;display:inline-flex;align-items:center;gap:5px;font-family:inherit}
+.a-tab.on,.a-tab:hover{background:var(--t);color:#fff;border-color:var(--t)}
 
 /* STATS */
-.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
-@media(max-width:600px){.srow{grid-template-columns:1fr 1fr}}
-.stat{background:var(--s);border:.5px solid var(--br);border-radius:12px;padding:16px;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--t);border-radius:0 12px 12px 0}
-.sl{font-size:11px;color:var(--m);margin-bottom:6px;font-weight:600}
-.sv{font-size:28px;font-weight:700}
-.sv.tc{color:var(--td)}.sv.rc{color:#B91C1C}.sv.gc{color:#065F46}
-.ss{font-size:11px;color:var(--m);margin-top:3px}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:12px}
+.s-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:15px;text-align:center}
+.s-card .si{font-size:1.2rem;color:var(--tb);margin-bottom:5px}
+.s-card .sn{font-size:1.7rem;font-weight:700;color:var(--t)}
+.s-card .sl{font-size:.7rem;color:var(--sub);margin-top:2px}
 
-/* ADMIN */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px;margin-bottom:18px}
-.ccard{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:16px}
-.ccard:hover{border-color:var(--tb)}
-.cch{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.ccav{width:40px;height:40px;border-radius:50%;background:var(--tl);border:.5px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--td);flex-shrink:0;overflow:hidden}
-.ccav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.ccn{font-size:14px;font-weight:700}.ccs{font-size:11px;color:var(--m);margin-top:2px}
-.ccst{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
-.ccsi{background:var(--tl);border-radius:6px;padding:8px;text-align:center}
-.ccsn{font-size:18px;font-weight:700;color:var(--td)}.ccsl{font-size:10px;color:var(--m);margin-top:2px}
-.ccsi.w .ccsn{color:#B91C1C}
-.ccf{display:flex;align-items:center;justify-content:space-between}
-.ccslug{font-family:monospace;font-size:11px;color:var(--td);background:var(--tl);border:.5px solid var(--tb);border-radius:5px;padding:2px 8px}
-.cca{display:flex;gap:6px}
-.ib{background:none;border:.5px solid rgba(0,0,0,.12);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--m);font-family:inherit}
-.ib:hover{background:#F0F9F9;color:var(--td)}
-.ib.del:hover{background:#FEF2F2;color:#B91C1C}
-.cdet{display:none;background:#F0FAFA;border:.5px solid var(--br);border-radius:var(--r);padding:16px;margin-bottom:14px}
-.cdet.on{display:block}
-.cdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cdh h3{font-size:14px;font-weight:700}
-.tw{overflow-x:auto;border:.5px solid var(--br);border-radius:var(--r2)}
-table{width:100%;border-collapse:collapse;table-layout:fixed}
-th{font-size:11px;font-weight:700;color:var(--m);text-align:right;padding:9px 12px;border-bottom:.5px solid var(--br);background:#F0FAFA;white-space:nowrap}
-td{padding:10px 12px;font-size:13px;border-bottom:.5px solid rgba(26,138,138,.08);vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#F0FAFA}
-.bdg{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
-.bc{background:#ECFDF5;color:#065F46}.bp2{background:#FFFBEB;color:#92400E}.bx{background:#FEF2F2;color:#B91C1C}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.76rem}
+.tbl th{background:var(--tl);color:var(--td);padding:8px 7px;text-align:right;font-weight:600;font-size:.7rem}
+.tbl td{padding:8px 7px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#FAFFFE}
 
-/* DOCTOR DASHBOARD */
-.scard{background:linear-gradient(135deg,var(--tl),#D4F0F0);border:1px solid var(--tb);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.surl{font-family:monospace;font-size:13px;color:var(--td);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-.cbtn{padding:9px 16px;border-radius:10px;border:.5px solid var(--tb);background:var(--s);font-size:13px;cursor:pointer;color:var(--td);font-family:inherit;font-weight:700}
-.cbtn:hover{background:var(--t);color:#fff}
-.afw{display:none}.afw.on{display:block}
-.dtab{padding:6px 14px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;cursor:pointer;color:var(--m);font-family:inherit}
-.dtab.on{background:var(--tl);border-color:var(--tb);color:var(--td);font-weight:700}
+/* TOGGLE */
+.tgl-wrap{display:flex;align-items:center;gap:9px}
+.tgl{position:relative;width:40px;height:21px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tgl-sl{position:absolute;inset:0;background:#D1D5DB;border-radius:21px;cursor:pointer;transition:.25s}
+.tgl-sl:before{content:'';position:absolute;width:15px;height:15px;right:3px;top:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tgl input:checked+.tgl-sl{background:var(--t)}
+.tgl input:checked+.tgl-sl:before{right:auto;left:3px}
 
-/* CALENDAR */
-.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-title{font-size:15px;font-weight:700;color:var(--td)}
-.cal-nav{background:none;border:.5px solid var(--br);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:14px;color:var(--m);font-family:inherit}
-.cal-nav:hover{background:var(--tl);color:var(--td)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-day-name{font-size:10px;font-weight:700;color:var(--m);text-align:center;padding:6px 0}
-.cal-day{min-height:46px;border-radius:10px;padding:5px 3px;text-align:center;cursor:pointer;transition:all .15s;border:.5px solid transparent}
-.cal-day:hover{background:var(--tl);border-color:var(--tb)}
-.cal-day.today{background:var(--tl);border-color:var(--t)}
-.cal-day.selected{background:var(--t);border-color:var(--t)}
-.cal-day.selected .cal-dn{color:#fff}
-.cal-day.selected .cal-dot{background:#fff}
-.cal-day.other-month .cal-dn{color:#ccc}
-.cal-dn{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:2px}
-.cal-dot{width:5px;height:5px;border-radius:50%;background:var(--t);margin:0 auto;display:none}
-.cal-dot.show{display:block}
-.cal-count{font-size:9px;color:var(--td);font-weight:700}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.48);z-index:200;justify-content:center;align-items:flex-end}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:20px 16px 34px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;animation:mUp .25s ease}
+@keyframes mUp{from{transform:translateY(50px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.modal-ttl{font-size:.96rem;font-weight:600;color:var(--text)}
+.modal-x{background:#F3F4F6;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:.78rem}
+.modal-x:hover{background:#E5E7EB}
 
-/* HOURS */
-.hrs-grid{display:grid;gap:10px}
-.hr-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F9FAFA;border-radius:10px;border:.5px solid var(--br)}
-.hr-label{flex:1;font-size:13px;font-weight:600}
-.hr-sub{font-size:11px;color:var(--m);margin-top:2px}
-.hr-time input[type=time]{width:96px;padding:6px 8px;font-size:12px;border:.5px solid var(--br);border-radius:7px;background:var(--s);margin:0 3px}
-.tog{position:relative;width:38px;height:21px;flex-shrink:0}
-.tog input{opacity:0;width:0;height:0}
-.tog-slider{position:absolute;inset:0;background:#DDD;border-radius:11px;cursor:pointer;transition:.2s}
-.tog-slider::before{content:'';position:absolute;width:15px;height:15px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.tog input:checked+.tog-slider{background:var(--t)}
-.tog input:checked+.tog-slider::before{left:20px}
+/* SALLA */
+.salla{background:var(--t);border-radius:var(--radius-lg);padding:20px;text-align:center;color:#fff;margin-top:12px}
+.salla-ico{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.3rem}
+.salla-title{font-size:.92rem;font-weight:600;margin-bottom:4px}
+.salla-sub{font-size:.76rem;opacity:.85;margin-bottom:14px;line-height:1.55}
+.salla-btn{background:#fff;color:var(--t);border:none;padding:11px 18px;border-radius:22px;font-size:.86rem;font-weight:600;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-family:inherit;transition:opacity .2s}
+.salla-btn:hover{opacity:.9}
 
-/* TODO */
-.todo-input-row{display:flex;gap:8px;margin-bottom:12px}
-.todo-input-row input{flex:1;padding:9px 12px;border:.5px solid var(--br);border-radius:10px;font-size:13px;font-family:inherit}
-.todo-add{padding:9px 14px;border-radius:10px;background:var(--t);border:none;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
-.todo-list{display:flex;flex-direction:column;gap:7px}
-.todo-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F9FAFA;border-radius:10px;border:.5px solid var(--br)}
-.todo-item.done .todo-text{text-decoration:line-through;color:var(--m)}
-.todo-cb{width:20px;height:20px;border-radius:6px;border:2px solid var(--tb);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all .15s;color:transparent}
-.todo-cb.checked{background:var(--t);border-color:var(--t);color:#fff}
-.todo-text{flex:1;font-size:13px}
-.todo-del{background:none;border:none;color:#CCC;cursor:pointer;font-size:15px;padding:0 2px;line-height:1}
-.todo-del:hover{color:#B91C1C}
-.todo-priority{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
-.prio-high{background:#FEF2F2;color:#B91C1C}
-.prio-med{background:#FFFBEB;color:#92400E}
-.prio-low{background:#ECFDF5;color:#065F46}
+/* SUCCESS */
+.success-wrap{text-align:center;padding:14px 0}
+.success-ico{width:68px;height:68px;border-radius:50%;background:var(--tl);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.7rem;color:var(--t)}
+.success-ref{background:var(--tl);border-radius:var(--radius);padding:12px;margin:12px 0;font-size:.96rem;font-weight:600;color:var(--t);letter-spacing:2px;border:2px dashed var(--tb);font-family:monospace}
 
-.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:#1A1A1A;color:#fff;padding:10px 22px;border-radius:10px;font-size:14px;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none}
-.notif.on{transform:translateX(-50%) translateY(0);opacity:1}
+/* Q CARD */
+.q-card{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:13px;margin-bottom:9px}
+.q-ttl{font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.q-ttl i{color:var(--t)}
+.q-opts{display:flex;gap:6px;flex-wrap:wrap}
+.q-opt{padding:6px 13px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;font-size:.76rem;transition:all .18s;color:var(--text)}
+.q-opt:hover,.q-opt.on{background:var(--t);color:#fff;border-color:var(--t)}
+
+/* PRE-SESSION BOX */
+.presession{background:var(--tl);border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid var(--tb)}
+.presession h4{color:var(--td);font-size:.8rem;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.presession ul{padding-right:16px;font-size:.78rem;color:#1F5C52;line-height:2.1}
+
+/* SCH */
+.sch-day{background:var(--card);border-radius:var(--radius);border:1.5px solid var(--border);padding:11px;margin-bottom:7px}
+.sch-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.sch-dn{font-weight:600;font-size:.82rem;color:var(--text)}
+.sch-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.sch-lbl{font-size:.68rem;color:var(--sub)}
+.sch-row input[type=time]{padding:5px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:.76rem;direction:ltr}
+.sch-row input[type=number]{width:50px;padding:5px 7px;border:1.5px solid var(--border);border-radius:7px;font-size:.76rem}
+.sch-row input:focus{outline:none;border-color:var(--t)}
+
+/* MISC */
+.loader{text-align:center;padding:28px;color:var(--sub);font-size:.82rem}
+.loader i{font-size:1.4rem;color:var(--tb);margin-bottom:9px;display:block}
+.empty{text-align:center;padding:36px 18px;color:var(--sub)}
+.empty i{font-size:2rem;color:var(--border);margin-bottom:10px;display:block}
+.empty p{font-size:.8rem;line-height:1.6}
+.login-wrap{max-width:360px;margin:28px auto 0}
+.info-note{background:var(--tl);border-radius:var(--radius);padding:12px 14px;font-size:.78rem;color:var(--td);line-height:1.7;border:1px solid var(--tb);margin-bottom:12px}
+.info-note i{color:var(--t);margin-left:5px}
+
+@media(max-width:480px){
+  .time-grid{grid-template-columns:repeat(3,1fr)}
+  .choice-grid{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="brand" onclick="goHome()">
-    <img src="logo.png" alt="MMH" onerror="this.style.display='none'">
-    <span class="brand-nm">Medina Medical Hospital</span>
-  </div>
-  <div class="ntabs" id="ntabs" style="display:none"></div>
-  <div style="display:flex;align-items:center;gap:7px">
-    <div class="rbadge" id="rbadge" style="display:none"></div>
-    <button class="lbtn" id="ltgl" onclick="openModal()">دخول</button>
-    <button class="obtn" id="obtn" onclick="doLogout()" style="display:none">خروج</button>
-  </div>
-</nav>
-
-<!-- LOGIN MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModalOut(event)">
-  <div class="modal-box">
-    <div class="modal-top">
-      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
-      <div class="modal-logo-wrap">
-        <img src="logo.png" alt="MMH" onerror="this.parentElement.innerHTML='<span style=font-size:18px;font-weight:700;color:#fff>MMH</span>'">
-      </div>
-      <h2>Medina Medical Hospital</h2>
-      <p>مستشفى المدينة الطبي</p>
-    </div>
-    <div class="modal-body">
-      <div class="modal-tabs">
-        <button class="mtab on" onclick="setMtab(this,'dr.noura')">&#x1FA7A; دكتورة / موظف</button>
-        <button class="mtab" onclick="setMtab(this,'mmh.admin')">&#x1F6E1; مدير النظام</button>
-      </div>
-      <div class="mfg"><label class="mfl">اسم المستخدم</label><input type="text" id="lu" placeholder="dr.noura" autocomplete="username"></div>
-      <div class="mfg"><label class="mfl">كلمة المرور</label><input type="password" id="lp" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="modal-btn" onclick="doLogin()">تسجيل الدخول</button>
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand">
+    <div class="brand-mark"><i class="fa-solid fa-spa"></i></div>
+    <div>
+      <div class="brand-name">Skin Care</div>
+      <div class="brand-sub">مستشفى المدينة الطبي</div>
     </div>
   </div>
-</div>
-
-<main>
+  <div>
+    <button class="hdr-btn" id="btnLogin" onclick="showLogin()"><i class="fa-solid fa-right-to-bracket"></i> دخول</button>
+    <button class="hdr-btn primary" id="btnLogout" style="display:none" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
+  </div>
+</header>
 
 <!-- HOME -->
-<div class="pg on" id="pg-home">
+<div class="screen active" id="s-home">
   <div class="hero">
-    <img src="logo.png" alt="MMH" onerror="this.style.display='none'">
-    <h1>Medina Medical Hospital</h1>
-    <p>مستشفى المدينة الطبي &mdash; احجزي موعدك مع أطباء المستشفى مباشرة</p>
-    <a class="lpill" href="https://maps.app.goo.gl/43rLwpCrHxd8vB9t8?g_st=ic" target="_blank">&#x1F4CD; موقع المستشفى على الخريطة</a>
+    <div class="hero-tag"><i class="fa-solid fa-star"></i> خدمات طبية متكاملة</div>
+    <div class="hero-title">حجز المواعيد الطبية</div>
+    <div class="hero-sub">اختر التخصص المناسب وحدد موعدك مع نخبة من الأطباء المتخصصين</div>
   </div>
-  <div class="doc-search-bar">
-    <span style="font-size:16px;color:var(--m)">&#x1F50D;</span>
-    <input type="text" id="doc-search" placeholder="ابحث عن طبيب لحجز موعدك..." oninput="filterDocs()">
+  <div class="sec-hdr">
+    <div class="sec-title"><i class="fa-solid fa-hospital"></i> التخصصات الطبية</div>
   </div>
-  <div class="doc-list" id="dgrid"></div>
+  <div class="dept-grid" id="deptGrid">
+    <div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div>
+  </div>
 </div>
 
-<!-- BOOKING PAGE (new style) -->
-<div class="pg" id="pg-book">
-  <button style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:.5px solid var(--br);background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit;margin-bottom:14px" onclick="goHome()">&#8592; الأطباء</button>
+<!-- LASER / SKIN CHOICE -->
+<div class="screen" id="s-laser-skin">
+  <button class="btn-back" onclick="goHome()"><i class="fa-solid fa-chevron-right"></i> العودة للأقسام</button>
+  <div class="pg-title">قسم الليزر وتنظيف البشرة</div>
+  <div class="pg-sub">حدد نوع الخدمة المطلوبة</div>
+  <div class="choice-grid">
+    <button class="choice-btn" onclick="pickLaserSkin('laser')">
+      <div class="choice-ico"><i class="fa-solid fa-bolt-lightning"></i></div>
+      <div class="choice-lbl">الليزر</div>
+      <div class="choice-sub">جلسات الليزر الطبية<br/>تتطلب زيارة الطبيب</div>
+    </button>
+    <button class="choice-btn" onclick="pickLaserSkin('skin')">
+      <div class="choice-ico"><i class="fa-solid fa-spa"></i></div>
+      <div class="choice-lbl">تنظيف البشرة</div>
+      <div class="choice-sub">جلسات عناية وتنظيف البشرة المتخصصة</div>
+    </button>
+  </div>
+</div>
 
-  <!-- Doctor header -->
-  <div class="book-header" id="book-header">
-    <div class="book-header-av" id="bh-av"></div>
-    <div>
-      <div class="book-header-name" id="bh-name"></div>
-      <div class="book-header-spec" id="bh-spec"></div>
-      <div class="book-header-loc">&#x1F4CD; <span id="bh-loc"></span></div>
+<!-- LASER INVOICE SCREEN -->
+<div class="screen" id="s-laser-invoice">
+  <button class="btn-back" onclick="showScreen('s-laser-skin')"><i class="fa-solid fa-chevron-right"></i> رجوع</button>
+  <div class="pg-title">حجز جلسة ليزر</div>
+  <div class="pg-sub">هل لديك فاتورة صادرة من المستشفى؟</div>
+  <div class="info-note"><i class="fa-solid fa-circle-info"></i>الفاتورة وثيقة دفع صادرة من المستشفى تُسلَّم لك بعد الدفع في الاستقبال. إن لم تكن تمتلكها، سيتم توجيهك للحجز مع أحد أطباء الجلدية والتجميل.</div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+      <button class="choice-btn" onclick="laserInvoiceChoice(true)" id="liYes">
+        <div class="choice-ico" style="width:48px;height:48px;font-size:1.1rem;margin-bottom:9px"><i class="fa-solid fa-file-invoice"></i></div>
+        <div class="choice-lbl" style="font-size:.86rem">نعم، لديّ فاتورة</div>
+      </button>
+      <button class="choice-btn" onclick="laserInvoiceChoice(false)" id="liNo">
+        <div class="choice-ico" style="width:48px;height:48px;font-size:1.1rem;margin-bottom:9px"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="choice-lbl" style="font-size:.86rem">لا، توجيهي للطبيب</div>
+      </button>
     </div>
-    <a href="https://maps.app.goo.gl/43rLwpCrHxd8vB9t8?g_st=ic" target="_blank" style="margin-right:auto;font-size:11px;color:var(--td);background:var(--tl);border:.5px solid var(--tb);border-radius:20px;padding:4px 10px;text-decoration:none;white-space:nowrap">&#x1F5FA; الخريطة</a>
   </div>
-
-  <!-- Invoice check -->
-  <div id="inv-check" style="background:var(--s);border-radius:16px;padding:20px;margin-bottom:14px;border:1px solid #E8E8E8;text-align:center">
-    <div style="font-size:32px;margin-bottom:10px">&#x1F9FE;</div>
-    <div style="font-size:15px;font-weight:700;margin-bottom:6px">هل لديك فاتورة من العيادة؟</div>
-    <div style="font-size:13px;color:var(--m);margin-bottom:16px">الحجز متاح فقط لمن لديهم فاتورة</div>
-    <div style="display:flex;gap:10px;justify-content:center">
-      <button onclick="hasInv(true)" style="padding:11px 28px;border-radius:12px;background:var(--t);border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">&#x2714; نعم، عندي فاتورة</button>
-      <button onclick="hasInv(false)" style="padding:11px 28px;border-radius:12px;border:1.5px solid #E8E8E8;background:none;font-size:14px;color:var(--m);cursor:pointer;font-family:inherit">&#x2716; لا</button>
+  <div id="invoiceNumSection" style="display:none">
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-hashtag"></i> أدخل رقم الفاتورة</div>
+      <div class="fld"><input class="inp" id="invoiceNum" type="text" placeholder="مثال: INV-2024-XXXXX"/></div>
+      <button class="btn btn-p" onclick="laserWithInvoiceProceed()"><i class="fa-solid fa-arrow-left"></i> اختر طبيب الليزر</button>
     </div>
   </div>
+</div>
 
-  <div class="noiv" id="noiv">
-    <div style="font-size:40px;margin-bottom:12px">&#x1F4CD;</div>
-    <div style="font-size:16px;font-weight:700;color:#92400E;margin-bottom:8px">تحتاجين فاتورة للحجز</div>
-    <div style="font-size:13px;color:#92400E;margin-bottom:14px;line-height:1.6">يرجى المرور على العيادة أولاً للحصول على الفاتورة</div>
-    <a href="https://maps.app.goo.gl/43rLwpCrHxd8vB9t8?g_st=ic" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#92400E;background:rgba(146,64,14,.08);border:1px solid #FCD34D;border-radius:20px;padding:7px 16px;text-decoration:none;margin-bottom:14px">&#x1F4CD; موقع المستشفى</a><br>
-    <button onclick="resetGate()" style="padding:9px 22px;border-radius:10px;border:1.5px solid var(--tb);background:none;font-size:13px;color:var(--td);cursor:pointer;font-family:inherit;margin-top:8px">&#8592; العودة</button>
-  </div>
+<!-- SKIN WIZARD (service → questionnaire) -->
+<div class="screen" id="s-services">
+  <button class="btn-back" id="wizBackBtn" onclick="wizBack()"><i class="fa-solid fa-chevron-right"></i> رجوع</button>
+  <div class="steps-bar" id="wStepsBar"></div>
+  <div id="wContent"></div>
+</div>
 
-  <!-- Date strip -->
-  <div class="date-section" id="date-section" style="display:none">
-    <div class="date-section-title">
-      <span>&#x1F4C5; التاريخ</span>
-      <span id="date-month-label" style="font-size:12px;color:var(--m);font-weight:500"></span>
+<!-- DOCTORS -->
+<div class="screen" id="s-doctors">
+  <button class="btn-back" onclick="backFromDoctors()"><i class="fa-solid fa-chevron-right"></i> رجوع</button>
+  <div class="pg-title" id="docTitle">اختر الطبيب</div>
+  <div class="pg-sub" id="docSub"></div>
+  <div id="docList"><div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div></div>
+</div>
+
+<!-- INVOICE (for normal depts) -->
+<div class="screen" id="s-invoice">
+  <button class="btn-back" onclick="backFromInvoice()"><i class="fa-solid fa-chevron-right"></i> رجوع</button>
+  <div class="pg-title">نوع الحجز</div>
+  <div class="pg-sub">حدد طريقة الدفع لاستكمال الحجز</div>
+  <div class="card">
+    <div class="alert al-info" style="margin-bottom:14px"><i class="fa-solid fa-circle-info"></i><span>الفاتورة وثيقة دفع صادرة من المستشفى. في حال عدم توفرها، يمكن الدفع إلكترونياً عبر منصة سلة.</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+      <button class="choice-btn" onclick="selectInv(true,this)">
+        <div class="choice-ico" style="width:48px;height:48px;font-size:1.1rem;margin-bottom:9px"><i class="fa-solid fa-file-invoice"></i></div>
+        <div class="choice-lbl" style="font-size:.86rem">لديّ فاتورة</div>
+        <div class="choice-sub" style="font-size:.7rem">حجز بفاتورة المستشفى</div>
+      </button>
+      <button class="choice-btn" onclick="selectInv(false,this)">
+        <div class="choice-ico" style="width:48px;height:48px;font-size:1.1rem;margin-bottom:9px"><i class="fa-solid fa-credit-card"></i></div>
+        <div class="choice-lbl" style="font-size:.86rem">دفع إلكتروني</div>
+        <div class="choice-sub" style="font-size:.7rem">عبر منصة سلة</div>
+      </button>
     </div>
-    <div class="date-strip" id="date-strip"></div>
   </div>
+</div>
 
-  <!-- Time slots -->
-  <div class="time-section" id="time-section">
-    <div class="time-section-title">&#x1F550; الأوقات المتاحة</div>
-    <div class="time-grid" id="time-grid"></div>
+<!-- DATETIME -->
+<div class="screen" id="s-datetime">
+  <button class="btn-back" onclick="backFromDatetime()"><i class="fa-solid fa-chevron-right"></i> رجوع</button>
+  <div class="pg-title">تحديد الموعد</div>
+  <div class="pg-sub" id="dtSubLbl"></div>
+  <div class="card">
+    <div class="sec-lbl"><i class="fa-solid fa-calendar-days"></i> التاريخ</div>
+    <div class="date-strip" id="dateStrip"></div>
   </div>
+  <div class="card" id="slotsCard" style="display:none">
+    <div class="sec-lbl" id="slotsLbl"><i class="fa-solid fa-clock"></i> الأوقات المتاحة</div>
+    <div class="time-grid" id="timeGrid"></div>
+  </div>
+  <button class="btn btn-p" id="btnDtNext" style="display:none;margin-top:4px" onclick="goPatient()">
+    التالي <i class="fa-solid fa-arrow-left"></i>
+  </button>
+</div>
 
-  <!-- Patient form -->
-  <div class="patient-section" id="patient-section">
-    <div class="clbl">&#x1F464; معلومات العميلة</div>
-    <div class="fg"><label class="fl">الاسم الكامل</label><input type="text" id="inm" placeholder="اكتبي اسمك هنا"></div>
-    <div class="fg"><label class="fl">رقم الجوال</label><input type="tel" id="iph" placeholder="05XXXXXXXX"></div>
-    <div class="fg"><label class="fl">ملاحظات (اختياري)</label><textarea id="ino" rows="2" style="resize:none" placeholder="أي استفسارات..."></textarea></div>
-    <div class="remb">
-      <div class="remt">&#x26A0; تذكيرات مهمة قبل الموعد</div>
-      <ul class="reml">
-        <li>ممنوع تعريض منطقة الفيلر للحرارة أو المشروبات الساخنة بعد الحقن</li>
-        <li>ممنوع الخروج بدون واقي شمس بعد جلسات التقشير</li>
-        <li>ممنوع الكريمات الدافئة والحمامات الساخنة بعد الجلسة</li>
-        <li>ممنوع وضع مكياج قبل جلسات الأجهزة</li>
-        <li>أبلغي الدكتورة عن أي حساسية أو تحسس سابق</li>
-        <li>قد يطرأ تأخير بسبب مرضى المستشفى — نشكر تفهمك</li>
+<!-- PATIENT -->
+<div class="screen" id="s-patient">
+  <button class="btn-back" onclick="showScreen('s-datetime')"><i class="fa-solid fa-chevron-right"></i> رجوع</button>
+  <div class="pg-title">بيانات المريض</div>
+  <div class="pg-sub">يُرجى إدخال البيانات لاستكمال الحجز</div>
+  <div id="preSessionBox" style="display:none">
+    <div class="presession">
+      <h4><i class="fa-solid fa-circle-info"></i> تعليمات ما قبل الجلسة</h4>
+      <ul>
+        <li>الحضور بوجه نظيف خالٍ من المكياج والمستحضرات</li>
+        <li>تجنب التعرض المباشر لأشعة الشمس قبل 24 ساعة من الجلسة</li>
+        <li>إبلاغ الفريق الطبي بجميع الأدوية والمستحضرات المستخدمة حالياً</li>
+        <li>الحضور قبل الموعد المحدد بعشر دقائق على الأقل</li>
+        <li>تجنب استخدام مقشرات البشرة قبل يومين من الجلسة</li>
       </ul>
     </div>
   </div>
+  <div class="card">
+    <div class="fld"><label><i class="fa-solid fa-user" style="color:var(--t);margin-left:4px"></i> الاسم الكامل <span style="color:var(--err)">*</span></label><input class="inp" id="pName" type="text" placeholder="الاسم الكامل للمريض"/></div>
+    <div class="fld"><label><i class="fa-solid fa-phone" style="color:var(--t);margin-left:4px"></i> رقم الجوال <span style="color:var(--err)">*</span></label><input class="inp" id="pPhone" type="tel" placeholder="05xxxxxxxx" maxlength="10"/></div>
+    <div class="fld"><label><i class="fa-solid fa-pen-to-square" style="color:var(--t);margin-left:4px"></i> ملاحظات إضافية <span style="color:var(--sub);font-weight:400">(اختياري)</span></label><textarea class="ta" id="pNotes" placeholder="أي معلومات تودّ إبلاغ الطبيب بها"></textarea></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-clipboard-check"></i> ملخص الحجز</div>
+    <div class="cf-row"><span class="cf-k">الطبيب</span><span class="cf-v" id="sDoc">-</span></div>
+    <div class="cf-row"><span class="cf-k">التخصص</span><span class="cf-v" id="sDept">-</span></div>
+    <div class="cf-row"><span class="cf-k">التاريخ</span><span class="cf-v" id="sDate">-</span></div>
+    <div class="cf-row"><span class="cf-k">الوقت</span><span class="cf-v" id="sTime">-</span></div>
+    <div class="cf-row" id="sSvcRow" style="display:none"><span class="cf-k">الخدمة</span><span class="cf-v" id="sSvc">-</span></div>
+    <div class="cf-row" id="sInvRow" style="display:none"><span class="cf-k">رقم الفاتورة</span><span class="cf-v" id="sInvNum">-</span></div>
+    <div class="cf-row"><span class="cf-k">نوع الحجز</span><span class="cf-v" id="sType">-</span></div>
+  </div>
+  <div id="pErr"></div>
+  <button class="btn btn-p" id="btnBook" onclick="confirmBooking()"><i class="fa-solid fa-circle-check"></i> تأكيد الحجز</button>
+</div>
 
-  <button class="cont-btn" id="cont-btn" onclick="submitBooking()">&#x2714; تأكيد الحجز</button>
+<!-- CONFIRM -->
+<div class="screen" id="s-confirm">
+  <div class="success-wrap">
+    <div class="success-ico"><i class="fa-solid fa-circle-check"></i></div>
+    <div style="font-size:1.1rem;font-weight:700;color:var(--text)">تم تأكيد الحجز بنجاح</div>
+    <div style="font-size:.76rem;color:var(--sub);margin-top:4px">يُرجى الاحتفاظ برقم الحجز للمراجعة</div>
+    <div class="success-ref" id="cRef">-</div>
+    <div class="card" style="text-align:right">
+      <div class="cf-row"><span class="cf-k">الطبيب</span><span class="cf-v" id="cDoc">-</span></div>
+      <div class="cf-row"><span class="cf-k">التاريخ</span><span class="cf-v" id="cDate">-</span></div>
+      <div class="cf-row"><span class="cf-k">الوقت</span><span class="cf-v" id="cTime">-</span></div>
+      <div class="cf-row"><span class="cf-k">اسم المريض</span><span class="cf-v" id="cPat">-</span></div>
+    </div>
+    <div class="salla" id="sallaBox" style="display:none">
+      <div class="salla-ico"><i class="fa-solid fa-store"></i></div>
+      <div class="salla-title">إتمام عملية الدفع</div>
+      <div class="salla-sub">تم تسجيل الحجز. اضغط أدناه للانتقال إلى منصة سلة وإتمام الدفع الإلكتروني</div>
+      <button class="salla-btn" onclick="openSalla()"><i class="fa-solid fa-arrow-up-right-from-square"></i> الدفع عبر سلة</button>
+    </div>
+    <button class="btn btn-s" style="margin-top:12px" onclick="goHome()"><i class="fa-solid fa-rotate-right"></i> حجز جديد</button>
+  </div>
+</div>
 
-  <!-- Success -->
-  <div class="succ" id="succ">
-    <div class="sicn">&#x2705;</div>
-    <h2 style="font-size:22px;font-weight:700;margin-bottom:8px;color:var(--td)">تم الحجز بنجاح!</h2>
-    <p style="font-size:14px;color:var(--m);margin-bottom:4px">سيتم التواصل معك للتأكيد</p>
-    <p style="font-size:13px;color:var(--m)">يرجى الحضور قبل الموعد بـ 10 دقائق</p>
-    <div class="rpill" id="rpill">MMH-0000</div>
-    <div class="dnote">&#x23F3; قد يطرأ تأخير بسبب مرضى المستشفى</div>
-    <button class="nbtn" onclick="resetForm()">+ حجز جديد</button>
+<!-- LOGIN -->
+<div class="screen" id="s-login">
+  <div class="login-wrap">
+    <div style="text-align:center;margin-bottom:22px">
+      <div style="width:52px;height:52px;background:var(--t);border-radius:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 11px"><i class="fa-solid fa-lock" style="color:#fff;font-size:1.2rem"></i></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text)">دخول النظام</div>
+      <div style="font-size:.74rem;color:var(--sub);margin-top:3px">للمسؤولين والكادر الطبي</div>
+    </div>
+    <div class="card">
+      <div class="fld"><label>اسم المستخدم</label><input class="inp" id="lUser" type="text" placeholder="username"/></div>
+      <div class="fld"><label>كلمة المرور</label><input class="inp" id="lPass" type="password" placeholder="••••••"/></div>
+      <div id="lErr" class="alert al-err" style="display:none"><i class="fa-solid fa-circle-exclamation"></i><span></span></div>
+      <button class="btn btn-p" onclick="doLogin()"><i class="fa-solid fa-right-to-bracket"></i> دخول</button>
+      <button class="btn btn-s" style="margin-top:9px" onclick="goHome()"><i class="fa-solid fa-chevron-right"></i> العودة للرئيسية</button>
+    </div>
   </div>
 </div>
 
 <!-- ADMIN -->
-<div class="pg" id="pg-admin">
-  <div class="sh"><h2>&#x1F6E1; لوحة الإدارة</h2><div style="padding:5px 13px;border-radius:var(--r2);background:var(--tl);border:.5px solid var(--tb);font-size:12px;color:var(--td);font-weight:600" id="tlbl"></div></div>
-  <div class="srow">
-    <div class="stat"><div class="sl">اجمالي الحجوزات</div><div class="sv tc" id="gst">0</div><div class="ss">كل العيادات</div></div>
-    <div class="stat"><div class="sl">حجوزات اليوم</div><div class="sv tc" id="gsd">0</div><div class="ss">كل العيادات</div></div>
-    <div class="stat"><div class="sl">بانتظار التأكيد</div><div class="sv rc" id="gsp">0</div><div class="ss">يحتاج مراجعة</div></div>
-    <div class="stat"><div class="sl">عدد العيادات</div><div class="sv gc" id="gsc">0</div><div class="ss">مفعّلة</div></div>
+<div class="screen" id="s-admin">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
+    <div><div class="pg-title">لوحة التحكم</div><div style="font-size:.74rem;color:var(--sub)">Skin Care — إدارة المستشفى</div></div>
+    <button class="btn btn-sm btn-s" onclick="goHome()"><i class="fa-solid fa-chevron-right"></i> الرئيسية</button>
   </div>
-  <div class="sh" style="margin-bottom:12px">
-    <div style="font-size:14px;font-weight:600">&#x1F3E5; العيادات</div>
-    <button class="bp" onclick="toggleAF()">+ إضافة دكتور</button>
+  <div class="a-tabs">
+    <button class="a-tab on" onclick="aTab('overview',this)"><i class="fa-solid fa-chart-pie"></i> نظرة عامة</button>
+    <button class="a-tab" onclick="aTab('doctors',this)"><i class="fa-solid fa-user-doctor"></i> الأطباء</button>
+    <button class="a-tab" onclick="aTab('schedules',this)"><i class="fa-solid fa-calendar-days"></i> الجداول</button>
+    <button class="a-tab" onclick="aTab('bookings',this)"><i class="fa-solid fa-clipboard-list"></i> الحجوزات</button>
+    <button class="a-tab" onclick="aTab('depts',this)"><i class="fa-solid fa-hospital"></i> الأقسام</button>
   </div>
-  <div class="afw" id="afw">
-    <div class="card" style="border-color:var(--tb);margin-bottom:16px">
-      <div class="clbl" style="margin-bottom:12px">دكتور جديد</div>
-      <div class="g2">
-        <div class="fg"><label class="fl">الاسم الكامل</label><input type="text" id="nun" placeholder="د. سارة الأحمد"></div>
-        <div class="fg"><label class="fl">التخصص</label><input type="text" id="nus" placeholder="جلدية، عظام..."></div>
-        <div class="fg"><label class="fl">الوصف للمريض</label><input type="text" id="nud" placeholder="متخصصة في..."></div>
-        <div class="fg"><label class="fl">الموقع داخل المستشفى</label><input type="text" id="nul" placeholder="الدور الثالث، غرفة 301"></div>
-        <div class="fg"><label class="fl">اسم المستخدم</label><input type="text" id="nuu" placeholder="dr.sara"></div>
-        <div class="fg"><label class="fl">كلمة المرور</label><input type="password" id="nup" placeholder="كلمة المرور"></div>
-        <div class="fg" style="grid-column:1/-1">
-          <label class="fl">الرابط الخاص</label>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:12px;color:var(--m);white-space:nowrap">mmh-booking.com/</span>
-            <input type="text" id="nusl" placeholder="dr-sara" style="flex:1">
-          </div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="bp" onclick="addDoc()">إضافة</button>
-        <button class="bs" onclick="toggleAF()">إلغاء</button>
-      </div>
-    </div>
-  </div>
-  <div class="cgrid" id="cgrid"></div>
-  <div class="cdet" id="cdet">
-    <div class="cdh"><h3 id="cdtl">حجوزات</h3><button class="xb" onclick="closeDet()">&#x2715;</button></div>
-    <div class="tw"><table><thead><tr><th style="width:80px">رقم</th><th style="width:110px">الاسم</th><th style="width:100px">الجوال</th><th style="width:70px">الخدمة</th><th style="width:90px">التاريخ</th><th style="width:65px">الوقت</th><th style="width:75px">الحالة</th></tr></thead><tbody id="cdtb"></tbody></table></div>
-  </div>
+  <div id="aContent"><div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div></div>
 </div>
 
-<!-- DOCTOR DASHBOARD -->
-<div class="pg" id="pg-doc">
-  <div class="sh"><h2 id="dtl">&#x1FA7A; لوحة التحكم</h2><div style="padding:5px 13px;border-radius:var(--r2);background:#FFF8E8;border:.5px solid #E8D5A0;font-size:12px;color:#8B6914;font-weight:600" id="dtlbl"></div></div>
-
-  <div class="scard">
-    <div style="width:38px;height:38px;border-radius:50%;background:var(--t);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;color:#fff">&#x1F517;</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:11px;color:var(--m);margin-bottom:3px;font-weight:600">رابط الحجز الخاص — شاركيه مع مريضاتك</div>
-      <div class="surl" id="myl">mmh-booking.com/dr-noura</div>
-    </div>
-    <button class="cbtn" onclick="copyLink()">&#x1F4CB; نسخ</button>
+<!-- DOCTOR PANEL -->
+<div class="screen" id="s-doctor">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
+    <div><div class="pg-title" id="drName">لوحة الطبيب</div><div style="font-size:.74rem;color:var(--sub)" id="drSpec"></div></div>
+    <button class="btn btn-sm btn-d" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
   </div>
-
-  <div class="srow">
-    <div class="stat"><div class="sl">اليوم</div><div class="sv tc" id="dt">0</div><div class="ss" id="dts">-</div></div>
-    <div class="stat"><div class="sl">الإجمالي</div><div class="sv" id="dtt">0</div><div class="ss">كل الحجوزات</div></div>
-    <div class="stat"><div class="sl">بانتظار</div><div class="sv rc" id="dp">0</div><div class="ss">يحتاج مراجعة</div></div>
-    <div class="stat"><div class="sl">مؤكدة</div><div class="sv gc" id="dc">0</div><div class="ss">هذا الشهر</div></div>
+  <div class="a-tabs">
+    <button class="a-tab on" onclick="drTab('schedule',this)"><i class="fa-solid fa-calendar-days"></i> جدول العمل</button>
+    <button class="a-tab" onclick="drTab('bookings',this)"><i class="fa-solid fa-clipboard-list"></i> الحجوزات</button>
   </div>
+  <div id="drContent"><div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div></div>
+</div>
 
-  <!-- CALENDAR -->
-  <div class="card">
-    <div class="cal-header">
-      <button class="cal-nav" onclick="calNav(-1)">&#8594;</button>
-      <div class="cal-title" id="cal-title"></div>
-      <button class="cal-nav" onclick="calNav(1)">&#8592;</button>
-    </div>
-    <div class="cal-grid" id="cal-grid"></div>
-    <div id="cal-detail" style="margin-top:12px;display:none">
-      <div style="font-size:12px;font-weight:700;color:var(--td);margin-bottom:8px;padding-top:10px;border-top:.5px solid var(--br)" id="cal-detail-title"></div>
-      <div id="cal-detail-bks"></div>
-    </div>
-  </div>
-
-  <!-- BOOKINGS TABLE -->
-  <div class="card">
-    <div class="clbl">&#x1F4C5; الحجوزات</div>
-    <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-      <input type="text" id="dsrch" placeholder="ابحثي بالاسم أو رقم الحجز..." oninput="renderDT()" style="flex:1;min-width:130px">
-      <button class="dtab on" onclick="setDF('all',this)">الكل</button>
-      <button class="dtab" onclick="setDF('pending',this)">بانتظار</button>
-      <button class="dtab" onclick="setDF('confirmed',this)">مؤكد</button>
-    </div>
-    <div class="tw"><table><thead><tr><th style="width:80px">رقم</th><th style="width:100px">الاسم</th><th style="width:100px">الجوال</th><th style="width:70px">الخدمة</th><th style="width:90px">التاريخ</th><th style="width:65px">الوقت</th><th style="width:75px">الحالة</th><th style="width:80px">إجراء</th></tr></thead><tbody id="dtb"></tbody></table></div>
-  </div>
-
-  <!-- HOURS -->
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div class="clbl" style="margin-bottom:0">&#x1F550; ساعات العمل</div>
-      <button class="bp" style="padding:7px 16px;font-size:12px" onclick="saveHours()">حفظ الأوقات</button>
-    </div>
-    <div class="hrs-grid" id="hrs-grid"></div>
-  </div>
-
-  <!-- TODO -->
-  <div class="card">
-    <div class="clbl">&#x2611; قائمة المهام</div>
-    <div class="todo-input-row">
-      <input type="text" id="todo-inp" placeholder="أضيفي مهمة جديدة..." onkeydown="if(event.key==='Enter')addTodo()">
-      <select id="todo-pri" style="width:auto;padding:9px 10px;font-size:12px">
-        <option value="med">متوسطة</option>
-        <option value="high">عالية</option>
-        <option value="low">منخفضة</option>
+<!-- MODALS -->
+<div class="overlay" id="mDoc">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-ttl" id="mDocTitle">إضافة طبيب</div><button class="modal-x" onclick="closeModal('mDoc')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="fld"><label>الاسم الكامل <span style="color:var(--err)">*</span></label><input class="inp" id="mdName"/></div>
+    <div class="fld"><label>اسم المستخدم <span style="color:var(--err)">*</span></label><input class="inp" id="mdUser" placeholder="dr.username"/></div>
+    <div class="fld"><label>كلمة المرور <span style="color:var(--err)">*</span></label><input class="inp" id="mdPass"/></div>
+    <div class="fld"><label>القسم / التخصص <span style="color:var(--err)">*</span></label>
+      <select class="sel" id="mdDept">
+        <option value="dermatology">الجلدية والتجميل</option>
+        <option value="cosmetic">الجلدية والتجميل (تجميل)</option>
+        <option value="laser">الليزر</option>
+        <option value="skin">تنظيف البشرة</option>
+        <option value="gynecology">النساء والولادة</option>
+        <option value="family">طب الأسرة</option>
+        <option value="internal">الباطنية</option>
+        <option value="pediatrics">طب الأطفال</option>
       </select>
-      <button class="todo-add" onclick="addTodo()">+ إضافة</button>
     </div>
-    <div class="todo-list" id="todo-list"></div>
-  </div>
-
-  <!-- PHOTO & SETTINGS -->
-  <div class="card">
-    <div class="clbl">&#x1F4F7; صورة الدكتورة</div>
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-      <div id="phprev" style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--tl),var(--tb));border:3px solid var(--t);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:var(--td);overflow:hidden;flex-shrink:0"></div>
-      <div style="flex:1">
-        <label class="fl">اختاري صورة PNG أو JPG</label>
-        <input type="file" id="phf" accept="image/*" onchange="uploadPhoto(this)" style="font-size:13px">
-        <div style="font-size:11px;color:var(--m);margin-top:5px">تظهر في صفحة الحجز والرئيسية</div>
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="clbl">&#x1F3E5; إعدادات العيادة</div>
-    <div class="g2">
-      <div class="fg"><label class="fl">الوصف (يظهر للمريضة)</label><textarea id="myd" rows="2" style="resize:none" placeholder="متخصصة في..."></textarea></div>
-      <div class="fg"><label class="fl">الموقع داخل المستشفى</label><input type="text" id="mylc" placeholder="الدور الثاني، أول يمين"></div>
-    </div>
-    <button class="bp" onclick="saveSettings()">&#x1F4BE; حفظ الإعدادات</button>
+    <div class="fld"><label>التخصص الدقيق</label><input class="inp" id="mdSpec" placeholder="مثال: استشاري جلدية وتجميل"/></div>
+    <div class="fld"><label>رقم الجوال</label><input class="inp" id="mdPhone" type="tel"/></div>
+    <div class="fld"><label>رابط متجر سلة (للدفع الإلكتروني)</label><input class="inp" id="mdSalla" type="url" placeholder="https://store.salla.sa/..."/></div>
+    <div class="fld"><label>نبذة مختصرة</label><textarea class="ta" id="mdBio"></textarea></div>
+    <div class="fld"><div class="tgl-wrap"><label class="tgl"><input type="checkbox" id="mdSch"><span class="tgl-sl"></span></label><span style="font-size:.8rem;font-weight:500">صلاحية إدارة جدول المواعيد</span></div></div>
+    <div id="mdErr" class="alert al-err" style="display:none"><i class="fa-solid fa-circle-exclamation"></i><span></span></div>
+    <button class="btn btn-p" onclick="saveDoc()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
   </div>
 </div>
 
-</main>
-<div class="notif" id="notif"></div>
+<div class="overlay" id="mSch">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-ttl" id="mSchTitle">جدول المواعيد</div><button class="modal-x" onclick="closeModal('mSch')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div id="schForm"></div>
+    <button class="btn btn-p" style="margin-top:11px" onclick="saveSch()"><i class="fa-solid fa-floppy-disk"></i> حفظ الجدول</button>
+  </div>
+</div>
+
+<div class="overlay" id="mBk">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-ttl">تفاصيل الحجز</div><button class="modal-x" onclick="closeModal('mBk')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div id="bkDetail"></div>
+  </div>
+</div>
+
+<div class="overlay" id="mVac">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-ttl">تسجيل إجازة</div><button class="modal-x" onclick="closeModal('mVac')"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="fld"><label>الطبيب</label><select class="sel" id="vDoc"></select></div>
+    <div class="fld"><label>من تاريخ</label><input class="inp" id="vFrom" type="date"/></div>
+    <div class="fld"><label>إلى تاريخ</label><input class="inp" id="vTo" type="date"/></div>
+    <div class="fld"><label>السبب</label><input class="inp" id="vReason"/></div>
+    <button class="btn btn-p" onclick="saveVac()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
+  </div>
+</div>
 
 <script>
-var H='mmh10';
-function lg(k,d){try{var v=localStorage.getItem(H+'_'+k);return v?JSON.parse(v):d;}catch(e){return d;}}
-function ls(k,v){try{localStorage.setItem(H+'_'+k,JSON.stringify(v));}catch(e){}}
+const SB_URL='https://ahaghhfunonuvpubrwyx.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoYWdoaGZ1bm9udXZwdWJyd3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTUwMjQsImV4cCI6MjA5NjA5MTAyNH0.y-8X_4R3zdfSfKyCuWfJmwHW7J5HiwROnVbowmZGkpQ';
+let db=null;
+try{db=supabase.createClient(SB_URL,SB_KEY);}catch(e){console.warn('Supabase not ready:',e);}
 
-var ADMIN={u:'mmh.admin',p:'admin123'};
-var defDocs=[{u:'dr.noura',p:'1234',n:'د. نورا راشد',sp:'جلدية وتجميل',d:'متخصصة في الجلدية والتجميل',l:'الدور الثاني، أول يمين',sl:'dr-noura',ph:''}];
-var docs=lg('docs',defDocs);
-function saveDocs(){ls('docs',docs);}
-function getBK(u){return lg('bk_'+u,[]);}
-function setBK(u,d){ls('bk_'+u,d);}
+// الأقسام تعريف ثابت — لون واحد (تيل)
+const GROUPS=[
+  {id:'derma-cosmetic',label:'الجلدية والتجميل',desc:'أمراض الجلد والإجراءات التجميلية',icon:'fa-hand-dots',depts:['dermatology','cosmetic'],flow:'normal',showPresession:true},
+  {id:'laser-skin',label:'الليزر وتنظيف البشرة',desc:'جلسات الليزر وعناية البشرة المتخصصة',icon:'fa-spa',depts:['laser','skin'],flow:'laser-skin',showPresession:true},
+  {id:'gynecology',label:'النساء والولادة',desc:'صحة المرأة وأمراض الجهاز التناسلي',icon:'fa-venus',depts:['gynecology'],flow:'normal',showPresession:false},
+  {id:'family',label:'طب الأسرة',desc:'الرعاية الصحية الأولية الشاملة',icon:'fa-house-medical',depts:['family'],flow:'normal',showPresession:false},
+  {id:'internal',label:'الباطنية',desc:'تشخيص وعلاج الأمراض الداخلية',icon:'fa-stethoscope',depts:['internal'],flow:'normal',showPresession:false},
+  {id:'pediatrics',label:'طب الأطفال',desc:'رعاية صحة الأطفال والمراهقين',icon:'fa-child-reaching',depts:['pediatrics'],flow:'normal',showPresession:false},
+];
 
-var defH={
-  inj:{label:'حقن',s:'16:00',e:'18:00',a:true},
-  dev:{label:'أجهزة',s:'09:00',e:'10:00',a:true},
-  con:{label:'استشارة',s:'10:00',e:'12:00',a:true},
-  ret:{label:'رتوش',s:'14:00',e:'15:00',a:true}
+const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const MON=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+// الحالة
+let curWizStep=0;
+const S={
+  user:null,group:null,laserSkinChoice:null,svc:null,doc:null,
+  inv:null,invoiceNum:null,date:null,time:null,skipInvoice:false,
+  skinType:null,skinProbs:[],pregnant:null,breast:null,
+  editDocId:null,schDocId:null,prevDocScreen:null
 };
-function getH(u){return lg('hr_'+u,JSON.parse(JSON.stringify(defH)));}
-function saveH(u,h){ls('hr_'+u,h);}
 
-var curRole=null,curDoc=null,curBU=null,dbk=[],dhr={};
-var curSvc={n:'حقن',k:'inj'},curSlt=null,curDate=null,df='all';
-var calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+// ── التنقل ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){
+  Object.assign(S,{group:null,laserSkinChoice:null,svc:null,doc:null,
+    inv:null,invoiceNum:null,date:null,time:null,skipInvoice:false,
+    skinType:null,skinProbs:[],pregnant:null,breast:null,prevDocScreen:null});
+  loadHome();showScreen('s-home');
+}
+function showLogin(){showScreen('s-login');}
 
-/* ---- MODAL ---- */
-function openModal(){document.getElementById('modal-overlay').classList.add('on');}
-function closeModal(){document.getElementById('modal-overlay').classList.remove('on');}
-function closeModalOut(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
-function setMtab(btn,ph){var b=document.querySelectorAll('.mtab');for(var i=0;i<b.length;i++)b[i].classList.remove('on');btn.classList.add('on');document.getElementById('lu').placeholder=ph;}
+// ── الرئيسية ──
+function renderGroups(cnt){
+  cnt=cnt||{};
+  const grid=document.getElementById('deptGrid');
+  grid.innerHTML=GROUPS.map(g=>{
+    const total=g.depts.reduce((s,d)=>s+(cnt[d]||0),0);
+    return `<div class="dept-card" onclick='pickGroup("${g.id}")'>
+      <div class="dept-icon"><i class="fa-solid ${g.icon}"></i></div>
+      <div style="flex:1">
+        <div class="dept-name">${g.label}</div>
+        <div class="dept-desc">${g.desc}</div>
+        <div class="dept-cnt" id="cnt-${g.id}"><i class="fa-solid fa-user-doctor" style="font-size:.62rem"></i>${total} طبيب</div>
+      </div>
+      <i class="fa-solid fa-arrow-left" style="color:var(--border);font-size:.8rem;flex-shrink:0"></i>
+    </div>`;
+  }).join('');
+}
+async function loadHome(){
+  // عرض الأقسام فوراً بدون انتظار قاعدة البيانات
+  renderGroups({});
+  // تحديث أعداد الأطباء في الخلفية
+  try{
+    const {data:docs}=await db.from('doctors').select('department').eq('active',true);
+    if(docs){
+      const cnt={};docs.forEach(d=>{cnt[d.department]=(cnt[d.department]||0)+1;});
+      // تحديث الأرقام فقط دون إعادة رسم الكروت
+      GROUPS.forEach(g=>{
+        const total=g.depts.reduce((s,d)=>s+(cnt[d]||0),0);
+        const el=document.getElementById('cnt-'+g.id);
+        if(el)el.innerHTML=`<i class="fa-solid fa-user-doctor" style="font-size:.62rem"></i>${total} طبيب`;
+      });
+    }
+  }catch(e){/* يُعرض عدد 0 إذا تعذّر الاتصال */}
+}
 
-function doLogin(){
-  var u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
-  if(!u||!p){notify('ادخل بياناتك');return;}
-  if(u===ADMIN.u&&p===ADMIN.p){
-    curRole='sup';
-    var rb=document.getElementById('rbadge');rb.className='rbadge sup';rb.textContent='Super Admin';rb.style.display='flex';
-    document.getElementById('ntabs').style.display='flex';
-    document.getElementById('tlbl').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    closeModal();showPg('admin');renderAdmin();
+function pickGroup(gid){
+  S.group=GROUPS.find(g=>g.id===gid);
+  if(!S.group)return;
+  if(S.group.flow==='laser-skin'){showScreen('s-laser-skin');}
+  else{loadNormalDoctors(S.group);}
+}
+
+// ── تدفق الجلدية والتجميل والأقسام العادية ──
+async function loadNormalDoctors(g){
+  document.getElementById('docTitle').textContent='اختر الطبيب';
+  document.getElementById('docSub').textContent=g.label;
+  S.prevDocScreen='s-home';
+  showScreen('s-doctors');
+  await loadDoctors(g.depts);
+}
+
+// ── تدفق الليزر / تنظيف البشرة ──
+function pickLaserSkin(choice){
+  S.laserSkinChoice=choice;
+  if(choice==='laser'){
+    showScreen('s-laser-invoice');
   } else {
-    var d=null;for(var i=0;i<docs.length;i++){if(docs[i].u===u&&docs[i].p===p){d=docs[i];break;}}
-    if(!d){notify('بيانات خاطئة');return;}
-    curRole='doc';curDoc=d;dbk=getBK(d.u);dhr=getH(d.u);
-    var rb=document.getElementById('rbadge');rb.className='rbadge doc';rb.textContent=d.n;rb.style.display='flex';
-    document.getElementById('ntabs').style.display='flex';
-    document.getElementById('dtl').textContent='لوحتي - '+d.n;
-    document.getElementById('dtlbl').textContent=new Date().toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    document.getElementById('myl').textContent='mmh-booking.com/'+(d.sl||d.u);
-    document.getElementById('myd').value=d.d||'';
-    document.getElementById('mylc').value=d.l||'';
-    var pp=document.getElementById('phprev');
-    pp.innerHTML=d.ph?('<img src="'+d.ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'):d.n[0];
-    closeModal();showPg('doc');renderDash();renderHours();renderTodos();
+    // تنظيف البشرة: ويزارد الخدمات مباشرة
+    S.skipInvoice=true;
+    S.inv=false;
+    showScreen('s-services');
+    curWizStep=0;
+    step(0);
   }
-  document.getElementById('ltgl').style.display='none';
-  document.getElementById('obtn').style.display='flex';
-  document.getElementById('lu').value='';document.getElementById('lp').value='';
 }
 
-function doLogout(){
-  curRole=null;curDoc=null;
-  document.getElementById('ltgl').style.display='flex';document.getElementById('obtn').style.display='none';
-  document.getElementById('rbadge').style.display='none';document.getElementById('ntabs').style.display='none';
-  goHome();
-}
-
-/* ---- PAGES ---- */
-function goHome(){var p=document.querySelectorAll('.pg');for(var i=0;i<p.length;i++)p[i].classList.remove('on');document.getElementById('pg-home').classList.add('on');renderDoctorList();}
-function showPg(id){var p=document.querySelectorAll('.pg');for(var i=0;i<p.length;i++)p[i].classList.remove('on');document.getElementById('pg-'+id).classList.add('on');}
-
-/* ---- DOCTOR LIST ---- */
-function getNextSlot(uid){
-  var bks=getBK(uid);var h=getH(uid);
-  var today=new Date();today.setHours(0,0,0,0);
-  for(var d=0;d<14;d++){
-    var dt=new Date(today);dt.setDate(today.getDate()+d);
-    var ds=dt.toISOString().split('T')[0];
-    var dayBks=bks.filter(function(b){return b.date===ds;}).map(function(b){return b.time;});
-    var keys=['inj','dev','con','ret'];
-    for(var k=0;k<keys.length;k++){
-      var hk=h[keys[k]];if(!hk||!hk.a)continue;
-      var sh=parseInt(hk.s.split(':')[0]),sm=parseInt(hk.s.split(':')[1]);
-      var eh=parseInt(hk.e.split(':')[0]),em=parseInt(hk.e.split(':')[1]);
-      var dur={inj:15,dev:10,con:20,ret:10}[keys[k]]||15;
-      var cur=sh*60+sm,end=eh*60+em;
-      while(cur<end){
-        var hh=Math.floor(cur/60),mm=cur%60;
-        var per=hh<12?'ص':'م';var dh=hh>12?hh-12:(hh===0?12:hh);
-        var ts=dh+':'+(mm<10?'0'+mm:mm)+' '+per;
-        if(dayBks.indexOf(ts)<0){
-          var mn=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'][dt.getMonth()];
-          return dt.getDate()+' '+mn+', '+dt.getFullYear()+' في '+ts;
-        }
-        cur+=dur;
-      }
-    }
-  }
-  return null;
-}
-
-function renderDoctorList(){
-  var q=(document.getElementById('doc-search')?document.getElementById('doc-search').value:'').toLowerCase();
-  var list=docs.filter(function(d){return !q||d.n.indexOf(q)>=0||d.sp.indexOf(q)>=0;});
-  var h='';
-  for(var i=0;i<list.length;i++){
-    var d=list[i];
-    var av=d.ph?('<img src="'+d.ph+'">'):d.n[0];
-    var next=getNextSlot(d.u);
-    h+='<div class="doc-list-card" onclick="openBook(\''+d.u+'\')">';
-    h+='<div class="doc-list-av">'+av+'</div>';
-    h+='<div class="doc-list-info">';
-    h+='<div class="doc-list-name">'+d.n+'</div>';
-    h+='<div class="doc-list-spec">'+d.sp+(d.l?' &bull; '+d.l:'')+'</div>';
-    if(next){h+='<div class="doc-list-next"><span class="doc-list-next-dot"></span> الموعد المتاح القادم: <span style="color:#22C55E">'+next+'</span></div>';}
-    h+='<div class="doc-list-btn">&#8592; ملف الطبيب &amp; الحجز</div>';
-    h+='</div></div>';
-  }
-  document.getElementById('dgrid').innerHTML=h||'<div style="color:var(--m);padding:24px;text-align:center;font-size:14px">لا يوجد أطباء متاحون</div>';
-}
-function filterDocs(){renderDoctorList();}
-
-/* ---- BOOKING FLOW ---- */
-function openBook(uid){
-  var d=null;for(var i=0;i<docs.length;i++){if(docs[i].u===uid){d=docs[i];break;}}
-  if(!d)return;
-  curBU=d;dbk=getBK(d.u);dhr=getH(d.u);curDate=null;curSlt=null;
-  var bh=document.getElementById('bh-av');
-  bh.innerHTML=d.ph?('<img src="'+d.ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'):d.n[0];
-  document.getElementById('bh-name').textContent=d.n;
-  document.getElementById('bh-spec').textContent=d.sp;
-  document.getElementById('bh-loc').textContent=d.l||'مستشفى المدينة الطبي';
-  showPg('book');resetGate();
-}
-
-function hasInv(v){
-  document.getElementById('inv-check').style.display='none';
-  if(v){
-    document.getElementById('date-section').style.display='block';
-    buildDateStrip();
+// ── فاتورة الليزر ──
+function laserInvoiceChoice(hasInv){
+  if(hasInv){
+    // عرض حقل رقم الفاتورة
+    document.querySelectorAll('#s-laser-invoice .choice-btn').forEach(b=>{b.style.borderColor='';b.style.background='';});
+    document.getElementById('liYes').style.borderColor='var(--t)';
+    document.getElementById('invoiceNumSection').style.display='block';
   } else {
-    document.getElementById('noiv').style.display='block';
+    // توجيه لدكاترة الجلدية والتجميل
+    document.getElementById('invoiceNumSection').style.display='none';
+    S.inv=false;
+    S.invoiceNum=null;
+    const dermGroup=GROUPS.find(g=>g.id==='derma-cosmetic');
+    document.getElementById('docTitle').textContent='اختر طبيب الجلدية والتجميل';
+    document.getElementById('docSub').textContent='سيتولى طبيب الجلدية تحديد مناسبة العلاج بالليزر لحالتك';
+    S.prevDocScreen='s-laser-invoice';
+    showScreen('s-doctors');
+    loadDoctors(['dermatology','cosmetic']);
   }
 }
 
-function resetGate(){
-  document.getElementById('inv-check').style.display='block';
-  document.getElementById('noiv').style.display='none';
-  document.getElementById('date-section').style.display='none';
-  document.getElementById('time-section').classList.remove('on');
-  document.getElementById('patient-section').classList.remove('on');
-  document.getElementById('cont-btn').classList.remove('on');
-  document.getElementById('succ').classList.remove('on');
-  curDate=null;curSlt=null;
+function laserWithInvoiceProceed(){
+  const num=document.getElementById('invoiceNum').value.trim();
+  if(!num){alert('يُرجى إدخال رقم الفاتورة');return;}
+  S.inv=true;
+  S.invoiceNum=num;
+  document.getElementById('docTitle').textContent='اختر طبيب الليزر';
+  document.getElementById('docSub').textContent='رقم الفاتورة: '+num;
+  S.prevDocScreen='s-laser-invoice';
+  showScreen('s-doctors');
+  loadDoctors(['laser']);
 }
 
-function resetForm(){
-  document.getElementById('succ').classList.remove('on');
-  resetGate();
-  ['inm','iph','ino'].forEach(function(id){document.getElementById(id).value='';});
-}
-
-/* ---- DATE STRIP ---- */
-function buildDateStrip(){
-  var strip=document.getElementById('date-strip');
-  var today=new Date();today.setHours(0,0,0,0);
-  var days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-  var months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-  var h='';
-  for(var i=0;i<21;i++){
-    var dt=new Date(today);dt.setDate(today.getDate()+i);
-    var ds=dt.toISOString().split('T')[0];
-    h+='<div class="date-chip" data-date="'+ds+'" onclick="pickDate(this,\''+ds+'\')">';
-    h+='<div class="dc-day">'+days[dt.getDay()].substring(0,3)+'</div>';
-    h+='<div class="dc-num">'+dt.getDate()+'</div>';
-    h+='</div>';
+// ── قائمة الأطباء ──
+async function loadDoctors(depts){
+  const l=document.getElementById('docList');
+  l.innerHTML='<div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div>';
+  let q=db.from('doctors').select('*').eq('active',true).in('department',depts);
+  const {data:docs}=await q.order('name');
+  if(!docs?.length){
+    l.innerHTML='<div class="empty"><i class="fa-solid fa-user-doctor"></i><p>لا يوجد أطباء متاحون في هذا القسم حالياً</p></div>';
+    return;
   }
-  strip.innerHTML=h;
-  var mn=months[today.getMonth()]+' '+today.getFullYear();
-  document.getElementById('date-month-label').textContent=mn;
+  l.innerHTML=`<div style="display:flex;flex-direction:column;gap:9px">${docs.map(d=>{
+    // تسمية القسم الواضحة
+    const deptLabels={dermatology:'الجلدية والتجميل',cosmetic:'الجلدية والتجميل',laser:'الليزر',skin:'تنظيف البشرة',gynecology:'النساء والولادة',family:'طب الأسرة',internal:'الباطنية',pediatrics:'طب الأطفال'};
+    return `<div class="doc-card" id="dc-${d.id}" onclick='pickDoc(${JSON.stringify(d)})'>
+      <div class="doc-av">${d.avatar?`<img src="${d.avatar}"/>`:`<i class="fa-solid fa-user-doctor"></i>`}</div>
+      <div style="flex:1">
+        <div class="doc-name">${d.name}</div>
+        <div class="doc-spec">${d.specialty||deptLabels[d.department]||''}</div>
+        <div class="doc-avail"><span class="doc-dot"></span> متاح للحجز</div>
+      </div>
+      <i class="fa-solid fa-arrow-left" style="color:var(--border);font-size:.8rem"></i>
+    </div>`;
+  }).join('')}</div>`;
 }
 
-function pickDate(el,ds){
-  var chips=document.querySelectorAll('.date-chip');
-  for(var i=0;i<chips.length;i++)chips[i].classList.remove('on');
-  el.classList.add('on');
-  curDate=ds;curSlt=null;
-  buildTimeGrid(ds);
-  document.getElementById('time-section').classList.add('on');
-  document.getElementById('patient-section').classList.remove('on');
-  document.getElementById('cont-btn').classList.remove('on');
-}
-
-function buildTimeGrid(ds){
-  var h=dhr||defH;var booked=[];
-  for(var i=0;i<dbk.length;i++){if(dbk[i].date===ds)booked.push(dbk[i].time);}
-  var slots=[];var keys=['inj','dev','con','ret'];
-  for(var k=0;k<keys.length;k++){
-    var hk=h[keys[k]];if(!hk||!hk.a)continue;
-    var sh=parseInt(hk.s.split(':')[0]),sm=parseInt(hk.s.split(':')[1]);
-    var eh=parseInt(hk.e.split(':')[0]),em=parseInt(hk.e.split(':')[1]);
-    var dur={inj:15,dev:10,con:20,ret:10}[keys[k]]||15;
-    var cur=sh*60+sm,end=eh*60+em;
-    while(cur<end){
-      var hh=Math.floor(cur/60),mm=cur%60;
-      var per=hh<12?'ص':'م';var dh=hh>12?hh-12:(hh===0?12:hh);
-      var ts=dh+':'+(mm<10?'0'+mm:mm)+' '+per;
-      var ts24=hk.s.split(':')[0]+':'+(mm<10?'0'+mm:mm);
-      var tse=Math.floor((cur+dur)/60)+':'+(((cur+dur)%60)<10?'0':'')+((cur+dur)%60);
-      if(slots.indexOf(ts)<0)slots.push(ts);
-      cur+=dur;
+function pickDoc(d){
+  S.doc=d;
+  document.querySelectorAll('.doc-card').forEach(c=>c.classList.remove('selected'));
+  const e=document.getElementById('dc-'+d.id);if(e)e.classList.add('selected');
+  setTimeout(()=>{
+    if(S.skipInvoice||S.inv!==null){
+      // skin or laser-already-decided → go to datetime
+      buildDates();showScreen('s-datetime');
+    } else {
+      showScreen('s-invoice');
     }
+  },180);
+}
+
+// رجوع من قائمة الأطباء
+function backFromDoctors(){
+  if(S.prevDocScreen){showScreen(S.prevDocScreen);}
+  else if(S.group?.flow==='laser-skin'){showScreen('s-laser-skin');}
+  else{goHome();}
+}
+
+// رجوع من الفاتورة
+function backFromInvoice(){
+  showScreen('s-doctors');
+}
+
+// رجوع من الموعد
+function backFromDatetime(){
+  if(S.skipInvoice){showScreen('s-doctors');}
+  else{showScreen('s-invoice');}
+}
+
+// ── الفاتورة (أقسام عادية) ──
+function selectInv(v,btn){
+  S.inv=v;
+  setTimeout(()=>{buildDates();showScreen('s-datetime');},180);
+}
+
+// ── التواريخ والأوقات ──
+function buildDates(){
+  const strip=document.getElementById('dateStrip');const today=new Date();strip.innerHTML='';
+  const deptLabels={dermatology:'الجلدية والتجميل',cosmetic:'الجلدية والتجميل',laser:'الليزر',skin:'تنظيف البشرة',gynecology:'النساء والولادة',family:'طب الأسرة',internal:'الباطنية',pediatrics:'طب الأطفال'};
+  document.getElementById('dtSubLbl').textContent=`${S.doc?.name} — ${deptLabels[S.doc?.department]||''}`;
+  for(let i=0;i<14;i++){
+    const d=new Date(today);d.setDate(today.getDate()+i);
+    const iso=d.toISOString().split('T')[0];
+    const chip=document.createElement('div');chip.className='date-chip';chip.id='dp-'+iso;
+    chip.innerHTML=`<div class="dc-d">${DAYS[d.getDay()].substring(0,3)}</div><div class="dc-n">${d.getDate()}</div><div class="dc-m">${MON[d.getMonth()]}</div>`;
+    chip.onclick=()=>pickDate(iso,d.getDay());
+    strip.appendChild(chip);
   }
-  slots.sort();
-  var out='';
-  if(!slots.length){out='<div style="grid-column:1/-1;text-align:center;font-size:13px;color:var(--m);padding:20px">لا توجد أوقات متاحة لهذا اليوم</div>';}
-  else{
-    for(var i=0;i<slots.length;i++){
-      var s=slots[i];
-      var isBkd=booked.indexOf(s)>=0;
-      out+='<div class="time-chip'+(isBkd?' bkd':'')+'"'+(isBkd?'':' onclick="pickTime(this,\''+s+'\')"')+'>'+s+'</div>';
-    }
-  }
-  document.getElementById('time-grid').innerHTML=out;
+  pickDate(today.toISOString().split('T')[0],today.getDay());
 }
 
-function pickTime(el,t){
-  var chips=document.querySelectorAll('.time-chip:not(.bkd)');
-  for(var i=0;i<chips.length;i++)chips[i].classList.remove('on');
-  el.classList.add('on');curSlt=t;
-  document.getElementById('patient-section').classList.add('on');
-  document.getElementById('cont-btn').classList.add('on');
+async function pickDate(iso,dow){
+  S.date=iso;S.time=null;
+  document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('sel'));
+  const chip=document.getElementById('dp-'+iso);if(chip)chip.classList.add('sel');
+  document.getElementById('btnDtNext').style.display='none';
+  await loadSlots(iso,dow);
 }
 
-function submitBooking(){
-  var nm=document.getElementById('inm').value.trim();
-  var ph=document.getElementById('iph').value.trim();
-  if(!nm||!ph){notify('يرجى تعبئة الاسم ورقم الجوال');return;}
-  if(!curDate||!curSlt){notify('يرجى اختيار التاريخ والوقت');return;}
-  var ref='MMH-'+Math.floor(1000+Math.random()*9000);
-  dbk.unshift({id:ref,name:nm,phone:ph,svc:'موعد',date:curDate,time:curSlt,status:'pending',notes:document.getElementById('ino').value.trim()});
-  setBK(curBU.u,dbk);
-  document.getElementById('date-section').style.display='none';
-  document.getElementById('time-section').classList.remove('on');
-  document.getElementById('patient-section').classList.remove('on');
-  document.getElementById('cont-btn').classList.remove('on');
-  document.getElementById('succ').classList.add('on');
-  document.getElementById('rpill').textContent=ref;
+async function loadSlots(date,dow){
+  const card=document.getElementById('slotsCard'),grid=document.getElementById('timeGrid');
+  card.style.display='block';
+  grid.innerHTML='<div class="loader" style="padding:14px"><i class="fa-solid fa-spinner fa-spin"></i></div>';
+  const id=S.doc?.id;
+  if(!id){grid.innerHTML='<div class="empty" style="padding:14px"><p>يُرجى اختيار طبيب أولاً</p></div>';return;}
+  const {data:sch}=await db.from('doctor_schedules').select('*').eq('doctor_id',id).eq('day_of_week',dow).eq('is_available',true).maybeSingle();
+  if(!sch){grid.innerHTML='<div class="empty" style="padding:11px"><i class="fa-solid fa-calendar-xmark"></i><p>الطبيب غير متاح في هذا اليوم</p></div>';return;}
+  const {data:vac}=await db.from('doctor_vacations').select('id').eq('doctor_id',id).lte('start_date',date).gte('end_date',date);
+  if(vac?.length){grid.innerHTML='<div class="empty" style="padding:11px"><i class="fa-solid fa-umbrella-beach"></i><p>الطبيب في إجازة خلال هذه الفترة</p></div>';return;}
+  const {data:bkd}=await db.from('bookings').select('booking_time').eq('doctor_id',id).eq('booking_date',date).neq('status','cancelled');
+  const busy=new Set((bkd||[]).map(b=>b.booking_time?.substring(0,5)));
+  // مدة الموعد: للتنظيف حسب الخدمة، للعادي 10 دقائق بدون فاتورة أو مدة الجدول
+  const dur=S.skipInvoice?(S.svc?.duration_minutes||sch.slot_duration_minutes||30):(S.inv?(S.svc?.duration_minutes||sch.slot_duration_minutes||30):10);
+  document.getElementById('slotsLbl').innerHTML=`<i class="fa-solid fa-clock" style="color:var(--t)"></i> الأوقات المتاحة (${dur} دقيقة / موعد)`;
+  const slots=genSlots(sch.start_time,sch.end_time,dur);
+  if(!slots.length){grid.innerHTML='<div class="empty" style="padding:11px"><p>لا توجد أوقات متاحة في هذا اليوم</p></div>';return;}
+  grid.innerHTML=slots.map(t=>`<div class="t-slot ${busy.has(t)?'busy':''}" ${busy.has(t)?'':'onclick="pickTime(\''+t+'\')"'}>${t}</div>`).join('');
 }
 
-/* ---- DOCTOR DASHBOARD ---- */
-function renderDash(){
-  var today=new Date().toISOString().split('T')[0];
-  var td=dbk.filter(function(b){return b.date===today;});
-  document.getElementById('dt').textContent=td.length;
-  var sc={};td.forEach(function(b){sc[b.svc]=(sc[b.svc]||0)+1;});
-  var sub=Object.keys(sc).map(function(k){return sc[k]+' '+k;});
-  document.getElementById('dts').textContent=sub.length?sub.join(' - '):'لا يوجد';
-  document.getElementById('dtt').textContent=dbk.length;
-  var pnd=dbk.filter(function(b){return b.status==='pending';}).length;
-  var cnf=dbk.filter(function(b){return b.status==='confirmed';}).length;
-  document.getElementById('dp').textContent=pnd;
-  document.getElementById('dc').textContent=cnf;
-  renderDT();renderCal();
+function genSlots(s,e,d){
+  const r=[];let[sh,sm]=s.split(':').map(Number);const[eh,em]=e.split(':').map(Number),end=eh*60+em;
+  while(sh*60+sm<end){r.push(`${String(sh).padStart(2,'0')}:${String(sm).padStart(2,'0')}`);sm+=d;if(sm>=60){sh+=Math.floor(sm/60);sm%=60;}}return r;
 }
 
-function setDF(v,btn){df=v;var t=document.querySelectorAll('.dtab');for(var i=0;i<t.length;i++)t[i].classList.remove('on');btn.classList.add('on');renderDT();}
-
-function renderDT(){
-  var q=document.getElementById('dsrch')?document.getElementById('dsrch').value.toLowerCase():'';
-  var data=dbk.filter(function(b){return(df==='all'||b.status===df)&&(!q||b.name.indexOf(q)>=0||b.id.toLowerCase().indexOf(q)>=0);});
-  var sm={confirmed:'<span class="bdg bc">مؤكد</span>',pending:'<span class="bdg bp2">بانتظار</span>',cancelled:'<span class="bdg bx">ملغي</span>'};
-  var h='';
-  if(!data.length){h='<tr><td colspan="8" style="text-align:center;padding:18px;color:var(--m)">لا توجد حجوزات</td></tr>';}
-  else{data.forEach(function(b){h+='<tr><td style="font-weight:700;color:var(--td)">'+b.id+'</td><td>'+b.name+'</td><td style="direction:ltr;text-align:right">'+b.phone+'</td><td>'+b.svc+'</td><td>'+b.date+'</td><td>'+b.time+'</td><td>'+(sm[b.status]||b.status)+'</td><td><button class="ib" onclick="chSt(\''+b.id+'\',\'confirmed\')" style="margin-left:4px">تأكيد</button><button class="ib del" onclick="chSt(\''+b.id+'\',\'cancelled\')">إلغاء</button></td></tr>';});}
-  document.getElementById('dtb').innerHTML=h;
+function pickTime(t){
+  S.time=t;
+  document.querySelectorAll('.t-slot').forEach(s=>s.classList.remove('sel'));
+  document.querySelectorAll('.t-slot').forEach(s=>{if(s.textContent===t)s.classList.add('sel');});
+  document.getElementById('btnDtNext').style.display='flex';
 }
 
-function chSt(id,s){
-  if(!curDoc)return;
-  for(var i=0;i<dbk.length;i++){if(dbk[i].id===id){dbk[i].status=s;break;}}
-  setBK(curDoc.u,dbk);renderDash();notify(s==='confirmed'?'تم التأكيد':'تم الإلغاء');
+function goPatient(){
+  if(!S.time)return;
+  const d=new Date(S.date+'T12:00:00');
+  const deptLabels={dermatology:'الجلدية والتجميل',cosmetic:'الجلدية والتجميل',laser:'الليزر',skin:'تنظيف البشرة',gynecology:'النساء والولادة',family:'طب الأسرة',internal:'الباطنية',pediatrics:'طب الأطفال'};
+  document.getElementById('sDoc').textContent=S.doc?.name||'-';
+  document.getElementById('sDept').textContent=deptLabels[S.doc?.department]||S.doc?.department||'-';
+  document.getElementById('sDate').textContent=`${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`;
+  document.getElementById('sTime').textContent=S.time;
+  if(S.svc){document.getElementById('sSvcRow').style.display='flex';document.getElementById('sSvc').textContent=S.svc.name;}
+  else document.getElementById('sSvcRow').style.display='none';
+  if(S.invoiceNum){document.getElementById('sInvRow').style.display='flex';document.getElementById('sInvNum').textContent=S.invoiceNum;}
+  else document.getElementById('sInvRow').style.display='none';
+  const invLabel=S.skipInvoice?'جلسة تنظيف بشرة':S.inv?('حجز بفاتورة'+(S.invoiceNum?' ('+S.invoiceNum+')'):''):'دفع إلكتروني عبر سلة';
+  document.getElementById('sType').textContent=invLabel;
+  // تعليمات ما قبل الجلسة
+  const showPS=S.group?.showPresession||['dermatology','cosmetic','laser','skin'].includes(S.doc?.department);
+  document.getElementById('preSessionBox').style.display=showPS?'block':'none';
+  showScreen('s-patient');
 }
 
-/* ---- CALENDAR ---- */
-function calNav(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCal();}
-
-function renderCal(){
-  var mnNames=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-  var dayNames=['أح','اث','ثل','أر','خم','جم','سب'];
-  document.getElementById('cal-title').textContent=mnNames[calMonth]+' '+calYear;
-  var today=new Date().toISOString().split('T')[0];
-  var first=new Date(calYear,calMonth,1);
-  var daysInMonth=new Date(calYear,calMonth+1,0).getDate();
-  var startDay=first.getDay();
-  var h=dayNames.map(function(d){return'<div class="cal-day-name">'+d+'</div>';}).join('');
-  for(var i=0;i<startDay;i++)h+='<div class="cal-day other-month"><div class="cal-dn"></div></div>';
-  for(var d=1;d<=daysInMonth;d++){
-    var ds=calYear+'-'+(calMonth+1<10?'0'+(calMonth+1):(calMonth+1))+'-'+(d<10?'0'+d:d);
-    var cnt=dbk.filter(function(b){return b.date===ds;}).length;
-    var cls='cal-day'+(ds===today?' today':'');
-    h+='<div class="'+cls+'" onclick="showCalDay(\''+ds+'\','+cnt+')" style="cursor:pointer">';
-    h+='<div class="cal-dn">'+d+'</div>';
-    h+='<div class="cal-dot'+(cnt>0?' show':'')+'"></div>';
-    if(cnt>0)h+='<div class="cal-count">'+cnt+'</div>';
-    h+='</div>';
-  }
-  document.getElementById('cal-grid').innerHTML=h;
-}
-
-function showCalDay(ds,cnt){
-  var detail=document.getElementById('cal-detail');
-  var dayBks=dbk.filter(function(b){return b.date===ds;});
-  document.getElementById('cal-detail-title').textContent=ds+' — '+cnt+' حجز';
-  var h='';
-  if(!dayBks.length){h='<div style="font-size:12px;color:var(--m);padding:8px 0">لا توجد حجوزات</div>';}
-  else{dayBks.forEach(function(b){var sm={confirmed:'مؤكد',pending:'بانتظار',cancelled:'ملغي'};h+='<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:.5px solid var(--br);font-size:12px"><span style="font-weight:700;color:var(--td)">'+b.time+'</span><span>'+b.name+'</span><span style="color:var(--m)">'+b.svc+'</span><span style="margin-right:auto;color:var(--m)">'+sm[b.status]+'</span></div>';});}
-  document.getElementById('cal-detail-bks').innerHTML=h;
-  detail.style.display='block';
-}
-
-/* ---- HOURS ---- */
-function renderHours(){
-  if(!curDoc)return;
-  var h=getH(curDoc.u);
-  var labels={inj:'💉 حقن',dev:'🔬 أجهزة',con:'💬 استشارة',ret:'✨ رتوش'};
-  var out='';
-  var keys=['inj','dev','con','ret'];
-  for(var i=0;i<keys.length;i++){
-    var k=keys[i];var hk=h[k];
-    out+='<div class="hr-row">';
-    out+='<div><div class="hr-label">'+labels[k]+'</div></div>';
-    out+='<div class="hr-time">من <input type="time" id="hs-'+k+'" value="'+hk.s+'"> إلى <input type="time" id="he-'+k+'" value="'+hk.e+'"></div>';
-    out+='<label class="tog"><input type="checkbox" id="ha-'+k+'"'+(hk.a?' checked':'')+' onchange="previewHour()"><span class="tog-slider"></span></label>';
-    out+='</div>';
-  }
-  document.getElementById('hrs-grid').innerHTML=out;
-}
-
-function previewHour(){}
-
-function saveHours(){
-  if(!curDoc)return;
-  var h=getH(curDoc.u);
-  var keys=['inj','dev','con','ret'];
-  for(var i=0;i<keys.length;i++){
-    var k=keys[i];
-    var s=document.getElementById('hs-'+k),e=document.getElementById('he-'+k),a=document.getElementById('ha-'+k);
-    if(s&&e&&a){h[k].s=s.value;h[k].e=e.value;h[k].a=a.checked;}
-  }
-  saveH(curDoc.u,h);dhr=h;notify('تم حفظ ساعات العمل ✓');
-}
-
-/* ---- TODOS ---- */
-function getTodos(){return lg('todos_'+(curDoc?curDoc.u:''),[]); }
-function saveTodos(t){ls('todos_'+(curDoc?curDoc.u:''),t);}
-
-function renderTodos(){
-  var todos=getTodos();
-  var pmap={high:'prio-high',med:'prio-med',low:'prio-low'};
-  var plab={high:'عالية',med:'متوسطة',low:'منخفضة'};
-  var h='';
-  if(!todos.length){h='<div style="text-align:center;font-size:13px;color:var(--m);padding:16px">لا توجد مهام</div>';}
-  else{
-    todos.forEach(function(t,i){
-      h+='<div class="todo-item'+(t.done?' done':'')+'">';
-      h+='<div class="todo-cb'+(t.done?' checked':'')+'" onclick="toggleTodo('+i+')">'+( t.done?'&#x2713;':'')+'</div>';
-      h+='<div class="todo-text">'+t.text+'</div>';
-      h+='<span class="todo-priority '+pmap[t.p||'med']+'">'+plab[t.p||'med']+'</span>';
-      h+='<button class="todo-del" onclick="delTodo('+i+')">&#x2715;</button>';
-      h+='</div>';
+// ── تأكيد الحجز ──
+async function confirmBooking(){
+  const nm=document.getElementById('pName').value.trim(),ph=document.getElementById('pPhone').value.trim(),nt=document.getElementById('pNotes').value.trim();
+  const errEl=document.getElementById('pErr');errEl.innerHTML='';
+  if(!nm){errEl.innerHTML='<div class="alert al-err"><i class="fa-solid fa-circle-exclamation"></i><span>يُرجى إدخال الاسم الكامل</span></div>';return;}
+  if(!ph||ph.length<9){errEl.innerHTML='<div class="alert al-err"><i class="fa-solid fa-circle-exclamation"></i><span>رقم الجوال غير صحيح</span></div>';return;}
+  const btn=document.getElementById('btnBook');btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جارٍ تسجيل الحجز...';
+  const ref='SKC-'+Date.now().toString(36).toUpperCase();
+  const {data:bk,error}=await db.from('bookings').insert({
+    booking_ref:ref,doctor_id:S.doc.id,service_id:S.svc?.id||null,
+    patient_name:nm,patient_phone:ph,booking_date:S.date,booking_time:S.time+':00',
+    status:'pending',payment_status:S.inv?'invoiced':'unpaid',
+    notes:(nt||'')+(S.invoiceNum?'\nرقم الفاتورة: '+S.invoiceNum:'')
+  }).select().single();
+  btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-circle-check"></i> تأكيد الحجز';
+  if(error){errEl.innerHTML=`<div class="alert al-err"><i class="fa-solid fa-circle-exclamation"></i><span>حدث خطأ: ${error.message}</span></div>`;return;}
+  // حفظ بيانات الاستشارة إن وجدت
+  if(S.svc&&(S.skinType||S.pregnant!==null)){
+    await db.from('booking_skin_questionnaire').insert({
+      booking_id:bk.id,skin_type:S.skinType,
+      has_blackheads:S.skinProbs.includes('blackheads'),has_irritation:S.skinProbs.includes('irritation'),
+      has_pigmentation:S.skinProbs.includes('pigmentation'),has_large_pores:S.skinProbs.includes('large_pores'),
+      is_pregnant:S.pregnant,is_breastfeeding:S.breast
     });
   }
-  document.getElementById('todo-list').innerHTML=h;
+  document.getElementById('cRef').textContent=bk.booking_ref;
+  document.getElementById('cDoc').textContent=S.doc?.name;
+  const d2=new Date(S.date+'T12:00:00');
+  document.getElementById('cDate').textContent=`${DAYS[d2.getDay()]} ${d2.getDate()} ${MON[d2.getMonth()]}`;
+  document.getElementById('cTime').textContent=S.time;document.getElementById('cPat').textContent=nm;
+  document.getElementById('sallaBox').style.display=(!S.inv&&!S.skipInvoice&&S.doc?.salla_link)?'block':'none';
+  showScreen('s-confirm');
+}
+function openSalla(){const l=S.doc?.salla_link;if(l)window.open(l,'_blank');}
+
+// ── ويزارد تنظيف البشرة ──
+const WIZ=['الخدمة','الاستشارة'];
+function wizBack(){
+  if(curWizStep===0){showScreen('s-laser-skin');}
+  else{step(curWizStep-1);}
+}
+function updateWizBack(){
+  const b=document.getElementById('wizBackBtn');
+  b.innerHTML=curWizStep===0?'<i class="fa-solid fa-chevron-right"></i> رجوع':'<i class="fa-solid fa-chevron-right"></i> رجوع';
+}
+async function step(n){
+  curWizStep=n;updateWizBack();
+  stepsBar(n);
+  const c=document.getElementById('wContent');
+  if(n===0){
+    c.innerHTML='<div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div>';
+    const {data:svcs}=await db.from('services').select('*').eq('department_id','skin').eq('active',true).order('sort_order');
+    if(!svcs?.length){c.innerHTML='<div class="empty"><i class="fa-solid fa-magnifying-glass"></i><p>لا توجد خدمات متاحة حالياً</p></div>';return;}
+    c.innerHTML=`<div class="pg-title">اختر الخدمة</div>
+      <div class="pg-sub">تنظيف البشرة</div>
+      <div class="svc-list">${svcs.map(s=>svcCard(s)).join('')}</div>`;
+  } else {
+    c.innerHTML=questionnaire();
+  }
+}
+function stepsBar(cur){
+  document.getElementById('wStepsBar').innerHTML=WIZ.map((l,i)=>
+    `<div class="step-item ${i<cur?'done':i===cur?'active':''}">
+      <div class="step-num">${i<cur?'<i class="fa-solid fa-check" style="font-size:.58rem"></i>':i+1}</div>
+      <div class="step-lbl">${l}</div></div>`).join('');
+}
+function svcCard(s){
+  const tags=[];
+  if(s.safe_for_pregnant===true) tags.push('<span class="badge badge-ok"><i class="fa-solid fa-check"></i> مناسب للحوامل</span>');
+  if(s.safe_for_pregnant===false) tags.push('<span class="badge badge-err"><i class="fa-solid fa-xmark"></i> غير مناسب للحوامل</span>');
+  if(s.safe_for_breastfeeding===false) tags.push('<span class="badge badge-warn"><i class="fa-solid fa-xmark"></i> غير مناسب للمرضعات</span>');
+  if(s.skin_type_restriction) tags.push(`<span class="badge badge-info">${s.skin_type_restriction}</span>`);
+  if(s.duration_minutes) tags.push(`<span class="badge badge-blue"><i class="fa-solid fa-clock"></i> ${s.duration_minutes} دقيقة</span>`);
+  return `<div class="svc-card" id="sc-${s.id}" onclick='pickSvc(${JSON.stringify(s)})'>
+    <div class="svc-ico"><i class="fa-solid fa-spa"></i></div>
+    <div style="flex:1">
+      <div class="svc-name">${s.name}</div>
+      <div class="svc-desc">${s.description||''}</div>
+      <div class="svc-tags">${tags.join('')}</div>
+    </div>
+    <i class="fa-solid fa-arrow-left" style="color:var(--border);font-size:.8rem;flex-shrink:0;margin-top:3px"></i>
+  </div>`;
+}
+function pickSvc(s){
+  S.svc=s;
+  document.querySelectorAll('.svc-card').forEach(c=>c.classList.remove('selected'));
+  const e=document.getElementById('sc-'+s.id);if(e)e.classList.add('selected');
+  setTimeout(()=>step(1),180);
+}
+function questionnaire(){
+  return `<div class="pg-title">استشارة طبية أولية</div>
+    <div class="pg-sub">يُرجى الإجابة بدقة لضمان ملاءمة الخدمة لحالتك</div>
+    <div class="q-card"><div class="q-ttl"><i class="fa-solid fa-droplet"></i> نوع البشرة</div><div class="q-opts">
+      ${['دهنية','جافة','مختلطة','عادية','حساسة'].map(t=>`<div class="q-opt" onclick="setSkin('${t}',this)">${t}</div>`).join('')}</div></div>
+    <div class="q-card"><div class="q-ttl"><i class="fa-solid fa-circle-exclamation"></i> مشكلات البشرة الحالية <span style="font-size:.7rem;color:var(--sub)">(يمكن اختيار أكثر من إجابة)</span></div><div class="q-opts">
+      ${[['رؤوس سوداء','blackheads'],['تهيج وحساسية','irritation'],['تصبغات وبقع','pigmentation'],['مسام واسعة','large_pores']].map(([l,k])=>
+        `<div class="q-opt" onclick="togProb('${k}',this)">${l}</div>`).join('')}</div></div>
+    <div class="q-card"><div class="q-ttl"><i class="fa-solid fa-heart"></i> هل أنتِ حامل؟</div><div class="q-opts">
+      <div class="q-opt" onclick="setPreg(true,this)">نعم</div><div class="q-opt" onclick="setPreg(false,this)">لا</div></div></div>
+    <div class="q-card"><div class="q-ttl"><i class="fa-solid fa-heart-pulse"></i> هل أنتِ في فترة الرضاعة؟</div><div class="q-opts">
+      <div class="q-opt" onclick="setBreast(true,this)">نعم</div><div class="q-opt" onclick="setBreast(false,this)">لا</div></div></div>
+    <div id="qMsg"></div>
+    <button class="btn btn-p" onclick="submitQ()">اختيار الطبيب <i class="fa-solid fa-arrow-left"></i></button>`;
+}
+function setSkin(v,el){S.skinType=v;el.closest('.q-opts').querySelectorAll('.q-opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
+function togProb(k,el){const i=S.skinProbs.indexOf(k);if(i<0){S.skinProbs.push(k);el.classList.add('on');}else{S.skinProbs.splice(i,1);el.classList.remove('on');}}
+function setPreg(v,el){S.pregnant=v;el.closest('.q-opts').querySelectorAll('.q-opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
+function setBreast(v,el){S.breast=v;el.closest('.q-opts').querySelectorAll('.q-opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');}
+function submitQ(){
+  const msg=document.getElementById('qMsg');msg.innerHTML='';
+  const sv=S.svc,warns=[];
+  if(S.pregnant&&sv?.safe_for_pregnant===false) warns.push('هذه الخدمة غير موصى بها للحوامل وفقاً للبروتوكول الطبي.');
+  if(S.breast&&sv?.safe_for_breastfeeding===false) warns.push('هذه الخدمة غير موصى بها خلال فترة الرضاعة.');
+  if(warns.length){
+    msg.innerHTML=warns.map(w=>`<div class="alert al-warn"><i class="fa-solid fa-triangle-exclamation"></i><span>${w}</span></div>`).join('')+
+      `<button class="btn btn-p" style="margin-top:7px" onclick="goToSkinDoctors()">متابعة مع العلم بالتنبيه <i class="fa-solid fa-arrow-left"></i></button>`;
+  } else goToSkinDoctors();
+}
+function goToSkinDoctors(){
+  document.getElementById('docTitle').textContent='اختر الطبيبة';
+  document.getElementById('docSub').textContent='تنظيف البشرة — '+( S.svc?.name||'');
+  S.prevDocScreen='s-services';
+  showScreen('s-doctors');
+  loadDoctors(['skin']);
 }
 
-function addTodo(){
-  var inp=document.getElementById('todo-inp');var t=inp.value.trim();if(!t)return;
-  var pri=document.getElementById('todo-pri').value;
-  var todos=getTodos();todos.unshift({text:t,done:false,p:pri});
-  saveTodos(todos);inp.value='';renderTodos();
+// ── مصادقة ──
+async function doLogin(){
+  const u=document.getElementById('lUser').value.trim(),p=document.getElementById('lPass').value;
+  const err=document.getElementById('lErr');err.style.display='none';
+  if(!u||!p){err.style.display='flex';err.querySelector('span').textContent='يُرجى إدخال بيانات الدخول';return;}
+  try{const {data:us}=await db.from('users').select('*').eq('username',u).eq('password',p);
+    if(us?.length){S.user=us[0];return login();}}catch(e){}
+  const {data:ds}=await db.from('doctors').select('*').eq('username',u).eq('password',p).eq('active',true);
+  if(ds?.length){S.user={...ds[0],role:'doctor'};return login();}
+  err.style.display='flex';err.querySelector('span').textContent='بيانات الدخول غير صحيحة';
+}
+function login(){
+  document.getElementById('btnLogin').style.display='none';document.getElementById('btnLogout').style.display='flex';
+  if(S.user.role==='superadmin'||S.user.username==='superadmin'){loadAdmin();showScreen('s-admin');}
+  else{loadDrPanel(S.user);showScreen('s-doctor');}
+}
+function doLogout(){S.user=null;document.getElementById('btnLogin').style.display='flex';document.getElementById('btnLogout').style.display='none';goHome();}
+
+// ── لوحة الإدارة ──
+let curA='overview';
+function aTab(t,el){curA=t;document.querySelectorAll('#s-admin .a-tab').forEach(b=>b.classList.remove('on'));if(el)el.classList.add('on');loadAdmin(t);}
+async function loadAdmin(t){
+  t=t||curA;const c=document.getElementById('aContent');
+  c.innerHTML='<div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div>';
+  if(t==='overview')await rOverview(c);
+  else if(t==='doctors')await rDoctors(c);
+  else if(t==='schedules')await rSchedules(c);
+  else if(t==='bookings')await rBookings(c);
+  else if(t==='depts')await rDepts(c);
+}
+async function rOverview(el){
+  const [{data:bks},{data:drs},{data:tbks}]=await Promise.all([
+    db.from('bookings').select('id,status'),db.from('doctors').select('id,active'),
+    db.from('bookings').select('id').eq('booking_date',new Date().toISOString().split('T')[0])
+  ]);
+  el.innerHTML=`<div class="stat-grid">
+    <div class="s-card"><div class="si"><i class="fa-solid fa-clipboard-list"></i></div><div class="sn">${bks?.length||0}</div><div class="sl">إجمالي الحجوزات</div></div>
+    <div class="s-card"><div class="si"><i class="fa-solid fa-calendar-day"></i></div><div class="sn">${tbks?.length||0}</div><div class="sl">حجوزات اليوم</div></div>
+    <div class="s-card"><div class="si"><i class="fa-solid fa-user-doctor"></i></div><div class="sn">${(drs||[]).filter(d=>d.active).length}</div><div class="sl">أطباء نشطون</div></div>
+    <div class="s-card"><div class="si"><i class="fa-solid fa-hourglass-half"></i></div><div class="sn">${(bks||[]).filter(b=>b.status==='pending').length}</div><div class="sl">حجوزات معلقة</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-bolt-lightning"></i> إجراءات سريعة</div>
+    <button class="btn btn-p" style="margin-bottom:9px" onclick="openDocModal()"><i class="fa-solid fa-plus"></i> إضافة طبيب جديد</button>
+    <button class="btn btn-s" onclick="openVacModal()"><i class="fa-solid fa-calendar-plus"></i> تسجيل إجازة طبيب</button>
+  </div>`;
+}
+async function rDoctors(el){
+  const {data:docs}=await db.from('doctors').select('*').order('name');
+  const dL={dermatology:'الجلدية والتجميل',cosmetic:'الجلدية والتجميل (تجميل)',laser:'الليزر',skin:'تنظيف البشرة',gynecology:'النساء والولادة',family:'طب الأسرة',internal:'الباطنية',pediatrics:'طب الأطفال'};
+  let h=`<button class="btn btn-p btn-sm" style="margin-bottom:12px" onclick="openDocModal()"><i class="fa-solid fa-plus"></i> إضافة طبيب</button>`;
+  if(!docs?.length){el.innerHTML=h+'<div class="empty"><i class="fa-solid fa-user-doctor"></i><p>لا يوجد أطباء مسجلون</p></div>';return;}
+  h+=`<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>الطبيب</th><th>القسم</th><th>الحالة</th><th>المواعيد</th><th>سلة</th><th>إجراء</th></tr></thead><tbody>
+    ${docs.map(d=>`<tr>
+      <td><span style="font-weight:600">${d.name}</span><br><small style="color:var(--sub);font-family:monospace">${d.username||''}</small></td>
+      <td><span style="font-size:.73rem;color:var(--t)">${dL[d.department]||d.department}</span></td>
+      <td><span class="badge ${d.active?'badge-ok':'badge-err'}">${d.active?'نشط':'موقوف'}</span></td>
+      <td><span class="badge ${d.can_manage_schedule?'badge-ok':'badge-warn'}">${d.can_manage_schedule?'مسموح':'محظور'}</span></td>
+      <td>${d.salla_link?'<span class="badge badge-ok"><i class="fa-solid fa-check"></i></span>':'<span class="badge badge-warn">لا</span>'}</td>
+      <td style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;padding:5px 7px">
+        <button class="btn btn-sm btn-s" onclick='openDocModal(${JSON.stringify(d)})'><i class="fa-solid fa-pen"></i></button>
+        <button class="btn btn-sm btn-s" onclick="openSchModal(${d.id},'${d.name}')"><i class="fa-solid fa-calendar-days"></i></button>
+        <button class="btn btn-sm btn-d" onclick="togActive(${d.id},${d.active})">${d.active?'إيقاف':'تفعيل'}</button>
+      </td></tr>`).join('')}
+    </tbody></table></div>`;
+  el.innerHTML=h;
+}
+async function rSchedules(el){
+  const {data:docs}=await db.from('doctors').select('id,name,department').eq('active',true);
+  const dL={dermatology:'الجلدية والتجميل',cosmetic:'الجلدية والتجميل',laser:'الليزر',skin:'تنظيف البشرة',gynecology:'النساء والولادة',family:'طب الأسرة',internal:'الباطنية',pediatrics:'طب الأطفال'};
+  el.innerHTML=(docs||[]).map(d=>`<div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:13px">
+    <div style="display:flex;align-items:center;gap:9px">
+      <div style="width:34px;height:34px;border-radius:8px;background:var(--tl);display:flex;align-items:center;justify-content:center;color:var(--t)"><i class="fa-solid fa-user-doctor"></i></div>
+      <div><div style="font-weight:600;font-size:.86rem">${d.name}</div><div style="font-size:.7rem;color:var(--sub)">${dL[d.department]||''}</div></div>
+    </div>
+    <button class="btn btn-sm btn-s" onclick="openSchModal(${d.id},'${d.name}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+  </div>`).join('');
+}
+async function rBookings(el){
+  const {data:bks}=await db.from('bookings').select('*,doctors(name)').order('booking_date',{ascending:false}).limit(100);
+  if(!bks?.length){el.innerHTML='<div class="empty"><i class="fa-solid fa-clipboard-list"></i><p>لا توجد حجوزات مسجلة</p></div>';return;}
+  const stA={'pending':'معلق','confirmed':'مؤكد','cancelled':'ملغي','completed':'مكتمل'};
+  const stB={'pending':'badge-warn','confirmed':'badge-ok','cancelled':'badge-err','completed':'badge-info'};
+  const pyA={'unpaid':'غير مدفوع','invoiced':'بفاتورة','paid':'مدفوع'};
+  el.innerHTML=`<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>رقم الحجز</th><th>المريض</th><th>الطبيب</th><th>التاريخ</th><th>الوقت</th><th>الحالة</th><th>الدفع</th><th>إجراء</th></tr></thead><tbody>
+    ${bks.map(b=>`<tr>
+      <td><small style="font-family:monospace;font-weight:600">${b.booking_ref}</small></td>
+      <td>${b.patient_name}<br><small style="color:var(--sub)">${b.patient_phone}</small></td>
+      <td>${b.doctors?.name||'-'}</td><td>${b.booking_date}</td>
+      <td style="font-family:monospace;font-weight:500">${b.booking_time?.substring(0,5)||'-'}</td>
+      <td><span class="badge ${stB[b.status]||'badge-info'}">${stA[b.status]||b.status}</span></td>
+      <td><span class="badge badge-info">${pyA[b.payment_status]||b.payment_status}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-s" onclick='showBk(${JSON.stringify(b)})'>تفاصيل</button>
+        ${b.status==='pending'?`<button class="btn btn-sm btn-p" style="margin:2px" onclick="updBk(${b.id},'confirmed')"><i class="fa-solid fa-check"></i></button>`:''}
+        ${b.status!=='cancelled'?`<button class="btn btn-sm btn-d" onclick="updBk(${b.id},'cancelled')"><i class="fa-solid fa-xmark"></i></button>`:''}
+      </td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+async function rDepts(el){
+  const [{data:depts},{data:svcs}]=await Promise.all([
+    db.from('clinic_departments').select('*').order('sort_order'),
+    db.from('services').select('*').order('sort_order')
+  ]);
+  el.innerHTML=(depts||[]).map(d=>{
+    const dsvcs=(svcs||[]).filter(s=>s.department_id===d.id);
+    return `<div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${dsvcs.length?'11px':'0'}">
+        <div><div style="font-weight:600;font-size:.88rem">${d.name_ar||d.name}</div><div style="font-size:.7rem;color:var(--sub)">${d.description||''}</div></div>
+        <span class="badge ${d.active?'badge-ok':'badge-err'}">${d.active?'نشط':'موقوف'}</span>
+      </div>
+      ${dsvcs.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:var(--bg);border-radius:7px;margin-bottom:4px">
+        <span style="font-size:.76rem;font-weight:500">${s.name}</span>
+        <span style="font-size:.7rem;color:var(--sub)"><i class="fa-solid fa-clock"></i> ${s.duration_minutes||60} دقيقة</span>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
 }
 
-function toggleTodo(i){var todos=getTodos();todos[i].done=!todos[i].done;saveTodos(todos);renderTodos();}
-function delTodo(i){var todos=getTodos();todos.splice(i,1);saveTodos(todos);renderTodos();}
-
-/* ---- ADMIN ---- */
-function renderAdmin(){
-  var today=new Date().toISOString().split('T')[0];
-  var tot=0,tod=0,pnd=0;
-  docs.forEach(function(d){var bks=getBK(d.u);tot+=bks.length;bks.forEach(function(b){if(b.date===today)tod++;if(b.status==='pending')pnd++;});});
-  document.getElementById('gst').textContent=tot;document.getElementById('gsd').textContent=tod;
-  document.getElementById('gsp').textContent=pnd;document.getElementById('gsc').textContent=docs.length;
-  renderCards();
-}
-
-function renderCards(){
-  var today=new Date().toISOString().split('T')[0];var h='';
-  docs.forEach(function(d,i){
-    var bks=getBK(d.u);var tc=0,pc=0;
-    bks.forEach(function(b){if(b.date===today)tc++;if(b.status==='pending')pc++;});
-    var av=d.ph?('<img src="'+d.ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'):d.n[0];
-    h+='<div class="ccard"><div class="cch"><div class="ccav">'+av+'</div><div><div class="ccn">'+d.n+'</div><div class="ccs">'+d.sp+'</div></div></div>';
-    h+='<div class="ccst"><div class="ccsi"><div class="ccsn">'+bks.length+'</div><div class="ccsl">إجمالي</div></div><div class="ccsi"><div class="ccsn">'+tc+'</div><div class="ccsl">اليوم</div></div><div class="ccsi '+(pc>0?'w':'')+'" ><div class="ccsn">'+pc+'</div><div class="ccsl">بانتظار</div></div></div>';
-    h+='<div class="ccf"><span class="ccslug">/'+(d.sl||d.u)+'</span><div class="cca"><button class="ib" onclick="showDet(\''+d.u+'\')">عرض</button><button class="ib del" onclick="delDoc('+i+')">حذف</button></div></div></div>';
+// ── نوافذ منبثقة ──
+function openDocModal(doc){
+  S.editDocId=doc?.id||null;
+  document.getElementById('mDocTitle').textContent=doc?'تعديل بيانات الطبيب':'إضافة طبيب جديد';
+  ['mdName','mdUser','mdPass','mdSpec','mdPhone','mdSalla','mdBio'].forEach(id=>{
+    const f={mdName:'name',mdUser:'username',mdPass:'password',mdSpec:'specialty',mdPhone:'phone',mdSalla:'salla_link',mdBio:'bio'}[id];
+    document.getElementById(id).value=doc?.[f]||'';
   });
-  document.getElementById('cgrid').innerHTML=h||'<div style="color:var(--m);font-size:13px">لا توجد عيادات</div>';
+  document.getElementById('mdDept').value=doc?.department||'dermatology';
+  document.getElementById('mdSch').checked=doc?.can_manage_schedule||false;
+  document.getElementById('mdErr').style.display='none';openModal('mDoc');
+}
+async function saveDoc(){
+  const nm=document.getElementById('mdName').value.trim(),us=document.getElementById('mdUser').value.trim(),ps=document.getElementById('mdPass').value.trim();
+  const err=document.getElementById('mdErr');
+  if(!nm||!us||!ps){err.style.display='flex';err.querySelector('span').textContent='الاسم واسم المستخدم وكلمة المرور إلزامية';return;}
+  const p={name:nm,username:us,password:ps,department:document.getElementById('mdDept').value,
+    specialty:document.getElementById('mdSpec').value.trim(),phone:document.getElementById('mdPhone').value.trim(),
+    salla_link:document.getElementById('mdSalla').value.trim(),bio:document.getElementById('mdBio').value.trim(),
+    can_manage_schedule:document.getElementById('mdSch').checked,active:true};
+  const {error}=S.editDocId?await db.from('doctors').update(p).eq('id',S.editDocId):await db.from('doctors').insert(p);
+  if(error){err.style.display='flex';err.querySelector('span').textContent='خطأ: '+error.message;return;}
+  closeModal('mDoc');loadAdmin('doctors');
+}
+async function togActive(id,cur){await db.from('doctors').update({active:!cur}).eq('id',id);loadAdmin('doctors');}
+
+async function openSchModal(id,nm){
+  S.schDocId=id;document.getElementById('mSchTitle').textContent='جدول عمل: '+nm;
+  const {data:schs}=await db.from('doctor_schedules').select('*').eq('doctor_id',id);
+  const m={};(schs||[]).forEach(s=>{m[s.day_of_week]=s;});
+  document.getElementById('schForm').innerHTML=DAYS.map((day,i)=>`
+    <div class="sch-day">
+      <div class="sch-hdr"><span class="sch-dn">${day}</span>
+        <label class="tgl"><input type="checkbox" id="sa-${i}" ${m[i]?.is_available?'checked':''}><span class="tgl-sl"></span></label>
+      </div>
+      <div class="sch-row">
+        <span class="sch-lbl">من</span><input type="time" id="ss-${i}" value="${m[i]?.start_time||'09:00'}"/>
+        <span class="sch-lbl">إلى</span><input type="time" id="se-${i}" value="${m[i]?.end_time||'17:00'}"/>
+        <span class="sch-lbl">مدة الموعد</span><input type="number" id="sd-${i}" value="${m[i]?.slot_duration_minutes||30}" min="5" max="120"/>
+        <span class="sch-lbl">دقيقة</span>
+      </div></div>`).join('');
+  openModal('mSch');
+}
+async function saveSch(){
+  await db.from('doctor_schedules').delete().eq('doctor_id',S.schDocId);
+  const rows=[];
+  for(let i=0;i<7;i++){
+    if(document.getElementById('sa-'+i)?.checked){
+      rows.push({doctor_id:S.schDocId,day_of_week:i,
+        start_time:document.getElementById('ss-'+i).value,
+        end_time:document.getElementById('se-'+i).value,
+        slot_duration_minutes:parseInt(document.getElementById('sd-'+i).value)||30,is_available:true});
+    }
+  }
+  if(rows.length)await db.from('doctor_schedules').insert(rows);
+  closeModal('mSch');alert('تم حفظ جدول المواعيد بنجاح');
 }
 
-function showDet(uid){
-  var d=null;for(var i=0;i<docs.length;i++){if(docs[i].u===uid){d=docs[i];break;}}if(!d)return;
-  var bks=getBK(uid);document.getElementById('cdtl').textContent='حجوزات '+d.n;
-  var sm={confirmed:'<span class="bdg bc">مؤكد</span>',pending:'<span class="bdg bp2">بانتظار</span>',cancelled:'<span class="bdg bx">ملغي</span>'};
-  var h=bks.length?bks.map(function(b){return'<tr><td style="font-weight:700;color:var(--td)">'+b.id+'</td><td>'+b.name+'</td><td style="direction:ltr;text-align:right">'+b.phone+'</td><td>'+b.svc+'</td><td>'+b.date+'</td><td>'+b.time+'</td><td>'+(sm[b.status]||b.status)+'</td></tr>';}).join(''):'<tr><td colspan="7" style="text-align:center;padding:18px;color:var(--m)">لا توجد حجوزات</td></tr>';
-  document.getElementById('cdtb').innerHTML=h;
-  document.getElementById('cdet').classList.add('on');
-  document.getElementById('cdet').scrollIntoView({behavior:'smooth',block:'nearest'});
+async function openVacModal(){
+  const {data:docs}=await db.from('doctors').select('id,name').eq('active',true);
+  document.getElementById('vDoc').innerHTML=(docs||[]).map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+  const t=new Date().toISOString().split('T')[0];
+  document.getElementById('vFrom').value=t;document.getElementById('vTo').value=t;document.getElementById('vReason').value='';
+  openModal('mVac');
+}
+async function saveVac(){
+  const id=parseInt(document.getElementById('vDoc').value),f=document.getElementById('vFrom').value,to=document.getElementById('vTo').value;
+  if(!f||!to){alert('يُرجى تحديد تواريخ الإجازة');return;}
+  await db.from('doctor_vacations').insert({doctor_id:id,start_date:f,end_date:to,reason:document.getElementById('vReason').value});
+  closeModal('mVac');alert('تم تسجيل الإجازة بنجاح');
 }
 
-function closeDet(){document.getElementById('cdet').classList.remove('on');}
-function toggleAF(){document.getElementById('afw').classList.toggle('on');}
+function showBk(b){
+  const stA={'pending':'معلق','confirmed':'مؤكد','cancelled':'ملغي','completed':'مكتمل'};
+  const stB={'pending':'badge-warn','confirmed':'badge-ok','cancelled':'badge-err','completed':'badge-info'};
+  const pyA={'unpaid':'غير مدفوع','invoiced':'بفاتورة','paid':'مدفوع'};
+  document.getElementById('bkDetail').innerHTML=`
+    <div class="cf-row"><span class="cf-k">رقم الحجز</span><span class="cf-v" style="font-family:monospace">${b.booking_ref}</span></div>
+    <div class="cf-row"><span class="cf-k">المريض</span><span class="cf-v">${b.patient_name}</span></div>
+    <div class="cf-row"><span class="cf-k">رقم الجوال</span><span class="cf-v">${b.patient_phone}</span></div>
+    <div class="cf-row"><span class="cf-k">التاريخ</span><span class="cf-v">${b.booking_date}</span></div>
+    <div class="cf-row"><span class="cf-k">الوقت</span><span class="cf-v" style="font-family:monospace">${b.booking_time?.substring(0,5)||'-'}</span></div>
+    <div class="cf-row"><span class="cf-k">حالة الحجز</span><span class="cf-v"><span class="badge ${stB[b.status]}">${stA[b.status]||b.status}</span></span></div>
+    <div class="cf-row"><span class="cf-k">حالة الدفع</span><span class="cf-v">${pyA[b.payment_status]||b.payment_status}</span></div>
+    ${b.notes?`<div class="cf-row"><span class="cf-k">ملاحظات</span><span class="cf-v" style="font-size:.76rem">${b.notes}</span></div>`:''}
+    <div style="margin-top:13px;display:flex;gap:7px;flex-wrap:wrap">
+      ${b.status==='pending'?`<button class="btn btn-sm btn-p" onclick="updBk(${b.id},'confirmed');closeModal('mBk')"><i class="fa-solid fa-check"></i> تأكيد</button>`:''}
+      ${b.status==='confirmed'?`<button class="btn btn-sm btn-s" onclick="updBk(${b.id},'completed');closeModal('mBk')"><i class="fa-solid fa-circle-check"></i> مكتمل</button>`:''}
+      ${b.status!=='cancelled'?`<button class="btn btn-sm btn-d" onclick="updBk(${b.id},'cancelled');closeModal('mBk')"><i class="fa-solid fa-xmark"></i> إلغاء</button>`:''}
+    </div>`;
+  openModal('mBk');
+}
+async function updBk(id,st){await db.from('bookings').update({status:st}).eq('id',id);loadAdmin(curA);}
 
-function addDoc(){
-  var n=document.getElementById('nun').value.trim(),sp=document.getElementById('nus').value.trim();
-  var d=document.getElementById('nud').value.trim(),l=document.getElementById('nul').value.trim();
-  var u=document.getElementById('nuu').value.trim(),p=document.getElementById('nup').value;
-  var sl=document.getElementById('nusl').value.trim()||u.replace('.','-');
-  if(!n||!u||!p){notify('الاسم واسم المستخدم وكلمة المرور مطلوبة');return;}
-  for(var i=0;i<docs.length;i++){if(docs[i].u===u){notify('اسم المستخدم موجود');return;}}
-  docs.push({u:u,p:p,n:n,sp:sp||'طبيب',d:d,l:l||'مستشفى المدينة الطبي',sl:sl,ph:''});
-  saveDocs();['nun','nus','nud','nul','nuu','nup','nusl'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('afw').classList.remove('on');renderAdmin();renderDoctorList();notify('تم إضافة '+n);
+// ── لوحة الطبيب ──
+let curDr='schedule';
+function drTab(t,el){curDr=t;document.querySelectorAll('#s-doctor .a-tab').forEach(b=>b.classList.remove('on'));if(el)el.classList.add('on');loadDrContent(t);}
+async function loadDrPanel(doc){
+  document.getElementById('drName').textContent=doc.name;
+  const dL={dermatology:'الجلدية والتجميل',cosmetic:'الجلدية والتجميل',laser:'الليزر',skin:'تنظيف البشرة',gynecology:'النساء والولادة',family:'طب الأسرة',internal:'الباطنية',pediatrics:'طب الأطفال'};
+  document.getElementById('drSpec').textContent=doc.specialty||dL[doc.department]||'';
+  await loadDrContent('schedule',doc.id);
+}
+async function loadDrContent(t,id){
+  id=id||S.user?.id;const c=document.getElementById('drContent');
+  c.innerHTML='<div class="loader"><i class="fa-solid fa-spinner fa-spin"></i>جارٍ التحميل...</div>';
+  if(t==='schedule'){
+    if(!S.user?.can_manage_schedule){c.innerHTML='<div class="alert al-warn"><i class="fa-solid fa-triangle-exclamation"></i><span>ليس لديك صلاحية إدارة جدول المواعيد. يُرجى التواصل مع المسؤول.</span></div>';return;}
+    const {data:schs}=await db.from('doctor_schedules').select('*').eq('doctor_id',id);
+    const m={};(schs||[]).forEach(s=>{m[s.day_of_week]=s;});
+    c.innerHTML=DAYS.map((day,i)=>{
+      const s=m[i];const avail=s?.is_available;
+      return `<div class="card" style="display:flex;align-items:center;gap:9px;padding:11px 13px;${avail?'':'opacity:.5'}">
+        <i class="fa-solid ${avail?'fa-calendar-check':'fa-calendar-xmark'}" style="color:${avail?'var(--ok)':'var(--sub)'}"></i>
+        <div style="flex:1"><div style="font-weight:600;font-size:.84rem">${day}</div>
+        ${avail?`<div style="font-size:.72rem;color:var(--sub)">من ${s.start_time?.substring(0,5)} إلى ${s.end_time?.substring(0,5)} · كل ${s.slot_duration_minutes} دقيقة</div>`:'<div style="font-size:.72rem;color:var(--sub)">غير متاح</div>'}
+        </div></div>`;
+    }).join('')+`<button class="btn btn-p" style="margin-top:7px" onclick="openSchModal(${id},'${S.user?.name||''}')"><i class="fa-solid fa-pen"></i> تعديل الجدول</button>`;
+  } else {
+    const {data:bks}=await db.from('bookings').select('*').eq('doctor_id',id).order('booking_date',{ascending:false}).limit(50);
+    if(!bks?.length){c.innerHTML='<div class="empty"><i class="fa-solid fa-clipboard-list"></i><p>لا توجد حجوزات مسجلة</p></div>';return;}
+    const stA={'pending':'معلق','confirmed':'مؤكد','cancelled':'ملغي','completed':'مكتمل'};
+    const stB={'pending':'badge-warn','confirmed':'badge-ok','cancelled':'badge-err','completed':'badge-info'};
+    c.innerHTML=bks.map(b=>`<div class="card" style="padding:11px 13px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div style="font-weight:600;font-size:.86rem">${b.patient_name}</div>
+          <div style="font-size:.72rem;color:var(--sub);margin-top:3px">${b.patient_phone}</div>
+          <div style="font-size:.72rem;color:var(--t);margin-top:4px">${b.booking_date} — ${b.booking_time?.substring(0,5)}</div>
+        </div><span class="badge ${stB[b.status]}">${stA[b.status]}</span>
+      </div></div>`).join('');
+  }
 }
 
-function delDoc(i){var n=docs[i].n;docs.splice(i,1);saveDocs();closeDet();renderAdmin();renderDoctorList();notify('تم حذف '+n);}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
-/* ---- MISC ---- */
-function uploadPhoto(inp){
-  var f=inp.files[0];if(!f)return;
-  var r=new FileReader();
-  r.onload=function(e){
-    var data=e.target.result;
-    document.getElementById('phprev').innerHTML='<img src="'+data+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';
-    if(curDoc){curDoc.ph=data;saveDocs();renderDoctorList();notify('تم حفظ الصورة ✓');}
-  };r.readAsDataURL(f);
-}
-
-function saveSettings(){
-  if(!curDoc)return;
-  curDoc.d=document.getElementById('myd').value.trim();
-  curDoc.l=document.getElementById('mylc').value.trim();
-  saveDocs();notify('تم حفظ الإعدادات ✓');
-}
-
-function copyLink(){
-  var u='mmh-booking.com/'+(curDoc?curDoc.sl||curDoc.u:'');
-  if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){notify('تم نسخ الرابط ✓');}).catch(function(){notify(u);});}else{notify(u);}
-}
-
-function notify(msg){var n=document.getElementById('notif');n.textContent=msg;n.classList.add('on');setTimeout(function(){n.classList.remove('on');},2600);}
-
-renderDoctorList();
+// السكريبت في نهاية body — DOM جاهز فعلاً، نستدعي مباشرة
+renderGroups({});
+if(db)loadHome();
 </script>
 </body>
 </html>
