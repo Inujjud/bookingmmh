@@ -1,0 +1,2396 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>حجز مواعيد — مستشفى المدينة الطبي</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--t:#1A8A8A;--td:#146868;--tl:#E8F5F5;--tb:#A8D5D5;--bg:#F5FAFA;--s:#fff;--txt:#1A1A1A;--m:#6B7280;--br:rgba(26,138,138,.18);--r:12px;--r2:8px;--ok:#059669;--err:#B91C1C;--warn:#D97706}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;direction:rtl}
+
+/* NAV */
+nav{background:var(--s);border-bottom:.5px solid var(--br);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:sticky;top:0;z-index:200}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand img{height:36px;width:auto}
+.brand-nm{font-size:13px;font-weight:600;color:var(--td)}
+.brand-sub{font-size:10px;color:var(--m);line-height:1}
+.rbadge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r2);font-size:11px;font-weight:600;border:.5px solid var(--br)}
+.rbadge.doc{background:#FFF8E8;color:#8B6914;border-color:#E8D5A0}
+.rbadge.sup{background:var(--tl);color:var(--td);border-color:var(--tb)}
+.lbtn{padding:7px 14px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;color:var(--m);cursor:pointer;font-family:inherit;transition:all .2s}
+.lbtn:hover{background:var(--tl);color:var(--td)}
+.obtn{padding:6px 12px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:12px;color:var(--m);cursor:pointer;font-family:inherit;transition:all .2s}
+.obtn:hover{color:var(--err);background:#FEF2F2}
+.nav-right{display:flex;align-items:center;gap:8px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.active{display:flex}
+.modal-box{background:var(--s);border-radius:24px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.modal-top{background:linear-gradient(135deg,var(--td),var(--t));padding:32px 28px 24px;text-align:center;position:relative}
+.modal-close{position:absolute;top:14px;left:16px;background:rgba(255,255,255,.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(255,255,255,.35)}
+.modal-logo-wrap{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.modal-logo-wrap img{height:44px;width:auto;object-fit:contain;filter:brightness(10)}
+.modal-top h2{font-size:17px;font-weight:700;color:#fff;margin-bottom:3px}
+.modal-top p{font-size:12px;color:rgba(255,255,255,.75)}
+.modal-body{padding:22px 24px 24px}
+.mfg{margin-bottom:13px}
+.mfl{font-size:12px;color:var(--m);margin-bottom:5px;display:block;font-weight:600}
+.mfg input,.mfg select,.mfg textarea{width:100%;padding:11px 13px;border:1.5px solid #E5E7EB;border-radius:10px;font-size:14px;background:#FAFAFA;color:var(--txt);outline:none;font-family:inherit;transition:all .15s}
+.mfg input:focus,.mfg select:focus,.mfg textarea:focus{border-color:var(--t);background:var(--s);box-shadow:0 0 0 3px rgba(26,138,138,.1)}
+.modal-btn{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--t),var(--td));border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-top:4px}
+.modal-btn:hover{opacity:.9;transform:translateY(-1px)}
+.modal-btn.danger{background:linear-gradient(135deg,var(--err),#9B1212)}
+.modal-btn.sec{background:#F0F0F0;color:var(--txt);margin-top:8px}
+.modal-btn.sec:hover{background:#E0E0E0;transform:none}
+
+/* MAIN */
+main{padding:20px 16px 40px;max-width:920px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--td) 0%,var(--t) 100%);border-radius:18px;padding:40px 20px 32px;margin-bottom:18px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none}
+.hero img{height:70px;width:auto;margin:0 auto 14px;display:block;filter:brightness(10);position:relative;z-index:1}
+.hero h1{font-size:22px;font-weight:700;color:#fff;margin-bottom:5px;position:relative;z-index:1}
+.hero p{font-size:13px;color:rgba(255,255,255,.82);line-height:1.7;margin-bottom:18px;position:relative;z-index:1}
+.lpill{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:22px;padding:8px 20px;cursor:pointer;transition:all .2s;position:relative;z-index:1}
+.lpill:hover{background:rgba(255,255,255,.3)}
+
+/* SEARCH */
+.search-bar{display:flex;align-items:center;gap:10px;background:var(--s);border:.5px solid var(--br);border-radius:12px;padding:10px 14px;margin-bottom:18px}
+.search-bar i{color:var(--m);font-size:15px;flex-shrink:0}
+.search-bar input{border:none;background:none;outline:none;font-size:14px;flex:1;font-family:inherit;color:var(--txt)}
+.search-bar input::placeholder{color:var(--m)}
+
+/* HOME SECTIONS */
+.sec-title{font-size:13px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.sec-title::after{content:'';flex:1;height:.5px;background:var(--br)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.gcard{background:var(--s);border:1px solid #E8E8E8;border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;font-family:inherit;font-size:13px;font-weight:600;color:var(--txt);display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.gcard:hover{border-color:var(--t);background:var(--tl);color:var(--td);transform:translateY(-2px);box-shadow:0 4px 12px rgba(26,138,138,.1)}
+.gcard i{font-size:22px;color:var(--t)}
+.gcard.svc{border-color:var(--tb)}
+.gcard.svc i{color:var(--td)}
+.gcard.svc:hover{border-color:var(--td);background:#E0F0F0}
+
+/* STEP HEADER */
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.sh h2{font-size:18px;font-weight:700}
+.bk{background:none;border:none;cursor:pointer;color:var(--m);font-size:18px;padding:4px 6px;border-radius:8px;transition:all .2s;line-height:1}
+.bk:hover{background:var(--tl);color:var(--td)}
+
+/* CARD */
+.card{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.clbl{font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.fg{margin-bottom:12px}
+.fl{font-size:13px;color:var(--m);margin-bottom:5px;display:block;font-weight:600}
+input,select,textarea{width:100%;padding:10px 13px;border:.5px solid rgba(0,0,0,.18);border-radius:var(--r2);font-size:14px;background:var(--s);color:var(--txt);outline:none;font-family:inherit;transition:all .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--t);box-shadow:0 0 0 3px rgba(26,138,138,.1)}
+input.err-inp{border-color:var(--err)!important;box-shadow:0 0 0 3px rgba(185,28,28,.1)!important}
+.err-msg{font-size:12px;color:var(--err);margin-top:4px;display:none}
+.err-msg.show{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.g2{grid-template-columns:1fr}}
+.bp{padding:13px 22px;border-radius:var(--r2);background:linear-gradient(135deg,var(--t),var(--td));border:none;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;box-shadow:0 4px 14px rgba(26,138,138,.25);transition:all .2s}
+.bp:hover{opacity:.9;transform:translateY(-1px)}
+.bs{padding:11px 18px;border-radius:var(--r2);background:#F0F0F0;border:none;font-size:14px;color:var(--txt);cursor:pointer;font-family:inherit;width:100%;margin-top:10px;transition:all .2s}
+.bs:hover{background:#E0E0E0}
+
+/* DOC LIST */
+.doc-list{display:flex;flex-direction:column;gap:10px}
+.dlc{background:var(--s);border:1px solid #E8E8E8;border-radius:14px;padding:14px;cursor:pointer;transition:all .2s;display:flex;align-items:flex-start;gap:13px;text-align:right;width:100%;font-family:inherit}
+.dlc:hover{border-color:var(--t);box-shadow:0 4px 16px rgba(26,138,138,.12);transform:translateY(-1px)}
+.dlc-av{width:56px;height:56px;border-radius:50%;background:var(--tl);border:2px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--td);overflow:hidden;flex-shrink:0}
+.dlc-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.dlc-av.sq{border-radius:12px;font-size:16px}
+.dlc-info{flex:1;min-width:0}
+.dlc-name{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.dlc-spec{font-size:12px;color:var(--m);margin-bottom:5px}
+.dlc-meta{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--td);font-weight:600}
+.dlc-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;flex-shrink:0}
+.dlc-sub{font-size:11px;color:var(--m);display:flex;align-items:center;gap:4px;margin-top:6px}
+
+/* BOOKING HEADER */
+.bk-hdr{background:var(--s);border-radius:14px;padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:13px;border:1px solid #E8E8E8}
+.bk-hdr-av{width:50px;height:50px;border-radius:50%;background:var(--tl);border:2px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--td);flex-shrink:0}
+.bk-hdr-name{font-size:15px;font-weight:700;margin-bottom:2px}
+.bk-hdr-spec{font-size:12px;color:var(--m)}
+
+/* DATE / TIME */
+.date-sec{background:var(--s);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #E8E8E8}
+.date-sec-t{font-size:13px;font-weight:700;margin-bottom:12px}
+.date-strip{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px}
+.date-strip::-webkit-scrollbar{display:none}
+.dc{flex-shrink:0;width:60px;padding:11px 6px;border-radius:11px;border:1.5px solid #E8E8E8;background:var(--s);text-align:center;cursor:pointer;transition:all .2s}
+.dc:hover:not(.vac){border-color:var(--t);background:var(--tl)}
+.dc.on{background:var(--td);border-color:var(--td);color:#fff}
+.dc.on .dc-n,.dc.on .dc-d{color:#fff}
+.dc.vac{background:#FEF2F2;border-color:#FECACA;cursor:not-allowed;opacity:.6}
+.dc-d{font-size:10px;color:var(--m);margin-bottom:3px;font-weight:500}
+.dc-n{font-size:18px;font-weight:700;color:var(--txt);line-height:1}
+.dc.vac .dc-d{color:var(--err)}
+.time-sec{background:var(--s);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid #E8E8E8;display:none}
+.time-sec.on{display:block}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tc{padding:11px 6px;border-radius:11px;border:1.5px solid #E8E8E8;background:var(--s);text-align:center;cursor:pointer;transition:all .2s;font-size:13px;font-weight:600;color:var(--txt);font-family:inherit}
+.tc:hover:not([disabled]){border-color:var(--t);background:var(--tl);color:var(--td)}
+.tc.on{background:var(--td);border-color:var(--td);color:#fff}
+.tc[disabled]{background:#F5F5F5;color:#CCC;cursor:not-allowed;text-decoration:line-through}
+.cont-btn{width:100%;padding:14px;border-radius:13px;background:linear-gradient(135deg,var(--t),var(--td));border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(26,138,138,.25);display:none;transition:all .2s;margin-top:4px}
+.cont-btn.on{display:block}
+.cont-btn:hover{transform:translateY(-1px)}
+
+/* STATS */
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:640px){.srow{grid-template-columns:1fr 1fr}}
+.stat{background:var(--s);border:.5px solid var(--br);border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--t);border-radius:0 12px 12px 0}
+.stat.gc::before{background:var(--ok)}.stat.gc .sv{color:var(--ok)}
+.stat.rc::before{background:var(--err)}.stat.rc .sv{color:var(--err)}
+.stat.oc::before{background:var(--warn)}.stat.oc .sv{color:var(--warn)}
+.sl{font-size:10px;color:var(--m);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.sv{font-size:26px;font-weight:700;color:var(--td)}
+.ss{font-size:11px;color:var(--m);margin-top:2px}
+
+/* BADGES */
+.bdg{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.bc{background:#ECFDF5;color:#065F46}.bp2{background:#FFFBEB;color:#92400E}.bx{background:#FEF2F2;color:#B91C1C}
+
+/* ADMIN TABS */
+.atabs{display:flex;gap:2px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1.5px solid var(--br)}
+.atab{padding:10px 16px;border-radius:var(--r2) var(--r2) 0 0;border:none;background:none;font-size:13px;cursor:pointer;font-family:inherit;color:var(--m);border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:all .2s}
+.atab.on{color:var(--td);border-bottom-color:var(--t);font-weight:700;background:var(--tl)}
+
+/* DOCTOR TABS */
+.dtabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px}
+.dtab{padding:7px 13px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;cursor:pointer;color:var(--m);font-family:inherit;transition:all .2s}
+.dtab.on{background:var(--tl);border-color:var(--tb);color:var(--td);font-weight:700}
+
+/* DR DASHBOARD */
+.scard{background:linear-gradient(135deg,var(--tl),#D4F0F0);border:1px solid var(--tb);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:13px;margin-bottom:16px}
+.surl{font-family:monospace;font-size:12px;color:var(--td);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.cbtn{padding:8px 14px;border-radius:9px;border:.5px solid var(--tb);background:var(--s);font-size:12px;cursor:pointer;color:var(--td);font-family:inherit;font-weight:700;transition:all .2s;flex-shrink:0}
+.cbtn:hover{background:var(--t);color:#fff}
+
+/* UPCOMING BOOKINGS CARD */
+.next-bk-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:.5px solid var(--br)}
+.next-bk-item:last-child{border-bottom:none}
+.next-bk-dot{width:8px;height:8px;border-radius:50%;background:var(--t);flex-shrink:0;margin-left:10px}
+.next-bk-dot.pending{background:var(--warn)}
+.next-bk-dot.approved{background:var(--ok)}
+
+/* CALENDAR */
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-m{font-size:14px;font-weight:700;color:var(--txt)}
+.cal-nav{background:none;border:.5px solid var(--br);border-radius:8px;width:28px;height:28px;cursor:pointer;color:var(--m);font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cal-nav:hover{background:var(--tl);color:var(--td)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.cal-dn{font-size:9px;color:var(--m);font-weight:700;padding:4px 0}
+.cal-d{font-size:11px;padding:5px 2px;border-radius:6px;position:relative;line-height:1.4;min-height:22px}
+.cal-d.today{background:var(--t);color:#fff;font-weight:700}
+.cal-d.has{font-weight:700;color:var(--td)}
+.cal-dot{width:4px;height:4px;border-radius:50%;background:var(--t);margin:1px auto 0;display:block}
+.cal-d.today .cal-dot{background:rgba(255,255,255,.7)}
+
+/* HOURS */
+.hrs-wrap{display:flex;flex-direction:column;gap:8px}
+.hr-row{display:flex;align-items:center;gap:11px;background:var(--s);border:.5px solid var(--br);border-radius:10px;padding:11px 13px}
+.hr-day{width:52px;font-size:12px;font-weight:700;color:var(--txt);flex-shrink:0}
+.tog{width:42px;height:23px;border-radius:12px;background:#E0E0E0;cursor:pointer;position:relative;transition:all .25s;flex-shrink:0}
+.tog.on{background:var(--t)}
+.tog-dot{width:19px;height:19px;border-radius:50%;background:#fff;position:absolute;top:2px;right:2px;transition:all .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog.on .tog-dot{right:auto;left:2px}
+.hr-times{display:flex;gap:6px;align-items:center;flex:1;flex-wrap:wrap}
+.hr-times input{width:95px;padding:6px 9px;font-size:12px;border:.5px solid var(--br);border-radius:7px}
+
+/* TODO */
+.todo-row{display:flex;gap:8px;margin-bottom:12px}
+.todo-row input{flex:1;border-radius:9px}
+.todo-add{padding:10px 14px;border-radius:9px;background:var(--t);border:none;color:#fff;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;flex-shrink:0;transition:all .2s}
+.todo-add:hover{background:var(--td)}
+.todo-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--s);border:.5px solid var(--br);border-radius:9px;margin-bottom:7px;transition:all .15s}
+.todo-cb{width:19px;height:19px;border-radius:5px;border:2px solid var(--tb);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:transparent;transition:all .15s}
+.todo-cb.chk{background:var(--t);border-color:var(--t);color:#fff}
+.todo-txt{flex:1;font-size:13px}
+.todo-del{background:none;border:none;color:#CCC;cursor:pointer;font-size:13px;padding:0 2px;transition:all .2s}
+.todo-del:hover{color:var(--err)}
+
+/* PHOTO AVATAR */
+.pav{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--tl),var(--tb));border:3px solid var(--t);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--td);overflow:hidden;flex-shrink:0}
+.pav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+
+/* TABLE */
+.tw{overflow-x:auto;border:.5px solid var(--br);border-radius:var(--r2)}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th{font-size:11px;font-weight:700;color:var(--m);text-align:right;padding:9px 11px;border-bottom:.5px solid var(--br);background:#F0FAFA;white-space:nowrap}
+td{padding:9px 11px;font-size:13px;border-bottom:.5px solid rgba(26,138,138,.07);vertical-align:middle;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#F8FDFD}
+
+/* ADMIN DOC CARDS */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:16px}
+.ccard{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:14px;transition:all .2s}
+.ccard:hover{border-color:var(--tb);box-shadow:0 2px 8px rgba(26,138,138,.08)}
+.cch{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.ccav{width:38px;height:38px;border-radius:50%;background:var(--tl);border:.5px solid var(--tb);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--td);flex-shrink:0}
+.ccn{font-size:13px;font-weight:700}.ccs{font-size:11px;color:var(--m);margin-top:1px}
+.cca{display:flex;gap:5px;margin-top:9px}
+.ib{background:none;border:.5px solid rgba(0,0,0,.12);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--m);font-family:inherit;transition:all .2s}
+.ib:hover{background:#F0F9F9;color:var(--td);border-color:var(--tb)}
+.ib.del:hover{background:#FEF2F2;color:var(--err);border-color:#FECACA}
+
+/* DEPT ACCORDION */
+.dept-blk{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.dept-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;cursor:pointer;transition:all .2s}
+.dept-hdr:hover{background:#F8FDFD}
+.dept-body{display:none;padding:12px 14px 14px;border-top:.5px solid var(--br)}
+.dept-body.open{display:block}
+.svc-row{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--tl);border-radius:8px;margin-bottom:7px}
+
+/* SUCCESS */
+.sicn{width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border:2px solid #6EE7B7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:36px}
+.rpill{display:inline-block;background:var(--tl);border:1.5px solid var(--tb);border-radius:11px;padding:11px 28px;font-size:22px;font-weight:700;color:var(--td);margin:12px 0;letter-spacing:2px}
+
+/* INVOICE CHECK PAGE */
+.inv-opt{background:var(--s);border:2px solid #E8E8E8;border-radius:16px;padding:20px;cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;font-family:inherit;width:100%}
+.inv-opt:hover{border-color:var(--t);background:var(--tl);transform:translateY(-2px);box-shadow:0 4px 14px rgba(26,138,138,.1)}
+.inv-opt i{font-size:28px;color:var(--t)}
+.inv-opt h3{font-size:15px;font-weight:700;color:var(--txt)}
+.inv-opt p{font-size:12px;color:var(--m);line-height:1.6}
+.inv-opt.salla-opt i{color:var(--warn)}
+.inv-opt.salla-opt:hover{border-color:var(--warn);background:#FFFBEB}
+
+/* SALLA PAGE */
+.salla-box{background:linear-gradient(135deg,#FFFBEB,#FEF9E7);border:1.5px solid #FCD34D;border-radius:18px;padding:28px;text-align:center;margin-bottom:16px}
+
+/* INFO BOX */
+.info-box{background:#FFFBEB;border:.5px solid #FCD34D;border-radius:11px;padding:13px 15px;font-size:13px;color:#92400E;margin-bottom:14px;line-height:1.7}
+
+/* MISC */
+.loader{text-align:center;padding:28px;color:var(--m);font-size:.82rem}
+.loader i{font-size:1.4rem;color:var(--tb);margin-bottom:9px;display:block}
+.empty{text-align:center;padding:32px 16px;color:var(--m)}
+.empty i{font-size:2rem;color:#E8E8E8;margin-bottom:10px;display:block}
+.empty p{font-size:.8rem;line-height:1.6}
+.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:#1A1A1A;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:all .25s;z-index:9999;pointer-events:none;max-width:90vw;text-align:center}
+.notif.on{transform:translateX(-50%) translateY(0);opacity:1}
+@media(max-width:600px){.grid2{grid-template-columns:1fr 1fr}.srow{grid-template-columns:1fr 1fr}.tgrid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="notif" id="notif"></div>
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="brand" id="brandLogo">
+    <img src="https://inujjud.github.io/bookingmmh/logo.png" alt="MMH" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div style="display:none;align-items:center;justify-content:center;width:36px;height:36px;background:var(--t);color:#fff;border-radius:8px;font-weight:700;font-size:15px">M</div>
+    <div>
+      <div class="brand-nm">مستشفى المدينة الطبي</div>
+      <div class="brand-sub">MMH — نظام الحجز</div>
+    </div>
+  </div>
+  <div id="navRight" style="display:flex;align-items:center;gap:8px">
+    <span id="navUser" style="display:none" class="rbadge">
+      <i class="fa fa-user-circle"></i><span id="navUserName"></span>
+    </span>
+    <button id="navLoginBtn" class="btn" onclick="openLogin()" style="font-size:12px;padding:6px 14px">
+      <i class="fa fa-sign-in-alt"></i> تسجيل الدخول
+    </button>
+    <button id="navLogoutBtn" class="btn btn-out" style="display:none;font-size:12px;padding:6px 14px" onclick="logout()">
+      <i class="fa fa-sign-out-alt"></i> خروج
+    </button>
+    <button id="navPanelBtn" class="btn" style="display:none;font-size:12px;padding:6px 14px" onclick="goPanel()">
+      <i class="fa fa-th-large"></i> لوحة التحكم
+    </button>
+  </div>
+</nav>
+
+<!-- WRAPPER -->
+<div id="app" style="max-width:940px;margin:0 auto;padding:20px 16px">
+
+<!-- ===== HOME PAGE ===== -->
+<div id="pg-home" class="page">
+  <div style="text-align:center;padding:28px 0 18px">
+    <h1 style="font-size:22px;font-weight:700;color:var(--td)">احجز موعدك الآن</h1>
+    <p style="color:var(--m);font-size:13px;margin-top:4px">اختر التخصص أو الخدمة التي تريدها</p>
+  </div>
+
+  <!-- SECTION 1: SPECIALTIES -->
+  <div class="sec-title">التخصصات الطبية</div>
+  <div id="homeSpecGrid" class="grid2" style="margin-bottom:28px"></div>
+
+  <!-- SECTION 2: SERVICES -->
+  <div class="sec-title">الخدمات التجميلية والعلاجية</div>
+  <div id="homeSvcGrid" class="grid2"></div>
+</div>
+
+<!-- ===== INVOICE CHECK PAGE ===== -->
+<div id="pg-inv" class="page">
+  <div class="card" style="max-width:500px;margin:30px auto">
+    <div style="text-align:center;margin-bottom:20px">
+      <i class="fa fa-file-invoice" style="font-size:32px;color:var(--t)"></i>
+      <h2 style="margin-top:10px;font-size:18px">هل لديك فاتورة من سلة؟</h2>
+      <p style="color:var(--m);font-size:13px;margin-top:6px">يرجى الإجابة لمتابعة الحجز</p>
+    </div>
+    <div style="display:flex;gap:14px">
+      <div class="inv-opt" onclick="hasInvoice()">
+        <i class="fa fa-check-circle" style="font-size:28px;color:var(--ok)"></i>
+        <div style="font-weight:600;margin-top:8px">نعم، لديّ فاتورة</div>
+        <div style="font-size:12px;color:var(--m);margin-top:4px">أدخل رقم الفاتورة</div>
+      </div>
+      <div class="inv-opt salla-opt" onclick="noInvoice()">
+        <i class="fa fa-store" style="font-size:28px;color:#8B5CF6"></i>
+        <div style="font-weight:600;margin-top:8px">لا، أريد الشراء</div>
+        <div style="font-size:12px;color:var(--m);margin-top:4px">توجّه إلى متجر سلة</div>
+      </div>
+    </div>
+    <button class="btn btn-out" style="width:100%;margin-top:16px" onclick="backFromInv()">
+      <i class="fa fa-arrow-right"></i> رجوع
+    </button>
+  </div>
+</div>
+
+<!-- ===== SALLA REDIRECT PAGE ===== -->
+<div id="pg-salla" class="page">
+  <div class="card" style="max-width:460px;margin:30px auto;text-align:center;padding:32px 24px">
+    <div style="background:linear-gradient(135deg,var(--t),var(--td));width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 8px 20px rgba(0,150,136,.25)">
+      <i class="fa fa-shopping-bag" style="font-size:32px;color:#fff"></i>
+    </div>
+    <h2 style="font-size:19px;font-weight:700;color:var(--hd);margin-bottom:12px">أتمّ الدفع عبر سلة أولاً</h2>
+    <p style="color:var(--m);font-size:13px;line-height:1.9;margin-bottom:6px">
+      لإتمام حجزك مع <strong id="sallaTargetName" style="color:var(--t)">—</strong>
+    </p>
+    <p style="color:var(--m);font-size:13px;line-height:1.9;margin-bottom:26px">
+      يرجى إتمام الدفع أولاً عبر متجر سلة.<br>
+      بعد الدفع ستصلك <strong>فاتورة برقم مرجعي</strong>،<br>
+      ارجع وأدخل هذا الرقم لتأكيد موعدك.
+    </p>
+    <div id="sallaBtnWrap" style="margin-bottom:12px"></div>
+    <button class="btn" onclick="goBackToInvoiceEntry()"
+      style="width:100%;margin-top:4px;background:var(--tl);color:var(--td);border:1px solid var(--t);font-size:14px;padding:12px">
+      <i class="fa fa-receipt"></i> عندي رقم الفاتورة بالفعل
+    </button>
+    <button class="btn btn-out" onclick="backFromSalla()"
+      style="width:100%;margin-top:8px;font-size:13px">
+      <i class="fa fa-arrow-right"></i> رجوع
+    </button>
+  </div>
+</div>
+
+<!-- ===== INVOICE INPUT PAGE ===== -->
+<div id="pg-invno" class="page">
+  <div class="card" style="max-width:480px;margin:30px auto">
+    <h3 style="margin-bottom:16px"><i class="fa fa-receipt" style="color:var(--t)"></i> رقم الفاتورة</h3>
+    <p style="color:var(--m);font-size:13px;margin-bottom:14px">أدخل رقم فاتورة سلة الخاصة بك للمتابعة</p>
+    <input id="invNoInput" type="text" class="inp" placeholder="مثال: INV-123456" style="text-align:center;font-size:16px;letter-spacing:2px">
+    <div id="invNoErr" class="err-msg"></div>
+    <button class="btn" style="width:100%;margin-top:14px" onclick="confirmInvoiceNo()">
+      <i class="fa fa-arrow-left"></i> متابعة
+    </button>
+    <button class="btn btn-out" style="width:100%;margin-top:8px" onclick="showPage('pg-inv')">
+      رجوع
+    </button>
+  </div>
+</div>
+
+<!-- ===== SERVICES PAGE ===== -->
+<div id="pg-svc" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn btn-out" onclick="backFromSvc()" style="padding:6px 12px"><i class="fa fa-arrow-right"></i></button>
+    <h2 id="svcPageTitle" style="font-size:17px">اختر الخدمة</h2>
+  </div>
+  <div id="svcList" class="grid2"></div>
+</div>
+
+<!-- ===== DOCTORS PAGE ===== -->
+<div id="pg-doc" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn btn-out" onclick="backFromDoc()" style="padding:6px 12px"><i class="fa fa-arrow-right"></i></button>
+    <h2 id="docPageTitle" style="font-size:17px">اختر الطبيب</h2>
+  </div>
+  <div id="docList" class="grid2"></div>
+</div>
+
+<!-- ===== DATETIME PAGE ===== -->
+<div id="pg-dt" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn btn-out" onclick="backFromDt()" style="padding:6px 12px"><i class="fa fa-arrow-right"></i></button>
+    <h2 style="font-size:17px">اختر التاريخ والوقت</h2>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div id="dtDocInfo" style="display:flex;align-items:center;gap:12px;margin-bottom:16px"></div>
+    <!-- STEP 1: Date -->
+    <div id="dtStep1">
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px"><i class="fa fa-calendar-alt" style="color:var(--t)"></i> اختر اليوم</div>
+      <div id="datePicker" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
+    <!-- STEP 2: Service (shown after date selection) -->
+    <div id="dtStep2" style="display:none;margin-top:18px">
+      <div style="font-weight:600;margin-bottom:10px;font-size:14px"><i class="fa fa-list-ul" style="color:var(--t)"></i> اختر الخدمة</div>
+      <div id="dtSvcPicker" style="display:grid;gap:8px"></div>
+    </div>
+    <!-- STEP 3: Time slots (shown after service selection) -->
+    <div id="dtStep3" style="display:none;margin-top:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-weight:600;font-size:14px"><i class="fa fa-clock" style="color:var(--t)"></i> اختر الوقت</span>
+        <span id="dtSvcLabel" style="font-size:12px;color:var(--t);font-weight:600;background:var(--tl);padding:3px 10px;border-radius:20px"></span>
+      </div>
+      <div id="timePicker" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      <div id="noSlots" style="display:none;text-align:center;padding:20px;color:var(--m);font-size:13px">
+        <i class="fa fa-calendar-times" style="font-size:24px;display:block;margin-bottom:8px"></i>
+        لا توجد مواعيد متاحة لهذه الخدمة في هذا اليوم
+      </div>
+    </div>
+  </div>
+  <!-- Reminders -->
+  <div id="dtReminders" style="display:none;background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:14px;padding:16px;margin-bottom:14px">
+    <div style="font-weight:700;font-size:13px;color:#92400E;margin-bottom:10px"><i class="fa fa-exclamation-triangle" style="color:#F59E0B"></i> ⚠ تذكيرات مهمة قبل الموعد</div>
+    <div id="dtRemindersList" style="font-size:12px;color:#78350F;line-height:2"></div>
+  </div>
+  <button id="dtNextBtn" class="btn" style="width:100%;display:none" onclick="showPage('pg-pat')">
+    <i class="fa fa-arrow-left"></i> متابعة لبيانات المريض
+  </button>
+</div>
+
+<!-- ===== PATIENT INFO PAGE ===== -->
+<div id="pg-pat" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn btn-out" onclick="showPage('pg-dt')" style="padding:6px 12px"><i class="fa fa-arrow-right"></i></button>
+    <h2 style="font-size:17px">بيانات المريض</h2>
+  </div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div style="grid-column:span 2">
+        <label class="lbl">الاسم الكامل *</label>
+        <input id="patName" type="text" class="inp" placeholder="الاسم الثلاثي">
+        <div id="patNameErr" class="err-msg"></div>
+      </div>
+      <div>
+        <label class="lbl">رقم الجوال *</label>
+        <input id="patPhone" type="tel" class="inp" placeholder="05xxxxxxxx" dir="ltr" maxlength="10">
+        <div id="patPhoneErr" class="err-msg"></div>
+      </div>
+
+      <div style="grid-column:span 2">
+        <label class="lbl">ملاحظات (اختياري)</label>
+        <textarea id="patNotes" class="inp" rows="3" placeholder="أي معلومات إضافية للطبيب..."></textarea>
+      </div>
+    </div>
+    <button class="btn" style="width:100%;margin-top:16px" onclick="goConfirm()">
+      <i class="fa fa-arrow-left"></i> مراجعة الحجز
+    </button>
+  </div>
+</div>
+
+<!-- ===== CONFIRM PAGE ===== -->
+<div id="pg-cf" class="page">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <button class="btn btn-out" onclick="showPage('pg-pat')" style="padding:6px 12px"><i class="fa fa-arrow-right"></i></button>
+    <h2 style="font-size:17px">تأكيد الحجز</h2>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div id="cfSummary"></div>
+  </div>
+  <button id="cfSubmitBtn" class="btn" style="width:100%" onclick="submitBooking()">
+    <i class="fa fa-check-circle"></i> تأكيد وإرسال الحجز
+  </button>
+</div>
+
+<!-- ===== SUCCESS PAGE ===== -->
+<div id="pg-ok" class="page">
+  <div class="card" style="max-width:480px;margin:40px auto;text-align:center">
+    <div style="width:64px;height:64px;background:var(--tl);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+      <i class="fa fa-check" style="font-size:28px;color:var(--t)"></i>
+    </div>
+    <h2 style="font-size:20px;color:var(--td);margin-bottom:8px">تم إرسال طلب الحجز!</h2>
+    <p style="color:var(--m);font-size:13px;line-height:1.8;margin-bottom:20px" id="okMsg"></p>
+    <div style="background:var(--tl);border-radius:var(--r2);padding:16px;margin-bottom:20px;text-align:right" id="okDetails"></div>
+    <button class="btn" onclick="showPage('pg-home')"><i class="fa fa-home"></i> الرئيسية</button>
+  </div>
+</div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div id="pg-admin" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <h2 style="font-size:18px;color:var(--td)"><i class="fa fa-cogs"></i> لوحة الإدارة</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="tab-btn active" onclick="adminTab('overview',this)">نظرة عامة</button>
+      <button class="tab-btn" onclick="adminTab('doctors',this)">الأطباء</button>
+      <button class="tab-btn" onclick="adminTab('depts',this)">الأقسام</button>
+      <button class="tab-btn" onclick="adminTab('services',this)">الخدمات</button>
+      <button class="tab-btn" onclick="adminTab('settings',this)">الإعدادات</button>
+    </div>
+  </div>
+
+  <!-- OVERVIEW TAB -->
+  <div id="atab-overview" class="atab">
+    <div class="stats-row" id="adminStats"></div>
+    <div class="stats-row" style="margin-top:12px" id="adminTopStats"></div>
+  </div>
+
+  <!-- DOCTORS TAB -->
+  <div id="atab-doctors" class="atab" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:15px">الأطباء المسجلون</h3>
+      <button class="btn btn-sm" onclick="openAddDoc()"><i class="fa fa-plus"></i> إضافة طبيب</button>
+    </div>
+    <div id="adminDocList"></div>
+  </div>
+
+  <!-- DEPTS TAB -->
+  <div id="atab-depts" class="atab" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:15px">الأقسام والتخصصات</h3>
+      <button class="btn btn-sm" onclick="openAddDept()"><i class="fa fa-plus"></i> إضافة قسم</button>
+    </div>
+    <div id="adminDeptList"></div>
+  </div>
+
+  <!-- SERVICES TAB -->
+  <div id="atab-services" class="atab" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:15px">الخدمات</h3>
+      <button class="btn btn-sm" onclick="openAddSvc()"><i class="fa fa-plus"></i> إضافة خدمة</button>
+    </div>
+    <div id="adminSvcList"></div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="atab-settings" class="atab" style="display:none">
+    <div class="card" style="max-width:480px">
+      <p style="color:var(--m);font-size:14px;text-align:center;padding:24px 0">
+        <i class="fa fa-info-circle" style="color:var(--t);margin-left:6px"></i>
+        رابط سلة يُضاف لكل خدمة وكل طبيب بشكل مستقل من تبويب الخدمات أو الأطباء
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DOCTOR PANEL ===== -->
+<div id="pg-doctor" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2 style="font-size:18px;color:var(--td)"><i class="fa fa-user-md"></i> لوحة الطبيب</h2>
+      <p id="dcWelcome" style="font-size:12px;color:var(--m);margin-top:2px"></p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="tab-btn active" onclick="docTab('dashboard',this)">الرئيسية</button>
+      <button class="tab-btn" onclick="docTab('bookings',this)">الحجوزات</button>
+      <button class="tab-btn" onclick="docTab('schedule',this)">الجدول</button>
+      <button class="tab-btn" onclick="docTab('settings',this)">الإعدادات</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD TAB -->
+  <div id="dtab-dashboard" class="dtab">
+    <!-- TODAY STATS (prominent) -->
+    <div class="card" style="background:linear-gradient(135deg,var(--td),var(--t));color:#fff;margin-bottom:16px">
+      <div style="font-size:13px;opacity:.8;margin-bottom:12px"><i class="fa fa-calendar-day"></i> إحصائيات اليوم</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div style="text-align:center;flex:1">
+          <div id="dcTodayTotal" style="font-size:32px;font-weight:700">0</div>
+          <div style="font-size:11px;opacity:.8">إجمالي</div>
+        </div>
+        <div style="text-align:center;flex:1">
+          <div id="dcTodayApproved" style="font-size:32px;font-weight:700;color:#86EFAC">0</div>
+          <div style="font-size:11px;opacity:.8">مقبول</div>
+        </div>
+        <div style="text-align:center;flex:1">
+          <div id="dcTodayPending" style="font-size:32px;font-weight:700;color:#FDE68A">0</div>
+          <div style="font-size:11px;opacity:.8">معلق</div>
+        </div>
+      </div>
+    </div>
+    <div id="dcStats" style="margin-top:14px"></div>
+    <!-- UPCOMING APPOINTMENTS -->
+    <div class="card" style="margin-top:16px">
+      <h3 style="font-size:15px;margin-bottom:14px"><i class="fa fa-clock" style="color:var(--t)"></i> المواعيد القادمة (أقرب 5)</h3>
+      <div id="dcUpcoming"></div>
+    </div>
+  </div>
+
+  <!-- BOOKINGS TAB -->
+  <div id="dtab-bookings" class="dtab" style="display:none">
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <select id="dcBkStatus" class="inp" style="width:auto" onchange="loadDcBookings()">
+        <option value="">كل الحالات</option>
+        <option value="pending">معلق</option>
+        <option value="approved">مقبول</option>
+        <option value="rejected">مرفوض</option>
+      </select>
+      <input id="dcBkDate" type="date" class="inp" style="width:auto" onchange="loadDcBookings()">
+    </div>
+    <div id="dcBkList"></div>
+  </div>
+
+  <!-- SCHEDULE TAB -->
+  <div id="dtab-schedule" class="dtab" style="display:none">
+    <!-- SERVICE HOURS CARD -->
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="font-size:15px"><i class="fa fa-clock" style="color:var(--t)"></i> ساعات العمل</h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm" onclick="addSvcHourRow()"><i class="fa fa-plus"></i> إضافة خدمة</button>
+          <button class="btn btn-sm" onclick="saveSvcHours()"><i class="fa fa-save"></i> حفظ الأوقات</button>
+        </div>
+      </div>
+      <div id="svcHoursList"></div>
+      <div id="svcHoursEmpty" style="text-align:center;padding:20px;color:var(--m);font-size:13px;display:none">
+        <i class="fa fa-calendar-plus" style="font-size:22px;display:block;margin-bottom:8px;color:var(--tb)"></i>
+        لم تُضف خدمات بعد — اضغط "إضافة خدمة" للبدء
+      </div>
+    </div>
+    <!-- VACATIONS CARD -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h3 style="font-size:15px"><i class="fa fa-calendar-times" style="color:var(--err)"></i> إجازات / أيام توقف</h3>
+        <button class="btn btn-sm" onclick="addVacation()"><i class="fa fa-plus"></i> إضافة</button>
+      </div>
+      <div id="vacList"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="dtab-settings" class="dtab" style="display:none">
+    <div class="card" style="max-width:520px">
+      <h3 style="margin-bottom:16px;font-size:15px">إعدادات الملف الشخصي</h3>
+      <div style="display:grid;gap:12px">
+        <div>
+          <label class="lbl">الاسم الكامل</label>
+          <input id="dcSetName" type="text" class="inp">
+        </div>
+        <div>
+          <label class="lbl">التخصص</label>
+          <input id="dcSetSpec" type="text" class="inp">
+        </div>
+        <div>
+          <label class="lbl">موقع العيادة</label>
+          <input id="dcSetLoc" type="text" class="inp" placeholder="مثال: الدور الثاني — عيادة 205">
+        </div>
+        <div>
+          <label class="lbl">نبذة تعريفية</label>
+          <textarea id="dcSetBio" class="inp" rows="3"></textarea>
+        </div>
+        <div>
+          <label class="lbl">صورة الملف الشخصي</label>
+          <!-- Preview + Upload -->
+          <div style="display:flex;align-items:center;gap:16px;margin-top:6px">
+            <div id="avatarPreviewWrap" style="position:relative;flex-shrink:0">
+              <div id="avatarPreview" style="width:72px;height:72px;border-radius:50%;background:var(--tl);border:2.5px solid var(--tb);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px;color:var(--td);font-weight:700"></div>
+              <div id="avatarUploadSpinner" style="display:none;position:absolute;inset:0;background:rgba(0,150,136,.6);border-radius:50%;display:none;align-items:center;justify-content:center">
+                <i class="fa fa-spinner fa-spin" style="color:#fff;font-size:18px"></i>
+              </div>
+            </div>
+            <div style="flex:1">
+              <label for="dcAvatarFile" class="btn btn-out" style="cursor:pointer;display:inline-flex;margin-bottom:8px;font-size:12px">
+                <i class="fa fa-camera"></i> اختر صورة من الجهاز
+              </label>
+              <input id="dcAvatarFile" type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarUpload(this)">
+              <div style="font-size:11px;color:var(--m)">JPG · PNG · WebP · حتى 5MB</div>
+            </div>
+          </div>
+          <!-- Hidden URL field (populated after upload) -->
+          <input id="dcSetAvatar" type="hidden">
+        </div>
+      </div>
+      <button class="btn" style="margin-top:16px;width:100%" onclick="saveDcSettings()"><i class="fa fa-save"></i> حفظ الإعدادات</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- LOGIN MODAL -->
+<div id="mLogin" class="modal">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-hd">
+      <span><i class="fa fa-lock" style="color:var(--t);margin-left:6px"></i> دخول الطاقم الطبي</span>
+      <button class="close-btn" onclick="closeModal('mLogin')">✕</button>
+    </div>
+    <div style="padding:20px">
+      <label class="lbl">اسم المستخدم</label>
+      <input id="liUser" type="text" class="inp" placeholder="username" autocomplete="username">
+      <label class="lbl" style="margin-top:12px">كلمة المرور</label>
+      <input id="liPass" type="password" class="inp" placeholder="••••••" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')doLogin()">
+      <div id="liErr" style="color:var(--err);font-size:12px;margin-top:6px;min-height:18px"></div>
+      <button class="btn" style="width:100%;margin-top:14px" onclick="doLogin()">
+        <i class="fa fa-sign-in-alt"></i> دخول
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL (mConfirm) -->
+<div id="mConfirm" class="modal">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-hd"><span id="mConfirmTitle">تأكيد</span></div>
+    <p id="mConfirmMsg" style="color:var(--m);font-size:14px;line-height:1.7;margin:16px 0"></p>
+    <div style="display:flex;gap:10px">
+      <button id="mConfirmOk" class="btn" style="flex:1">تأكيد</button>
+      <button class="btn btn-out" style="flex:1" onclick="closeModal('mConfirm')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOCTOR MODAL (Add/Edit) -->
+<div id="mDoc" class="modal">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-hd"><span id="mDocTitle">إضافة طبيب</span><button class="close-btn" onclick="closeModal('mDoc')">✕</button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <label class="lbl">اسم المستخدم *</label>
+        <input id="mDocUser" type="text" class="inp">
+      </div>
+      <div>
+        <label class="lbl">كلمة المرور *</label>
+        <input id="mDocPass" type="password" class="inp">
+      </div>
+      <div style="grid-column:span 2">
+        <label class="lbl">الاسم الكامل *</label>
+        <input id="mDocName" type="text" class="inp">
+      </div>
+      <div>
+        <label class="lbl">القسم</label>
+        <select id="mDocDept" class="inp"><option value="">— اختر القسم —</option></select>
+      </div>
+      <div>
+        <label class="lbl">التخصص</label>
+        <input id="mDocSpec" type="text" class="inp" placeholder="مثال: الجلدية والتجميل">
+      </div>
+      <div style="grid-column:span 2">
+        <label class="lbl">الدور</label>
+        <select id="mDocRole" class="inp">
+          <option value="doctor">طبيب — يظهر في قائمة الحجز</option>
+          <option value="manager">مسؤول قسم — لا يظهر للعملاء</option>
+        </select>
+      </div>
+      <div style="grid-column:span 2">
+        <label class="lbl">موقع العيادة</label>
+        <input id="mDocLoc" type="text" class="inp" placeholder="مثال: الدور الثاني — عيادة 205">
+      </div>
+      <div style="grid-column:span 2">
+        <label class="lbl">رابط الصورة</label>
+        <input id="mDocAvatar" type="url" class="inp" dir="ltr" placeholder="https://...">
+      </div>
+      <div style="grid-column:span 2">
+        <label class="lbl">نبذة</label>
+        <textarea id="mDocBio" class="inp" rows="2"></textarea>
+      </div>
+      <div style="grid-column:span 2">
+        <label class="lbl"><i class="fa fa-link" style="color:var(--warn)"></i> رابط متجر سلة الخاص بالطبيب</label>
+        <input id="mDocSalla" type="url" class="inp" dir="ltr" placeholder="https://store.salla.sa/...">
+      </div>
+    </div>
+    <input type="hidden" id="mDocId">
+    <button class="btn" style="width:100%;margin-top:14px" onclick="saveDoc()"><i class="fa fa-save"></i> حفظ</button>
+  </div>
+</div>
+
+<!-- DEPT MODAL -->
+<div id="mDept" class="modal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-hd"><span id="mDeptTitle">إضافة قسم</span><button class="close-btn" onclick="closeModal('mDept')">✕</button></div>
+    <label class="lbl">اسم القسم *</label>
+    <input id="mDeptName" type="text" class="inp">
+    <label class="lbl" style="margin-top:10px">الأيقونة (Font Awesome class)</label>
+    <input id="mDeptIcon" type="text" class="inp" placeholder="fa-heartbeat" dir="ltr">
+    <label class="lbl" style="margin-top:10px">نوع القسم</label>
+    <select id="mDeptType" class="inp">
+      <option value="specialty">تخصص طبي</option>
+      <option value="laser">ليزر (يتطلب فاتورة)</option>
+      <option value="skin">تنظيف بشرة (بدون طبيب)</option>
+    </select>
+    <label class="lbl" style="margin-top:10px"><i class="fa fa-link" style="color:var(--warn)"></i> رابط متجر سلة للقسم</label>
+    <input id="mDeptSalla" type="url" class="inp" dir="ltr" placeholder="https://store.salla.sa/...">
+    <input type="hidden" id="mDeptId">
+    <button class="btn" style="width:100%;margin-top:14px" onclick="saveDept()"><i class="fa fa-save"></i> حفظ</button>
+  </div>
+</div>
+
+<!-- SERVICE MODAL -->
+<div id="mSvc" class="modal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-hd"><span id="mSvcTitle">إضافة خدمة</span><button class="close-btn" onclick="closeModal('mSvc')">✕</button></div>
+    <label class="lbl">اسم الخدمة *</label>
+    <input id="mSvcName" type="text" class="inp">
+    <label class="lbl" style="margin-top:10px">القسم</label>
+    <select id="mSvcDept" class="inp"></select>
+    <label class="lbl" style="margin-top:10px">الوصف</label>
+    <textarea id="mSvcDesc" class="inp" rows="2"></textarea>
+    <label class="lbl" style="margin-top:10px"><i class="fa fa-link" style="color:var(--warn)"></i> رابط متجر سلة الخاص بالخدمة</label>
+    <input id="mSvcSalla" type="url" class="inp" dir="ltr" placeholder="https://store.salla.sa/...">
+    <input type="hidden" id="mSvcId">
+    <button class="btn" style="width:100%;margin-top:14px" onclick="saveSvc()"><i class="fa fa-save"></i> حفظ</button>
+  </div>
+</div>
+
+<!-- BOOKING DETAIL MODAL -->
+<div id="mBk" class="modal">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-hd"><span>تفاصيل الحجز</span><button class="close-btn" onclick="closeModal('mBk')">✕</button></div>
+    <div id="mBkBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:24px;right:50%;transform:translateX(50%);background:#333;color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:9999;display:none;max-width:320px;text-align:center"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const SB = 'https://ahaghhfunonuvpubrwyx.supabase.co';
+const SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoYWdoaGZ1bm9udXZwdWJyd3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTUwMjQsImV4cCI6MjA5NjA5MTAyNH0.y-8X_4R3zdfSfKyCuWfJmwHW7J5HiwROnVbowmZGkpQ';
+let db = null;
+window.addEventListener('load', () => {
+  try {
+    db = supabase.createClient(SB, SK);
+    console.log('✅ Supabase connected');
+    loadHome();
+    checkUrlParam();
+  } catch(e) {
+    console.error('❌ Supabase init failed:', e);
+    toast('تعذّر الاتصال بقاعدة البيانات');
+  }
+});
+
+// ALTER TABLE doctors ADD COLUMN IF NOT EXISTS clinic_location TEXT;
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let CU = null; // current user {role:'admin'|'doctor', id, name, ...}
+const S = { grp:null, svc:null, doc:null, dcSvc:null, date:null, time:null, invNo:null };
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function toast(msg, dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(()=>{ t.style.display='none'; }, dur);
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  const pg = document.getElementById(id);
+  if (pg) { pg.style.display='block'; window.scrollTo(0,0); }
+}
+
+function openModal(id) { document.getElementById(id).style.display='flex'; }
+function closeModal(id) { document.getElementById(id).style.display='none'; }
+
+function mConfirm(msg, onOk, title='تأكيد') {
+  document.getElementById('mConfirmTitle').textContent = title;
+  document.getElementById('mConfirmMsg').textContent = msg;
+  const btn = document.getElementById('mConfirmOk');
+  const newBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(newBtn, btn);
+  newBtn.addEventListener('click', () => { closeModal('mConfirm'); onOk(); });
+  openModal('mConfirm');
+}
+
+function fmtDate(d) {
+  const dt = new Date(d);
+  return dt.toLocaleDateString('ar-SA-u-ca-gregory', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+}
+
+function toAr(n) { return String(n).replace(/\d/g, d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
+
+function statusBadge(s) {
+  const m = {pending:{c:'#D97706',bg:'#FEF3C7',t:'معلق'}, approved:{c:'#059669',bg:'#D1FAE5',t:'مقبول'}, rejected:{c:'#B91C1C',bg:'#FEE2E2',t:'مرفوض'}};
+  const x = m[s]||{c:'#6B7280',bg:'#F3F4F6',t:s};
+  return `<span style="background:${x.bg};color:${x.c};padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600">${x.t}</span>`;
+}
+
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+// Secret trigger: click logo 5 times within 3 seconds to open login
+let _logoClicks = 0, _logoTimer = null;
+document.addEventListener('DOMContentLoaded', () => {
+  const logo = document.getElementById('brandLogo');
+  if (logo) {
+    logo.style.cursor = 'pointer';
+    logo.addEventListener('click', () => {
+      if (CU) { showPage('pg-home'); return; } // logged in → go home
+      _logoClicks++;
+      clearTimeout(_logoTimer);
+      if (_logoClicks >= 5) {
+        _logoClicks = 0;
+        openModal('mLogin');
+      } else {
+        _logoTimer = setTimeout(() => {
+          if (_logoClicks > 0 && _logoClicks < 5) { showPage('pg-home'); }
+          _logoClicks = 0;
+        }, 1500);
+      }
+    });
+  }
+});
+
+function openLogin() { openModal('mLogin'); }
+
+// ── requireDb helper ──────────────────────────────────────────────────────────
+function requireDb() {
+  if (!db) { toast('لا يوجد اتصال بقاعدة البيانات'); return false; }
+  return true;
+}
+
+// ── setNavUser (alias for updateNav) ─────────────────────────────────────────
+function setNavUser() { updateNav(); }
+
+// ── loadAdmin (alias) ─────────────────────────────────────────────────────────
+function loadAdmin() { loadAdminOverview(); }
+
+// ── loadDrPanel ───────────────────────────────────────────────────────────────
+function loadDrPanel(data) { loadDcDashboard(); }
+
+// ── doLogin ───────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const u = document.getElementById('liUser').value.trim();
+  const p = document.getElementById('liPass').value.trim();
+  const er = document.getElementById('liErr');
+  if (er) er.textContent = '';
+
+  if (!u || !p) {
+    if (er) er.textContent = 'يرجى إدخال بيانات الدخول';
+    return;
+  }
+
+  // ── 1. المشرف — hardcoded (لا يتصل بـ Supabase) ──────────────────────────
+  if (u === 'superadmin' && p === 'admin123') {
+    CU = { role: 'admin', username: 'superadmin', name: 'المسؤول' };
+    closeModal('mLogin');
+    setNavUser();
+    showPage('pg-admin');
+    loadAdmin();
+    return;
+  }
+
+  // ── 2. الطبيب — Supabase ──────────────────────────────────────────────────
+  if (!requireDb()) return;
+
+  const loginBtn = document.querySelector('#mLogin .btn');
+  if (loginBtn) { loginBtn.disabled=true; loginBtn.innerHTML='<i class="fa fa-spinner fa-spin"></i> جاري التحقق...'; }
+
+  const { data, error } = await db.from('doctors').select('*').eq('username', u).single();
+
+  if (loginBtn) { loginBtn.disabled=false; loginBtn.innerHTML='<i class="fa fa-sign-in-alt"></i> دخول'; }
+
+  if (error || !data) {
+    if (er) er.textContent = 'اسم المستخدم غير صحيح';
+    return;
+  }
+
+  // التحقق من كلمة المرور — يدعم حقل password و password_hash
+  const storedPass = data.password_hash || data.password || '';
+  if (storedPass !== p) {
+    if (er) er.textContent = 'كلمة المرور غير صحيحة';
+    return;
+  }
+
+  CU = { role: 'doctor', id: data.id, username: u, name: data.name, ...data };
+  closeModal('mLogin');
+  setNavUser();
+  showPage('pg-doctor');
+  loadDrPanel(data);
+}
+
+function afterLogin() {
+  closeModal('mLogin');
+  updateNav();
+  if (CU.role==='admin') { showPage('pg-admin'); loadAdminOverview(); }
+  else { showPage('pg-doctor'); loadDcDashboard(); }
+}
+
+function logout() {
+  mConfirm('هل تريد تسجيل الخروج؟', ()=>{
+    CU = null; updateNav(); showPage('pg-home');
+  });
+}
+
+function goPanel() {
+  if (!CU) return;
+  if (CU.role==='admin') showPage('pg-admin'), loadAdminOverview();
+  else showPage('pg-doctor'), loadDcDashboard();
+}
+
+function updateNav() {
+  const loginBtn = document.getElementById('navLoginBtn');
+  const logoutBtn = document.getElementById('navLogoutBtn');
+  const panelBtn = document.getElementById('navPanelBtn');
+  const userEl = document.getElementById('navUser');
+  const userNm = document.getElementById('navUserName');
+  if (CU) {
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = 'inline-flex';
+    panelBtn.style.display = 'inline-flex';
+    userEl.style.display = 'inline-flex';
+    userNm.textContent = CU.name || CU.username || '';
+    userEl.className = 'rbadge ' + (CU.role==='admin'?'':'doc');
+  } else {
+    loginBtn.style.display = 'inline-flex';
+    logoutBtn.style.display = 'none';
+    panelBtn.style.display = 'none';
+    userEl.style.display = 'none';
+  }
+}
+
+// ── HOME PAGE ─────────────────────────────────────────────────────────────────
+async function loadHome() {
+  try {
+    const {data, error} = await db.from('clinic_departments').select('*').order('name');
+    if (error) throw error;
+    const specs = (data||[]).filter(g=>!g.flow_type || g.flow_type==='specialty');
+    const svcs  = (data||[]).filter(g=>g.flow_type && g.flow_type!=='specialty');
+    renderHomeGroups('homeSpecGrid', specs, false);
+    renderHomeGroups('homeSvcGrid', svcs, true);
+  } catch(e) {
+    toast('خطأ في تحميل الأقسام');
+  }
+}
+
+function renderHomeGroups(containerId, groups, isSvc) {
+  const el = document.getElementById(containerId);
+  if (!groups.length) { el.innerHTML='<p style="color:var(--m);font-size:13px">لا توجد عناصر</p>'; return; }
+  el.innerHTML = '';
+  groups.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'gcard' + (isSvc?' svc':'');
+    card.innerHTML = `
+      <div class="gcard-icon"><i class="fa ${g.icon||'fa-stethoscope'}"></i></div>
+      <div class="gcard-name">${g.name}</div>
+      ${g.description?`<div style="font-size:11px;color:var(--m);margin-top:2px">${g.description}</div>`:''}
+    `;
+    card.addEventListener('click', () => selectGroup(g));
+    el.appendChild(card);
+  });
+}
+
+function selectGroup(g) {
+  S.grp = g; S.svc = null; S.doc = null; S.date = null; S.time = null; S.invNo = null;
+  const ft = g.flow_type || 'specialty';
+  if (ft === 'specialty') {
+    // تخصص طبي: اختر الطبيب أولاً
+    loadDocs(g.name);
+    showPage('pg-doc');
+    document.getElementById('docPageTitle').textContent = g.name_ar || g.name || 'اختر الطبيب';
+  } else {
+    // خدمات (ليزر، تنظيف بشرة، ...): اختر الخدمة أولاً
+    loadSvcs(g.id);
+    showPage('pg-svc');
+    document.getElementById('svcPageTitle').textContent = g.name_ar || g.name || 'اختر الخدمة';
+  }
+}
+
+// ── INVOICE FLOW ──────────────────────────────────────────────────────────────
+function hasInvoice() { showPage('pg-invno'); }
+
+// الرجوع من pg-inv حسب من أين أتينا
+function backFromInv() {
+  const ft = S.grp ? S.grp.flow_type : 'specialty';
+  if (ft === 'specialty' || ft === 'laser') showPage('pg-doc');
+  else showPage('pg-svc'); // skin
+}
+
+// من صفحة سلة → رجوع لصفحة الفاتورة (يحافظ على S.doc و S.svc)
+function goBackToInvoiceEntry() {
+  showPage('pg-invno');
+}
+
+// رجوع من صفحة سلة → شاشة "هل عندك فاتورة؟"
+function backFromSalla() {
+  showPage('pg-inv');
+}
+
+function getSallaUrl() {
+  // سلة: salla_url أولاً، ثم salla_link كـ fallback، ثم مستوى القسم
+  if (S.doc)  return S.doc.salla_url  || S.doc.salla_link  || null;
+  if (S.svc)  return S.svc.salla_url  || S.svc.salla_link  || null;
+  if (S.grp)  return S.grp.salla_link || null;
+  return null;
+}
+
+function noInvoice() {
+  const targetName = (S.doc && S.doc.name) || (S.svc && S.svc.name) || (S.grp && (S.grp.name_ar || S.grp.name)) || 'هذه الخدمة';
+  document.getElementById('sallaTargetName').textContent = targetName;
+  const url = getSallaUrl();
+  const wrap = document.getElementById('sallaBtnWrap');
+  if (url) {
+    wrap.innerHTML = '';
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.style.cssText = 'display:block;width:100%;text-decoration:none';
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.style.cssText = 'width:100%;background:linear-gradient(135deg,var(--t),var(--td));border:none;font-size:15px;padding:14px;cursor:pointer';
+    btn.innerHTML = '<i class="fa fa-external-link-alt"></i> الدفع عبر سلة';
+    btn.addEventListener('click', (e) => { e.preventDefault(); window.open(url, '_blank'); });
+    a.appendChild(btn);
+    wrap.appendChild(a);
+  } else {
+    wrap.innerHTML = `<div style="background:var(--tl);border-radius:12px;padding:14px 16px;color:var(--td);font-size:13px;line-height:1.7">
+      <i class="fa fa-info-circle" style="margin-left:6px"></i>
+      يرجى التواصل مع الاستقبال لإتمام الدفع وأخذ رقم الفاتورة
+    </div>`;
+  }
+  showPage('pg-salla');
+}
+
+function confirmInvoiceNo() {
+  const val = document.getElementById('invNoInput').value.trim();
+  const err = document.getElementById('invNoErr');
+  if (!val) { err.textContent='أدخل رقم الفاتورة'; return; }
+  err.textContent = '';
+  S.invNo = val;
+  // جميع التدفقات بعد الفاتورة → اختيار الموعد
+  showPage('pg-dt');
+  renderDtDocInfo();
+  loadDatePicker();
+}
+
+function backFromSvc() {
+  showPage('pg-home'); // رجوع من اختيار الخدمة → الرئيسية
+}
+
+function backFromDoc() {
+  const ft = S.grp ? S.grp.flow_type : 'specialty';
+  if (ft === 'laser') showPage('pg-svc'); // ليزر → رجوع لاختيار الخدمة
+  else showPage('pg-home'); // تخصص طبي → الرئيسية
+}
+
+function backFromDt() {
+  showPage('pg-invno'); // الموعد ← رجوع لإدخال الفاتورة
+}
+
+// ── SERVICES ─────────────────────────────────────────────────────────────────
+async function loadSvcs(deptId) {
+  document.getElementById('svcList').innerHTML = '<p style="color:var(--m)">جاري التحميل...</p>';
+  try {
+    const {data, error} = await db.from('services').select('*').eq('department_id', deptId).order('name');
+    if (error) throw error;
+    const el = document.getElementById('svcList');
+    el.innerHTML = '';
+    if (!data||!data.length) { el.innerHTML='<p style="color:var(--m)">لا توجد خدمات</p>'; return; }
+    data.forEach(svc => {
+      const card = document.createElement('div');
+      card.className = 'gcard svc';
+      card.innerHTML = `<div class="gcard-icon"><i class="fa fa-star"></i></div><div class="gcard-name">${svc.name}</div>`;
+      card.addEventListener('click', () => {
+        S.svc = svc;
+        const ft = S.grp ? S.grp.flow_type : '';
+        if (ft === 'laser') {
+          // ليزر: اختر خدمة → اختر طبيب → فاتورة
+          loadDocs(S.grp.name);
+          showPage('pg-doc');
+          document.getElementById('docPageTitle').textContent = 'اختر الطبيب';
+        } else {
+          // تنظيف بشرة وغيرها: اختر خدمة → فاتورة (بدون طبيب)
+          showPage('pg-inv');
+        }
+      });
+      el.appendChild(card);
+    });
+  } catch(e) {
+    toast('خطأ في تحميل الخدمات');
+  }
+}
+
+// ── DOCTORS ──────────────────────────────────────────────────────────────────
+async function loadDocs(deptName) {
+  if (!requireDb()) return;
+  document.getElementById('docList').innerHTML = '<p style="color:var(--m)">جاري التحميل...</p>';
+  let query = db.from('doctors').select('*').eq('active', true).neq('doctor_role','manager');
+  // filter by department name if provided
+  if (deptName) query = query.eq('department', deptName);
+  const {data, error} = await query.order('name');
+  if (error) { toast('خطأ في تحميل الأطباء: '+error.message); return; }
+  const el = document.getElementById('docList');
+  el.innerHTML = '';
+  if (!data||!data.length) { el.innerHTML='<p style="color:var(--m)">لا يوجد أطباء</p>'; return; }
+  data.forEach(doc => {
+    const card = document.createElement('div');
+    card.className = 'doc-card';
+    const photo = doc.avatar || '';
+    card.innerHTML = `
+      ${photo ? `<img src="${photo}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--tl)" onerror="this.style.display='none'">` : `<div style="width:56px;height:56px;border-radius:50%;background:var(--tl);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--td);font-weight:700;flex-shrink:0">${(doc.name||'D')[0]}</div>`}
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:14px">${doc.name||'—'}</div>
+        <div style="font-size:12px;color:var(--m)">${doc.specialty||''}</div>
+        ${doc.clinic_location?`<div style="font-size:11px;color:var(--t);margin-top:2px"><i class="fa fa-map-marker-alt"></i> ${doc.clinic_location}</div>`:''}
+      </div>
+      <span style="width:10px;height:10px;background:var(--ok);border-radius:50%;display:inline-block;flex-shrink:0"></span>
+    `;
+    card.addEventListener('click', () => {
+      S.doc = doc;
+      // اختيار الطبيب → شاشة الفاتورة
+      showPage('pg-inv');
+    });
+    el.appendChild(card);
+  });
+}
+
+// ── DATE / TIME PICKER ───────────────────────────────────────────────────────
+async function loadDatePicker() {
+  const el = document.getElementById('datePicker');
+  el.innerHTML = '<p style="color:var(--m);font-size:13px">جاري التحميل...</p>';
+  document.getElementById('timePicker').innerHTML = '';
+  document.getElementById('dtNextBtn').style.display = 'none';
+  document.getElementById('noSlots').style.display = 'none';
+  S.date = null; S.time = null;
+
+  try {
+    // Fetch vacations for this doctor
+    let vacDates = new Set();
+    if (S.doc) {
+      const {data: vacs} = await db.from('doctor_vacations')
+        .select('vacation_date').eq('doctor_id', S.doc.id);
+      (vacs||[]).forEach(v => vacDates.add(v.vacation_date));
+    }
+
+    // Fetch schedule to know which weekdays are active
+    let activeDays = null;
+    if (S.doc) {
+      const {data: sched} = await db.from('doctor_schedules')
+        .select('*').eq('doctor_id', S.doc.id).eq('is_active', true);
+      if (sched && sched.length) {
+        activeDays = new Set(sched.map(s => s.day_of_week));
+      }
+    }
+
+    el.innerHTML = '';
+    const today = new Date(); today.setHours(0,0,0,0);
+    const dayNames = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+
+    for (let i = 0; i < 14; i++) {
+      const d = new Date(today); d.setDate(today.getDate() + i);
+      const iso = d.toISOString().split('T')[0];
+      const dow = d.getDay();
+      const isVac = vacDates.has(iso);
+      const isOff = activeDays && !activeDays.has(dow);
+      const chip = document.createElement('div');
+      chip.className = 'dc' + (isVac || isOff ? ' vac' : '');
+      chip.innerHTML = `<div style="font-size:11px;opacity:.7">${dayNames[dow]}</div><div style="font-size:13px;font-weight:600">${d.getDate()}</div>`;
+      if (!isVac && !isOff) {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.dc').forEach(c=>c.classList.remove('sel'));
+          chip.classList.add('sel');
+          S.date = iso;
+          S.time = null; S.dcSvc = null;
+          // Reset steps 2 and 3
+          document.getElementById('dtStep2').style.display = 'none';
+          document.getElementById('dtStep3').style.display = 'none';
+          document.getElementById('dtNextBtn').style.display = 'none';
+          document.getElementById('dtReminders').style.display = 'none';
+          loadDocServices(iso);
+        });
+      } else {
+        chip.title = isVac ? 'إجازة' : 'يوم إجازة رسمي';
+      }
+      el.appendChild(chip);
+    }
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--err)">خطأ في التحميل</p>';
+  }
+}
+
+// ── STEP 2: Load doctor services for selected date ───────────────────────────
+async function loadDocServices(date) {
+  const step2 = document.getElementById('dtStep2');
+  const el    = document.getElementById('dtSvcPicker');
+  el.innerHTML = '<p style="color:var(--m);font-size:13px">جاري التحميل...</p>';
+  step2.style.display = 'block';
+
+  try {
+    // Load service hours for this doctor
+    let services = [];
+    if (S.doc) {
+      const {data} = await db.from('doctor_service_hours')
+        .select('*').eq('doctor_id', S.doc.id).eq('active', true).order('sort_order');
+      services = data || [];
+    }
+
+    el.innerHTML = '';
+    if (!services.length) {
+      // Fallback: no services configured → go directly to time slots
+      el.innerHTML = '';
+      step2.style.display = 'none';
+      loadTimeSlotsForService(date, null);
+      return;
+    }
+
+    services.forEach(svc => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 14px;border:.5px solid var(--br);border-radius:10px;cursor:pointer;transition:all .2s;background:var(--s)';
+      row.innerHTML = `
+        <span style="font-size:20px">${svc.service_icon||'💊'}</span>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:14px">${svc.service_name}</div>
+          <div style="font-size:11px;color:var(--m)">${svc.start_time.substring(0,5)} — ${svc.end_time.substring(0,5)} · ${svc.duration_minutes} دقيقة</div>
+        </div>
+        <i class="fa fa-chevron-left" style="color:var(--m);font-size:12px"></i>
+      `;
+      row.addEventListener('mouseenter', () => row.style.background='var(--tl)');
+      row.addEventListener('mouseleave', () => { if (S.dcSvc?.id !== svc.id) row.style.background='var(--s)'; });
+      row.addEventListener('click', () => {
+        document.querySelectorAll('#dtSvcPicker > div').forEach(r=>r.style.background='var(--s)');
+        row.style.background = 'var(--tl)';
+        row.style.borderColor = 'var(--t)';
+        S.dcSvc = svc;
+        document.getElementById('dtSvcLabel').textContent = svc.service_name;
+        loadTimeSlotsForService(date, svc);
+        showDtReminders();
+      });
+      el.appendChild(row);
+    });
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--err)">خطأ في تحميل الخدمات</p>';
+  }
+}
+
+// ── STEP 3: Load time slots for selected service ──────────────────────────────
+async function loadTimeSlotsForService(date, svc) {
+  const step3 = document.getElementById('dtStep3');
+  const el    = document.getElementById('timePicker');
+  step3.style.display = 'block';
+  el.innerHTML = '<p style="color:var(--m);font-size:13px">جاري التحميل...</p>';
+  document.getElementById('noSlots').style.display = 'none';
+  document.getElementById('dtNextBtn').style.display = 'none';
+  S.time = null;
+
+  try {
+    // Determine start/end from service or fallback to doctor_schedules
+    let start = '09:00', end = '17:00';
+    let slotMin = 30;
+    if (svc) {
+      start   = (svc.start_time||'09:00').substring(0,5);
+      end     = (svc.end_time||'17:00').substring(0,5);
+      slotMin = svc.duration_minutes || 30;
+    } else if (S.doc) {
+      const dow = new Date(date).getDay();
+      const {data: sc} = await db.from('doctor_schedules')
+        .select('*').eq('doctor_id', S.doc.id).eq('day_of_week', dow).eq('is_active', true).maybeSingle();
+      if (sc) { start = (sc.start_time||'09:00').substring(0,5); end = (sc.end_time||'17:00').substring(0,5); }
+    }
+
+    // Get booked times for this doctor + date (+ service filter if applicable)
+    let bookedTimes = new Set();
+    if (S.doc) {
+      let q = db.from('bookings').select('booking_time').eq('doctor_id', S.doc.id).eq('booking_date', date).neq('status','rejected');
+      if (svc) q = q.ilike('notes', `%[${svc.service_name}]%`);
+      const {data: bks} = await q;
+      (bks||[]).forEach(b => bookedTimes.add((b.booking_time||'').substring(0,5)));
+    }
+
+    // Generate slots
+    const [sh, sm] = start.split(':').map(Number);
+    const [eh, em] = end.split(':').map(Number);
+    let cur = sh*60+sm;
+    const endMin = eh*60+em;
+    const slots = [];
+    while (cur + slotMin <= endMin) {
+      slots.push(String(Math.floor(cur/60)).padStart(2,'0') + ':' + String(cur%60).padStart(2,'0'));
+      cur += slotMin;
+    }
+
+    const now = new Date(); const todayIso = now.toISOString().split('T')[0];
+    const available = slots.filter(t => {
+      if (bookedTimes.has(t)) return false;
+      if (date === todayIso) {
+        const [th, tm] = t.split(':').map(Number);
+        if (th*60+tm <= now.getHours()*60+now.getMinutes()) return false;
+      }
+      return true;
+    });
+
+    el.innerHTML = '';
+    if (!available.length) { document.getElementById('noSlots').style.display='block'; return; }
+
+    available.forEach(t => {
+      const chip = document.createElement('div');
+      chip.className = 'tc';
+      chip.textContent = t;
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.tc').forEach(c=>c.classList.remove('sel'));
+        chip.classList.add('sel');
+        S.time = t;
+        document.getElementById('dtNextBtn').style.display = 'block';
+      });
+      el.appendChild(chip);
+    });
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--err)">خطأ في التحميل</p>';
+  }
+}
+
+// ── Show reminders if applicable ──────────────────────────────────────────────
+function showDtReminders() {
+  const dept = S.grp || (S.doc && {name: S.doc.department, reminders: null});
+  // Check if department has reminders or is dermatology/aesthetics
+  const deptName = (dept && (dept.name||'')).toLowerCase();
+  const isAesthetic = /جلد|تجميل|dermat|skin|laser|ليزر|cosmetic/.test(deptName) ||
+    (S.doc && /جلد|تجميل|dermat|skin/.test((S.doc.specialty||'').toLowerCase()));
+  
+  const reminders = (S.grp && S.grp.reminders) || (isAesthetic ? `ممنوع تعريض منطقة الفيلر للحرارة أو المشروبات الساخنة بعد الحقن
+ممنوع الخروج بدون واقي شمس بعد جلسات التقشير
+ممنوع الكريمات الدافئة والحمامات الساخنة بعد الجلسة
+ممنوع وضع مكياج قبل جلسات الأجهزة
+أبلغي الدكتورة عن أي حساسية أو تحسس سابق
+قد يطرأ تأخير بسبب مرضى المستشفى — نشكر تفهمك` : null);
+
+  const box = document.getElementById('dtReminders');
+  const list = document.getElementById('dtRemindersList');
+  if (reminders) {
+    list.innerHTML = reminders.split('\n').map(r=>`<div>• ${r.trim()}</div>`).join('');
+    box.style.display = 'block';
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+function renderDtDocInfo() {
+  const el = document.getElementById('dtDocInfo');
+  if (!S.doc) { el.innerHTML=''; return; }
+  const photo = S.doc.avatar||'';
+  el.innerHTML = `
+    <img src="${photo}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--tl)" onerror="this.src='https://via.placeholder.com/48?text=Dr'">
+    <div>
+      <div style="font-weight:600">${S.doc.name}</div>
+      <div style="font-size:12px;color:var(--m)">${S.doc.specialty||''}</div>
+      ${S.doc.clinic_location?`<div style="font-size:11px;color:var(--t)"><i class="fa fa-map-marker-alt"></i> ${S.doc.clinic_location}</div>`:''}
+    </div>
+  `;
+}
+
+// ── PATIENT INFO ─────────────────────────────────────────────────────────────
+function goConfirm() {
+  const name = document.getElementById('patName').value.trim();
+  const phone = document.getElementById('patPhone').value.trim();
+  let ok = true;
+  const setErr = (id, msg) => { const el=document.getElementById(id); if(el) el.textContent=msg; if(msg) ok=false; };
+  setErr('patNameErr', name ? '' : 'الاسم مطلوب');
+  setErr('patPhoneErr', /^05\d{8}$/.test(phone) ? '' : 'رقم جوال غير صحيح (05xxxxxxxx)');
+  if (!ok) return;
+
+  const el = document.getElementById('cfSummary');
+  el.innerHTML = `
+    <div style="display:grid;gap:10px">
+      ${S.grp?`<div class="cf-row"><span>القسم</span><strong>${S.grp.name}</strong></div>`:''}
+      ${S.doc?`<div class="cf-row"><span>الطبيب</span><strong>${S.doc.name}</strong></div>`:''}
+      ${S.svc?`<div class="cf-row"><span>الخدمة</span><strong>${S.svc.name}</strong></div>`:''}
+      ${S.dcSvc?`<div class="cf-row"><span>نوع الخدمة</span><strong>${S.dcSvc.service_icon||''} ${S.dcSvc.service_name}</strong></div>`:''}
+      ${S.invNo?`<div class="cf-row"><span>رقم الفاتورة</span><strong dir="ltr">${S.invNo}</strong></div>`:''}
+      <div class="cf-row"><span>التاريخ</span><strong>${fmtDate(S.date)}</strong></div>
+      <div class="cf-row"><span>الوقت</span><strong>${S.time}</strong></div>
+      <div class="cf-row"><span>المريض</span><strong>${name}</strong></div>
+      <div class="cf-row"><span>الجوال</span><strong dir="ltr">${phone}</strong></div>
+    </div>
+  `;
+  showPage('pg-cf');
+}
+
+// ── SUBMIT BOOKING ────────────────────────────────────────────────────────────
+function genBookingRef() {
+  const d = new Date();
+  const ymd = d.getFullYear().toString() +
+    String(d.getMonth()+1).padStart(2,'0') +
+    String(d.getDate()).padStart(2,'0');
+  const rand = Math.random().toString(36).substring(2,6).toUpperCase();
+  return `MMH-${ymd}-${rand}`;
+}
+
+async function submitBooking() {
+  if (!requireDb()) return;
+  const btn = document.getElementById('cfSubmitBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> جاري الإرسال...';
+  try {
+    // Duplicate check
+    if (S.doc) {
+      const {data: exist} = await db.from('bookings').select('id')
+        .eq('doctor_id', S.doc.id)
+        .eq('booking_date', S.date)
+        .eq('booking_time', S.time)
+        .neq('status','rejected');
+      if (exist && exist.length) {
+        toast('عذراً، هذا الموعد محجوز بالفعل. اختر وقتاً آخر.');
+        btn.disabled=false; btn.innerHTML='<i class="fa fa-check-circle"></i> تأكيد وإرسال الحجز';
+        showPage('pg-dt'); return;
+      }
+    }
+
+    const name = document.getElementById('patName').value.trim();
+    const phone = document.getElementById('patPhone').value.trim();
+    const notes = document.getElementById('patNotes').value.trim();
+
+    const payload = {
+      booking_ref:   genBookingRef(),
+      patient_name:  name,
+      patient_phone: phone,
+      notes:         (S.dcSvc ? `[${S.dcSvc.service_name}] ` : '') + (notes||'')||null,
+      booking_date:  S.date,
+      booking_time:  S.time,
+      status:        'pending',
+      doctor_id:     S.doc ? S.doc.id : null,
+      service_id:    S.svc ? S.svc.id : null,
+      salla_order_id: S.invNo||null
+    };
+
+    const {error} = await db.from('bookings').insert(payload);
+    if (error) throw error;
+
+    document.getElementById('okMsg').textContent = 'تم إرسال طلب حجزك بنجاح. سيتواصل معك فريقنا لتأكيد الموعد.';
+    document.getElementById('okDetails').innerHTML = `
+      <div class="cf-row"><span>التاريخ</span><strong>${fmtDate(S.date)}</strong></div>
+      <div class="cf-row"><span>الوقت</span><strong>${S.time}</strong></div>
+      ${S.doc?`<div class="cf-row"><span>الطبيب</span><strong>${S.doc.name}</strong></div>`:''}
+      ${S.svc?`<div class="cf-row"><span>الخدمة</span><strong>${S.svc.name}</strong></div>`:''}
+    `;
+    showPage('pg-ok');
+  } catch(e) {
+    toast('خطأ في إرسال الحجز: ' + (e.message||''));
+    btn.disabled=false; btn.innerHTML='<i class="fa fa-check-circle"></i> تأكيد وإرسال الحجز';
+  }
+}
+
+// ── ADMIN PANEL ───────────────────────────────────────────────────────────────
+function adminTab(name, el) {
+  document.querySelectorAll('.atab').forEach(t=>t.style.display='none');
+  document.getElementById('atab-'+name).style.display='block';
+  if (el) { document.querySelectorAll('#pg-admin .tab-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+  if (name==='overview') loadAdminOverview();
+  else if (name==='bookings') loadAdminBookings();
+  else if (name==='doctors') loadAdminDocs();
+  else if (name==='depts') loadAdminDepts();
+  else if (name==='services') loadAdminSvcs();
+  else if (name==='settings') loadAdminSettings();
+}
+
+async function loadAdminOverview() {
+  try {
+    const [bkRes, docRes, svcRes] = await Promise.all([
+      db.from('bookings').select('id,status,doctor_id,service_id,booking_date', {count:'exact'}),
+      db.from('doctors').select('id', {count:'exact'}),
+      db.from('services').select('id', {count:'exact'})
+    ]);
+    const bks = bkRes.data||[];
+    const pending = bks.filter(b=>b.status==='pending').length;
+    const approved = bks.filter(b=>b.status==='approved').length;
+    document.getElementById('adminStats').innerHTML = `
+      <div class="stat-card"><div class="stat-num">${bks.length}</div><div class="stat-lbl">إجمالي الحجوزات</div></div>
+      <div class="stat-card" style="border-top:3px solid var(--warn)"><div class="stat-num" style="color:var(--warn)">${pending}</div><div class="stat-lbl">قيد الانتظار</div></div>
+      <div class="stat-card" style="border-top:3px solid var(--ok)"><div class="stat-num" style="color:var(--ok)">${approved}</div><div class="stat-lbl">مقبول</div></div>
+      <div class="stat-card"><div class="stat-num">${docRes.count||0}</div><div class="stat-lbl">الأطباء</div></div>
+    `;
+    // Top stats this month
+    const now = new Date();
+    const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const monthBks = bks.filter(b=>b.booking_date && b.booking_date.startsWith(monthStr));
+
+    // Top doctor
+    const docCount = {};
+    monthBks.forEach(b=>{ if(b.doctor_id) docCount[b.doctor_id]=(docCount[b.doctor_id]||0)+1; });
+    const topDocId = Object.entries(docCount).sort((a,b)=>b[1]-a[1])[0]?.[0];
+
+    // Top service
+    const svcCount = {};
+    monthBks.forEach(b=>{ if(b.service_id) svcCount[b.service_id]=(svcCount[b.service_id]||0)+1; });
+    const topSvcId = Object.entries(svcCount).sort((a,b)=>b[1]-a[1])[0]?.[0];
+
+    let topDocName = '—', topSvcName = '—';
+    if (topDocId) {
+      try {
+        const {data:d} = await db.from('doctors').select('name').eq('id',topDocId).maybeSingle();
+        if (d) topDocName = d.name;
+      } catch(e) {}
+    }
+    if (topSvcId) {
+      try {
+        const {data:s} = await db.from('services').select('name').eq('id',topSvcId).maybeSingle();
+        if (s) topSvcName = s.name;
+      } catch(e) {}
+    }
+
+    document.getElementById('adminTopStats').innerHTML = `
+      <div class="stat-card" style="border-top:3px solid #8B5CF6">
+        <div class="stat-num" style="font-size:15px;color:#8B5CF6">${topDocName}</div>
+        <div class="stat-lbl">أكثر طبيب طلباً هذا الشهر</div>
+      </div>
+      <div class="stat-card" style="border-top:3px solid #0EA5E9">
+        <div class="stat-num" style="font-size:15px;color:#0EA5E9">${topSvcName}</div>
+        <div class="stat-lbl">أكثر خدمة طلباً</div>
+      </div>
+    `;
+
+  } catch(e) {
+    toast('خطأ في تحميل الإحصائيات');
+  }
+}
+
+let allAdminBks = [];
+async function loadAdminBookings() {
+  document.getElementById('adminBkList').innerHTML='<p style="color:var(--m)">جاري التحميل...</p>';
+  try {
+    const {data, error} = await db.from('bookings')
+      .select('*, doctors(name), clinic_departments(name), services(name)')
+      .order('booking_date',{ascending:false}).order('booking_time',{ascending:false});
+    if (error) throw error;
+    allAdminBks = data||[];
+    // Populate doctor filter
+    const docFilter = document.getElementById('bkDoctorFilter');
+    const docMap = {};
+    allAdminBks.forEach(b=>{ if(b.doctor_id && b.doctors) docMap[b.doctor_id]=b.doctors.name; });
+    docFilter.innerHTML = '<option value="">كل الأطباء</option>';
+    Object.entries(docMap).forEach(([id,name])=>{
+      const o = document.createElement('option'); o.value=id; o.textContent=name; docFilter.appendChild(o);
+    });
+    filterAdminBk();
+  } catch(e) {
+    toast('خطأ في تحميل الحجوزات');
+  }
+}
+
+function filterAdminBk() {
+  const search = (document.getElementById('bkSearch').value||'').toLowerCase();
+  const status = document.getElementById('bkStatusFilter').value;
+  const docId = document.getElementById('bkDoctorFilter').value;
+  const filtered = allAdminBks.filter(b=>{
+    if (status && b.status!==status) return false;
+    if (docId && String(b.doctor_id)!==docId) return false;
+    if (search) {
+      const s = ((b.patient_name||'')+(b.patient_phone||'')).toLowerCase();
+      if (!s.includes(search)) return false;
+    }
+    return true;
+  });
+  renderAdminBkTable(filtered, 'adminBkList');
+}
+
+function renderAdminBkTable(bks, elId) {
+  const el = document.getElementById(elId);
+  if (!bks||!bks.length) { el.innerHTML='<p style="color:var(--m);text-align:center;padding:20px">لا توجد حجوزات</p>'; return; }
+  const tbl = document.createElement('table');
+  tbl.className = 'tbl';
+  tbl.innerHTML = `<thead><tr><th>المريض</th><th>التاريخ</th><th>الوقت</th><th>الطبيب</th><th>الحالة</th><th>تفاصيل</th></tr></thead>`;
+  const tb = document.createElement('tbody');
+  bks.forEach(b=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div style="font-weight:500">${b.patient_name||'—'}</div><div style="font-size:11px;color:var(--m)">${b.patient_phone||''}</div></td>
+      <td>${b.booking_date||'—'}</td>
+      <td>${(b.booking_time||'').substring(0,5)}</td>
+      <td>${b.doctors?.name||'—'}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td></td>
+    `;
+    const detailBtn = document.createElement('button');
+    detailBtn.className = 'btn btn-sm'; detailBtn.textContent='عرض';
+    detailBtn.addEventListener('click', ()=>openBkModal(b));
+    tr.cells[5].appendChild(detailBtn);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+  el.innerHTML=''; el.appendChild(tbl);
+}
+
+async function loadAdminDocs() {
+  if (!requireDb()) return;
+  document.getElementById('adminDocList').innerHTML='<p style="color:var(--m)">جاري التحميل...</p>';
+  const {data, error} = await db.from('doctors').select('*').order('name');
+  if (error) { toast('خطأ في تحميل الأطباء: '+error.message); return; }
+  const el = document.getElementById('adminDocList');
+  el.innerHTML='';
+  if (!data||!data.length) { el.innerHTML='<p style="color:var(--m);text-align:center;padding:20px">لا يوجد أطباء</p>'; return; }
+  const tbl = document.createElement('table'); tbl.className='tbl';
+  tbl.innerHTML='<thead><tr><th>الاسم</th><th>القسم</th><th>التخصص</th><th>الموقع</th><th>إجراءات</th></tr></thead>';
+  const tb = document.createElement('tbody');
+  data.forEach(d=>{
+    const tr = document.createElement('tr');
+    const isManager = d.doctor_role === 'manager';
+    tr.innerHTML=`<td><div style="font-weight:500">${d.name||'—'} ${isManager?'<span style="font-size:10px;background:#EDE9FE;color:#7C3AED;border-radius:6px;padding:2px 7px;font-weight:600">مسؤول قسم</span>':''}</div><div style="font-size:11px;color:var(--m)">@${d.username||''}</div></td><td>${d.department||'—'}</td><td>${isManager?'—':d.specialty||'—'}</td><td>${d.clinic_location||'—'}</td><td></td>`;
+    const editBtn = document.createElement('button'); editBtn.className='btn btn-sm'; editBtn.textContent='تعديل';
+    editBtn.addEventListener('click',()=>openEditDoc(d));
+    const delBtn = document.createElement('button'); delBtn.className='btn btn-sm btn-del'; delBtn.textContent='حذف'; delBtn.style.marginRight='4px';
+    delBtn.addEventListener('click',()=>deleteDoc(d.id,d.name));
+    tr.cells[4].appendChild(editBtn); tr.cells[4].appendChild(delBtn);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb); el.appendChild(tbl);
+}
+
+async function loadAdminDepts() {
+  document.getElementById('adminDeptList').innerHTML='<p style="color:var(--m)">جاري التحميل...</p>';
+  try {
+    const {data, error} = await db.from('clinic_departments').select('*').order('name');
+    if (error) throw error;
+    const el = document.getElementById('adminDeptList');
+    el.innerHTML='';
+    const tbl = document.createElement('table'); tbl.className='tbl';
+    tbl.innerHTML='<thead><tr><th>الاسم</th><th>النوع</th><th>إجراءات</th></tr></thead>';
+    const tb = document.createElement('tbody');
+    (data||[]).forEach(d=>{
+      const tr = document.createElement('tr');
+      const typeMap = {specialty:'تخصص',laser:'ليزر',skin:'تنظيف بشرة'};
+      tr.innerHTML=`<td><i class="fa ${d.icon||'fa-circle'}" style="color:var(--t);margin-left:8px"></i>${d.name}</td><td>${typeMap[d.flow_type]||'—'}</td><td></td>`;
+      const editBtn = document.createElement('button'); editBtn.className='btn btn-sm'; editBtn.textContent='تعديل';
+      editBtn.addEventListener('click',()=>openEditDept(d));
+      const delBtn = document.createElement('button'); delBtn.className='btn btn-sm btn-del'; delBtn.textContent='حذف'; delBtn.style.marginRight='4px';
+      delBtn.addEventListener('click',()=>deleteDept(d.id,d.name));
+      tr.cells[2].appendChild(editBtn); tr.cells[2].appendChild(delBtn);
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); el.appendChild(tbl);
+  } catch(e) { toast('خطأ في تحميل الأقسام'); }
+}
+
+async function loadAdminSvcs() {
+  document.getElementById('adminSvcList').innerHTML='<p style="color:var(--m)">جاري التحميل...</p>';
+  try {
+    const {data, error} = await db.from('services').select('*, clinic_departments(name)').order('name');
+    if (error) throw error;
+    const el = document.getElementById('adminSvcList');
+    el.innerHTML='';
+    const tbl = document.createElement('table'); tbl.className='tbl';
+    tbl.innerHTML='<thead><tr><th>الاسم</th><th>القسم</th><th>إجراءات</th></tr></thead>';
+    const tb = document.createElement('tbody');
+    (data||[]).forEach(s=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML=`<td>${s.name}</td><td>${s.clinic_departments?.name||'—'}</td><td></td>`;
+      const editBtn = document.createElement('button'); editBtn.className='btn btn-sm'; editBtn.textContent='تعديل';
+      editBtn.addEventListener('click',()=>openEditSvc(s));
+      const delBtn = document.createElement('button'); delBtn.className='btn btn-sm btn-del'; delBtn.textContent='حذف'; delBtn.style.marginRight='4px';
+      delBtn.addEventListener('click',()=>deleteSvc(s.id,s.name));
+      tr.cells[2].appendChild(editBtn); tr.cells[2].appendChild(delBtn);
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb); el.appendChild(tbl);
+  } catch(e) { toast('خطأ في تحميل الخدمات'); }
+}
+
+function loadAdminSettings() { /* salla link moved to per-service/doctor settings */ }
+
+// ── DOCTOR ADD/EDIT ───────────────────────────────────────────────────────────
+// الأعمدة الفعلية في جدول doctors:
+// id, name, specialty, department (text), avatar, phone, bio,
+// username, password, clinic_location, active
+
+async function openAddDoc() {
+  document.getElementById('mDocId').value='';
+  document.getElementById('mDocTitle').textContent='إضافة طبيب';
+  ['mDocUser','mDocPass','mDocName','mDocSpec','mDocLoc','mDocAvatar','mDocBio','mDocSalla'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  await populateDeptSelect('mDocDept', 'name');
+  openModal('mDoc');
+}
+
+async function openEditDoc(d) {
+  document.getElementById('mDocId').value=d.id;
+  document.getElementById('mDocTitle').textContent='تعديل طبيب';
+  document.getElementById('mDocUser').value=d.username||'';
+  document.getElementById('mDocPass').value=d.password||'';
+  document.getElementById('mDocName').value=d.name||'';
+  document.getElementById('mDocSpec').value=d.specialty||'';
+  document.getElementById('mDocLoc').value=d.clinic_location||'';
+  document.getElementById('mDocAvatar').value=d.avatar||'';
+  document.getElementById('mDocBio').value=d.bio||'';
+  document.getElementById('mDocSalla').value=d.salla_url||d.salla_link||'';
+  document.getElementById('mDocRole').value=d.doctor_role||'doctor';
+  await populateDeptSelect('mDocDept', 'name');
+  document.getElementById('mDocDept').value=d.department||'';
+  openModal('mDoc');
+}
+
+async function saveDoc() {
+  if (!requireDb()) return;
+  const id = document.getElementById('mDocId').value;
+  const payload = {
+    username:        document.getElementById('mDocUser').value.trim(),
+    password:        document.getElementById('mDocPass').value.trim(),
+    name:            document.getElementById('mDocName').value.trim(),
+    specialty:       document.getElementById('mDocSpec').value.trim()||null,
+    department:      document.getElementById('mDocDept').value.trim()||null,
+    clinic_location: document.getElementById('mDocLoc').value.trim()||null,
+    avatar:          document.getElementById('mDocAvatar').value.trim()||null,
+    bio:             document.getElementById('mDocBio').value.trim()||null,
+    salla_url:       document.getElementById('mDocSalla').value.trim()||null,
+    salla_link:      document.getElementById('mDocSalla').value.trim()||null,
+    doctor_role:     document.getElementById('mDocRole').value||'doctor',
+  };
+  if (!payload.username||!payload.name) { toast('أدخل اسم المستخدم والاسم الكامل'); return; }
+  const {error} = id
+    ? await db.from('doctors').update(payload).eq('id',id)
+    : await db.from('doctors').insert(payload);
+  if (error) { toast('خطأ: '+error.message); return; }
+  closeModal('mDoc'); loadAdminDocs(); toast('تم الحفظ بنجاح');
+}
+
+async function deleteDoc(id, name) {
+  mConfirm(`هل تريد حذف الطبيب "${name}"؟`, async()=>{
+    try {
+      const {error} = await db.from('doctors').delete().eq('id',id);
+      if (error) throw error;
+      loadAdminDocs(); toast('تم الحذف');
+    } catch(e) { toast('خطأ في الحذف'); }
+  }, 'حذف طبيب');
+}
+
+// ── DEPT ADD/EDIT ─────────────────────────────────────────────────────────────
+function openAddDept() {
+  document.getElementById('mDeptId').value='';
+  document.getElementById('mDeptTitle').textContent='إضافة قسم';
+  ['mDeptName','mDeptIcon','mDeptSalla'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mDeptType').value='specialty';
+  openModal('mDept');
+}
+function openEditDept(d) {
+  document.getElementById('mDeptId').value=d.id;
+  document.getElementById('mDeptTitle').textContent='تعديل قسم';
+  document.getElementById('mDeptName').value=d.name||'';
+  document.getElementById('mDeptIcon').value=d.icon||'';
+  document.getElementById('mDeptType').value=d.flow_type||'specialty';
+  document.getElementById('mDeptSalla').value=d.salla_link||'';
+  openModal('mDept');
+}
+async function saveDept() {
+  const id=document.getElementById('mDeptId').value;
+  const payload={name:document.getElementById('mDeptName').value.trim(), icon:document.getElementById('mDeptIcon').value.trim()||null, flow_type:document.getElementById('mDeptType').value, salla_link:document.getElementById('mDeptSalla').value.trim()||null};
+  if (!payload.name) { toast('أدخل اسم القسم'); return; }
+  try {
+    const {error}=id?await db.from('clinic_departments').update(payload).eq('id',id):await db.from('clinic_departments').insert(payload);
+    if (error) throw error;
+    closeModal('mDept'); loadAdminDepts(); toast('تم الحفظ');
+  } catch(e) { toast('خطأ: '+(e.message||'')); }
+}
+async function deleteDept(id,name) {
+  mConfirm(`حذف القسم "${name}"؟`, async()=>{
+    try { const {error}=await db.from('clinic_departments').delete().eq('id',id); if(error)throw error; loadAdminDepts(); toast('تم الحذف'); }
+    catch(e){toast('خطأ في الحذف');}
+  },'حذف قسم');
+}
+
+// ── SERVICE ADD/EDIT ──────────────────────────────────────────────────────────
+// ── POPULATE DEPT SELECT ─────────────────────────────────────────────────────
+// valueField='id'  → stores department id  (used for services)
+// valueField='name' → stores department name (used for doctors)
+async function populateDeptSelect(selectId, valueField='id') {
+  const el = document.getElementById(selectId);
+  if (!el) return;
+  const saved = el.value; // preserve current value
+  el.innerHTML = '<option value="">— اختر القسم —</option>';
+  if (!db) return;
+  try {
+    const {data, error} = await db.from('clinic_departments').select('*').eq('active', true).order('sort_order');
+    if (error || !data) return;
+    data.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d[valueField] || d.id;
+      opt.textContent = d.name_ar || d.name || d.id;
+      el.appendChild(opt);
+    });
+    if (saved) el.value = saved; // restore selection
+  } catch(e) { console.warn('populateDeptSelect error:', e); }
+}
+
+async function openAddSvc() {
+  document.getElementById('mSvcId').value='';
+  document.getElementById('mSvcTitle').textContent='إضافة خدمة';
+  ['mSvcName','mSvcDesc','mSvcSalla'].forEach(id=>document.getElementById(id).value='');
+  await populateDeptSelect('mSvcDept'); openModal('mSvc');
+}
+async function openEditSvc(s) {
+  document.getElementById('mSvcId').value=s.id;
+  document.getElementById('mSvcTitle').textContent='تعديل خدمة';
+  document.getElementById('mSvcName').value=s.name||'';
+  document.getElementById('mSvcDesc').value=s.description||'';
+  await populateDeptSelect('mSvcDept');
+  document.getElementById('mSvcDept').value=s.department_id||'';
+  document.getElementById('mSvcSalla').value=s.salla_url||s.salla_link||'';
+  openModal('mSvc');
+}
+async function saveSvc() {
+  const id=document.getElementById('mSvcId').value;
+  const payload={name:document.getElementById('mSvcName').value.trim(), description:document.getElementById('mSvcDesc').value.trim()||null, department_id:document.getElementById('mSvcDept').value||null, salla_url:document.getElementById('mSvcSalla').value.trim()||null, salla_link:document.getElementById('mSvcSalla').value.trim()||null};
+  if (!payload.name){toast('أدخل اسم الخدمة');return;}
+  try {
+    const {error}=id?await db.from('services').update(payload).eq('id',id):await db.from('services').insert(payload);
+    if(error)throw error; closeModal('mSvc'); loadAdminSvcs(); toast('تم الحفظ');
+  } catch(e){toast('خطأ: '+(e.message||''));}
+}
+async function deleteSvc(id,name) {
+  mConfirm(`حذف الخدمة "${name}"؟`, async()=>{
+    try{const {error}=await db.from('services').delete().eq('id',id);if(error)throw error;loadAdminSvcs();toast('تم الحذف');}
+    catch(e){toast('خطأ في الحذف');}
+  },'حذف خدمة');
+}
+
+// ── BOOKING MODAL ─────────────────────────────────────────────────────────────
+function openBkModal(b) {
+  const el = document.getElementById('mBkBody');
+  el.innerHTML = `
+    <div style="display:grid;gap:10px;margin-bottom:16px">
+      <div class="cf-row"><span>المريض</span><strong>${b.patient_name||'—'}</strong></div>
+      <div class="cf-row"><span>الجوال</span><strong dir="ltr">${b.patient_phone||'—'}</strong></div>
+      <div class="cf-row"><span>التاريخ</span><strong>${b.booking_date||'—'}</strong></div>
+      <div class="cf-row"><span>الوقت</span><strong>${(b.booking_time||'').substring(0,5)}</strong></div>
+      <div class="cf-row"><span>الطبيب</span><strong>${b.doctors?.name||'—'}</strong></div>
+      <div class="cf-row"><span>الخدمة</span><strong>${b.services?.name||'—'}</strong></div>
+      ${b.salla_order_id?`<div class="cf-row"><span>رقم الطلب</span><strong dir="ltr">${b.salla_order_id}</strong></div>`:''}
+      <div class="cf-row"><span>الحالة</span>${statusBadge(b.status)}</div>
+      ${b.notes?`<div class="cf-row"><span>ملاحظات</span><strong>${b.notes}</strong></div>`:''}
+    </div>
+  `;
+  openModal('mBk');
+}
+
+// ── DOCTOR PANEL ─────────────────────────────────────────────────────────────
+function docTab(name, el) {
+  document.querySelectorAll('.dtab').forEach(t=>t.style.display='none');
+  document.getElementById('dtab-'+name).style.display='block';
+  if (el) { document.querySelectorAll('#pg-doctor .tab-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); }
+  if (name==='dashboard') loadDcDashboard();
+  else if (name==='bookings') loadDcBookings();
+  else if (name==='schedule') loadDcSchedule();
+  else if (name==='settings') loadDcSettings();
+}
+
+async function loadDcDashboard() {
+  if (!CU) return;
+  document.getElementById('dcWelcome').textContent = 'مرحباً، ' + (CU.name||'');
+  try {
+    const todayIso = new Date().toISOString().split('T')[0];
+    const {data: bks, error} = await db.from('bookings').select('*').eq('doctor_id', CU.id);
+    if (error) throw error;
+    const all = bks||[];
+    const todayBks = all.filter(b=>b.booking_date===todayIso);
+
+    // Today stats
+    document.getElementById('dcTodayTotal').textContent = todayBks.length;
+    document.getElementById('dcTodayApproved').textContent = todayBks.filter(b=>b.status==='approved').length;
+    document.getElementById('dcTodayPending').textContent = todayBks.filter(b=>b.status==='pending').length;
+
+    // All-time stats (full width, 3 equal columns)
+    const rejected = all.filter(b=>b.status==='rejected').length;
+    document.getElementById('dcStats').innerHTML = `
+      <div class="stat-card-full">
+        <div class="stat-col">
+          <div class="stat-big">${all.length}</div>
+          <div class="stat-lbl2">إجمالي الحجوزات</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-big" style="color:var(--warn)">${all.filter(b=>b.status==='pending').length}</div>
+          <div class="stat-lbl2">قيد الانتظار</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-big" style="color:var(--ok)">${all.filter(b=>b.status==='approved').length}</div>
+          <div class="stat-lbl2">مقبول</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-big" style="color:var(--err)">${rejected}</div>
+          <div class="stat-lbl2">مرفوض</div>
+        </div>
+      </div>
+    `;
+
+    // Upcoming 5
+    const now = new Date();
+    const upcoming = all
+      .filter(b => {
+        if (b.status==='rejected') return false;
+        const dt = new Date(b.booking_date + 'T' + (b.booking_time||'00:00'));
+        return dt >= now;
+      })
+      .sort((a,b) => {
+        const da = new Date(a.booking_date+'T'+(a.booking_time||'00:00'));
+        const db2 = new Date(b.booking_date+'T'+(b.booking_time||'00:00'));
+        return da-db2;
+      })
+      .slice(0,5);
+
+    const upEl = document.getElementById('dcUpcoming');
+    if (!upcoming.length) { upEl.innerHTML='<p style="color:var(--m);font-size:13px;text-align:center;padding:16px">لا توجد مواعيد قادمة</p>'; return; }
+    upEl.innerHTML='';
+    upcoming.forEach(b=>{
+      const item = document.createElement('div');
+      item.className = 'next-bk-item';
+      item.innerHTML = `
+        <div class="next-bk-dot" style="background:${b.status==='approved'?'var(--ok)':b.status==='pending'?'var(--warn)':'var(--err)'}"></div>
+        <div style="flex:1">
+          <div style="font-weight:500;font-size:13px">${b.patient_name||'—'}</div>
+          <div style="font-size:11px;color:var(--m)">${b.booking_date} — ${(b.booking_time||'').substring(0,5)}</div>
+        </div>
+        ${statusBadge(b.status)}
+      `;
+      upEl.appendChild(item);
+    });
+  } catch(e) { toast('خطأ في تحميل بياناتك'); }
+}
+
+async function loadDcBookings() {
+  if (!CU) return;
+  const statusFilter = document.getElementById('dcBkStatus').value;
+  const dateFilter = document.getElementById('dcBkDate').value;
+  document.getElementById('dcBkList').innerHTML='<p style="color:var(--m)">جاري التحميل...</p>';
+  try {
+    let q = db.from('bookings').select('*').eq('doctor_id', CU.id).order('booking_date',{ascending:false}).order('booking_time',{ascending:false});
+    if (statusFilter) q=q.eq('status',statusFilter);
+    if (dateFilter) q=q.eq('booking_date',dateFilter);
+    const {data, error}=await q;
+    if (error) throw error;
+    renderDcBkTable(data||[]);
+  } catch(e) { toast('خطأ في تحميل الحجوزات'); }
+}
+
+function renderDcBkTable(bks) {
+  const el = document.getElementById('dcBkList');
+  if (!bks.length){el.innerHTML='<p style="color:var(--m);text-align:center;padding:20px">لا توجد حجوزات</p>';return;}
+  const tbl = document.createElement('table'); tbl.className='tbl';
+  tbl.innerHTML='<thead><tr><th>المريض</th><th>التاريخ</th><th>الوقت</th><th>الحالة</th><th>إجراءات</th></tr></thead>';
+  const tb = document.createElement('tbody');
+  bks.forEach(b=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td><div style="font-weight:500">${b.patient_name||'—'}</div><div style="font-size:11px;color:var(--m)">${b.patient_phone||''}</div></td>
+      <td>${b.booking_date||'—'}</td>
+      <td>${(b.booking_time||'').substring(0,5)}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap"></td>
+    `;
+    const actCell = tr.cells[4];
+    // Quick approve
+    if (b.status!=='approved') {
+      const apBtn = document.createElement('button'); apBtn.className='btn btn-sm'; apBtn.style.background='var(--ok)'; apBtn.style.color='#fff'; apBtn.textContent='قبول';
+      apBtn.addEventListener('click',()=>quickBkAction(b.id,'approved'));
+      actCell.appendChild(apBtn);
+    }
+    // Quick reject
+    if (b.status!=='rejected') {
+      const rjBtn = document.createElement('button'); rjBtn.className='btn btn-sm btn-del'; rjBtn.textContent='رفض';
+      rjBtn.addEventListener('click',()=>quickBkAction(b.id,'rejected'));
+      actCell.appendChild(rjBtn);
+    }
+    // View
+    const vwBtn = document.createElement('button'); vwBtn.className='btn btn-sm btn-out'; vwBtn.textContent='عرض';
+    vwBtn.addEventListener('click',()=>openBkModal(b));
+    actCell.appendChild(vwBtn);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb); el.innerHTML=''; el.appendChild(tbl);
+}
+
+async function quickBkAction(bkId, newStatus) {
+  const label = newStatus==='approved'?'قبول':'رفض';
+  mConfirm(`هل تريد ${label} هذا الحجز؟`, async()=>{
+    try {
+      const {error}=await db.from('bookings').update({status:newStatus}).eq('id',bkId);
+      if (error) throw error;
+      toast(newStatus==='approved'?'تم قبول الحجز':'تم رفض الحجز');
+      loadDcBookings();
+      loadDcDashboard();
+    } catch(e){toast('خطأ: '+(e.message||''));}
+  }, label+' الحجز');
+}
+
+// ── SCHEDULE ─────────────────────────────────────────────────────────────────
+const DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+// ── SERVICE HOURS (per-service schedule) ─────────────────────────────────────
+let _svcHoursRows = []; // in-memory rows for editing
+
+async function loadDcSchedule() {
+  if (!CU) return;
+  try {
+    const {data, error} = await db.from('doctor_service_hours')
+      .select('*').eq('doctor_id', CU.id).order('sort_order');
+    if (error) throw error;
+    _svcHoursRows = (data||[]).map(r => ({...r, _new: false}));
+    renderSvcHours();
+    loadVacations();
+  } catch(e) { toast('خطأ في تحميل الجدول'); }
+}
+
+function renderSvcHours() {
+  const el = document.getElementById('svcHoursList');
+  const empty = document.getElementById('svcHoursEmpty');
+  el.innerHTML = '';
+  if (!_svcHoursRows.length) { empty.style.display='block'; return; }
+  empty.style.display = 'none';
+
+  _svcHoursRows.forEach((row, idx) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px;border:.5px solid var(--br);border-radius:10px;margin-bottom:8px;background:var(--s)';
+    div.innerHTML = `
+      <input type="text" value="${row.service_icon||'💊'}" data-idx="${idx}" data-field="service_icon"
+        style="width:40px;font-size:18px;text-align:center;border:none;background:transparent;cursor:text" title="أيقونة (emoji)">
+      <input type="text" value="${row.service_name||''}" data-idx="${idx}" data-field="service_name"
+        class="inp" style="flex:1;min-width:80px" placeholder="اسم الخدمة">
+      <span style="font-size:12px;color:var(--m);flex-shrink:0">من</span>
+      <input type="time" value="${(row.start_time||'09:00').substring(0,5)}" data-idx="${idx}" data-field="start_time"
+        class="inp" style="width:100px;font-size:13px">
+      <span style="font-size:12px;color:var(--m);flex-shrink:0">إلى</span>
+      <input type="time" value="${(row.end_time||'17:00').substring(0,5)}" data-idx="${idx}" data-field="end_time"
+        class="inp" style="width:100px;font-size:13px">
+      <select data-idx="${idx}" data-field="duration_minutes" class="inp" style="width:90px;font-size:12px">
+        ${[15,20,30,45,60].map(m=>`<option value="${m}" ${row.duration_minutes==m?'selected':''}>${m} د</option>`).join('')}
+      </select>
+      <!-- Toggle -->
+      <label style="position:relative;display:inline-flex;align-items:center;cursor:pointer;flex-shrink:0">
+        <input type="checkbox" ${row.active?'checked':''} data-idx="${idx}" data-field="active"
+          style="opacity:0;position:absolute;width:0;height:0" class="svc-toggle">
+        <span class="tog-track ${row.active?'on':''}"></span>
+      </label>
+      <button onclick="removeSvcRow(${idx})" style="background:none;border:none;color:var(--err);cursor:pointer;padding:4px;font-size:14px">
+        <i class="fa fa-trash-alt"></i>
+      </button>
+    `;
+    // Event listeners
+    div.querySelectorAll('[data-idx]').forEach(inp => {
+      const field = inp.dataset.field;
+      const i = parseInt(inp.dataset.idx);
+      if (inp.type === 'checkbox') {
+        inp.addEventListener('change', () => {
+          _svcHoursRows[i][field] = inp.checked;
+          inp.nextElementSibling.className = 'tog-track ' + (inp.checked?'on':'');
+        });
+      } else {
+        inp.addEventListener('input', () => {
+          _svcHoursRows[i][field] = inp.value;
+        });
+        inp.addEventListener('change', () => {
+          _svcHoursRows[i][field] = inp.value;
+        });
+      }
+    });
+    el.appendChild(div);
+  });
+}
+
+function addSvcHourRow() {
+  _svcHoursRows.push({ service_name:'', service_icon:'💊', start_time:'09:00', end_time:'17:00', duration_minutes:30, active:true, sort_order: _svcHoursRows.length, _new:true });
+  renderSvcHours();
+  // Scroll to last
+  setTimeout(() => { const rows = document.querySelectorAll('#svcHoursList > div'); if (rows.length) rows[rows.length-1].scrollIntoView({behavior:'smooth',block:'nearest'}); }, 100);
+}
+
+function removeSvcRow(idx) {
+  _svcHoursRows.splice(idx, 1);
+  renderSvcHours();
+}
+
+async function saveSvcHours() {
+  if (!CU || !requireDb()) return;
+  try {
+    // Delete existing rows for this doctor then re-insert
+    const { error: delErr } = await db.from('doctor_service_hours').delete().eq('doctor_id', CU.id);
+    if (delErr) throw delErr;
+    const toInsert = _svcHoursRows.filter(r => r.service_name.trim()).map((r, i) => ({
+      doctor_id: CU.id,
+      service_name: r.service_name.trim(),
+      service_icon: r.service_icon||'💊',
+      start_time: r.start_time||'09:00',
+      end_time: r.end_time||'17:00',
+      duration_minutes: parseInt(r.duration_minutes)||30,
+      active: !!r.active,
+      sort_order: i
+    }));
+    if (toInsert.length) {
+      const { error } = await db.from('doctor_service_hours').insert(toInsert);
+      if (error) throw error;
+    }
+    await loadDcSchedule();
+    toast('✅ تم حفظ ساعات العمل');
+  } catch(e) { toast('خطأ في الحفظ: '+(e.message||'')); }
+}
+
+async function loadVacations() {
+  if (!CU) return;
+  try {
+    const {data}=await db.from('doctor_vacations').select('*').eq('doctor_id',CU.id).order('vacation_date');
+    const el=document.getElementById('vacList'); el.innerHTML='';
+    if (!data||!data.length){el.innerHTML='<p style="color:var(--m);font-size:13px">لا توجد إجازات مسجلة</p>';return;}
+    data.forEach(v=>{
+      const row=document.createElement('div'); row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:.5px solid var(--br)';
+      const dt=document.createElement('span'); dt.textContent=fmtDate(v.vacation_date); dt.style.flex='1';
+      const delBtn=document.createElement('button'); delBtn.className='btn btn-sm btn-del'; delBtn.textContent='حذف';
+      delBtn.addEventListener('click',()=>deleteVac(v.id));
+      row.append(dt,delBtn); el.appendChild(row);
+    });
+  } catch(e){}
+}
+
+async function addVacation() {
+  const d=prompt('أدخل تاريخ الإجازة (YYYY-MM-DD):');
+  if (!d||!/^\d{4}-\d{2}-\d{2}$/.test(d)){if(d)toast('صيغة تاريخ غير صحيحة');return;}
+  try {
+    const {error}=await db.from('doctor_vacations').insert({doctor_id:CU.id,vacation_date:d});
+    if(error)throw error; loadVacations(); toast('تمت إضافة الإجازة');
+  } catch(e){toast('خطأ: '+(e.message||''));}
+}
+
+async function deleteVac(id) {
+  mConfirm('حذف هذه الإجازة؟',async()=>{
+    try{const {error}=await db.from('doctor_vacations').delete().eq('id',id);if(error)throw error;loadVacations();toast('تم الحذف');}
+    catch(e){toast('خطأ في الحذف');}
+  },'حذف إجازة');
+}
+
+// ── DOCTOR SETTINGS ───────────────────────────────────────────────────────────
+function loadDcSettings() {
+  if (!CU) return;
+  document.getElementById('dcSetName').value   = CU.name||'';
+  document.getElementById('dcSetSpec').value   = CU.specialty||'';
+  document.getElementById('dcSetLoc').value    = CU.clinic_location||'';
+  document.getElementById('dcSetBio').value    = CU.bio||'';
+  document.getElementById('dcSetAvatar').value = CU.avatar||'';
+  // Show avatar preview
+  const prev = document.getElementById('avatarPreview');
+  if (prev) {
+    if (CU.avatar) {
+      prev.innerHTML = `<img src="${CU.avatar}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='${(CU.name||'D')[0]}'">`;
+    } else {
+      prev.textContent = (CU.name||'D')[0].toUpperCase();
+    }
+  }
+}
+
+async function handleAvatarUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('الصورة أكبر من 5MB'); input.value=''; return; }
+  if (!requireDb()) return;
+
+  // Show spinner
+  const spinner = document.getElementById('avatarUploadSpinner');
+  const prev    = document.getElementById('avatarPreview');
+  if (spinner) spinner.style.display = 'flex';
+
+  try {
+    const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
+    const path = `${CU.id}/avatar_${Date.now()}.${ext}`;
+    const { data: upData, error: upErr } = await db.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw upErr;
+
+    // Get public URL
+    const { data: urlData } = db.storage.from('avatars').getPublicUrl(path);
+    const publicUrl = urlData.publicUrl;
+
+    // Update hidden field + preview
+    document.getElementById('dcSetAvatar').value = publicUrl;
+    if (prev) prev.innerHTML = `<img src="${publicUrl}" style="width:100%;height:100%;object-fit:cover">`;
+    toast('تم رفع الصورة، اضغط حفظ لتأكيدها');
+  } catch(e) {
+    toast('خطأ في رفع الصورة: ' + (e.message||''));
+  } finally {
+    if (spinner) spinner.style.display = 'none';
+    input.value = '';
+  }
+}
+
+async function saveDcSettings() {
+  if (!CU || !requireDb()) return;
+  const payload = {
+    name:            document.getElementById('dcSetName').value.trim(),
+    specialty:       document.getElementById('dcSetSpec').value.trim()||null,
+    clinic_location: document.getElementById('dcSetLoc').value.trim()||null,
+    bio:             document.getElementById('dcSetBio').value.trim()||null,
+    avatar:          document.getElementById('dcSetAvatar').value.trim()||null,
+  };
+  const {error} = await db.from('doctors').update(payload).eq('id', CU.id);
+  if (error) { toast('خطأ: '+error.message); return; }
+  Object.assign(CU, payload);
+  updateNav();
+  toast('تم حفظ الإعدادات');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+// CSS for cf-row and missing styles
+const extraStyle = document.createElement('style');
+extraStyle.textContent = `
+/* BUTTONS */
+.tog-track{width:40px;height:22px;background:#ccc;border-radius:11px;position:relative;transition:background .2s;flex-shrink:0}
+.tog-track::after{content:'';position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s}
+.tog-track.on{background:var(--t)}
+.tog-track.on::after{transform:translateX(-18px)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--t),var(--td));border:none;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn:hover:not(:disabled){opacity:.9;transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-out{background:none!important;border:.5px solid var(--br)!important;color:var(--m)!important}
+.btn-out:hover:not(:disabled){background:var(--tl)!important;color:var(--td)!important;border-color:var(--tb)!important}
+.btn-sm{padding:5px 11px!important;font-size:12px!important}
+/* INPUTS */
+.inp{width:100%;padding:10px 13px;border:.5px solid rgba(0,0,0,.18);border-radius:var(--r2);font-size:14px;background:var(--s);color:var(--txt);outline:none;font-family:inherit;transition:all .2s}
+.inp:focus{border-color:var(--t);box-shadow:0 0 0 3px rgba(26,138,138,.1)}
+.lbl{font-size:12px;color:var(--m);display:block;margin-bottom:5px;font-weight:600}
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--s);border-radius:18px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:.5px solid var(--br);font-weight:700;font-size:15px;color:var(--td);position:sticky;top:0;background:var(--s);z-index:1}
+.modal-box > .modal-hd + *{padding:20px}
+.close-btn{background:none;border:none;cursor:pointer;color:var(--m);font-size:18px;padding:0 4px;line-height:1;transition:all .2s}
+.close-btn:hover{color:var(--err)}
+.modal-box > div:not(.modal-hd){padding:20px}
+/* TAB BUTTONS */
+.tab-btn{padding:7px 14px;border-radius:var(--r2);border:.5px solid var(--br);background:none;font-size:13px;cursor:pointer;color:var(--m);font-family:inherit;transition:all .2s}
+.tab-btn.active,.tab-btn:hover{background:var(--tl);border-color:var(--tb);color:var(--td);font-weight:600}
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.stat-card{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:16px;border-top:3px solid var(--t)}
+.stat-num{font-size:26px;font-weight:700;color:var(--td)}
+.stat-lbl{font-size:11px;color:var(--m);margin-top:3px;font-weight:600}
+/* Full-width stat card for doctor dashboard */
+.stat-card-full{background:var(--s);border:.5px solid var(--br);border-radius:var(--r);padding:0;display:flex;align-items:stretch;overflow:hidden}
+.stat-col{flex:1;text-align:center;padding:20px 10px}
+.stat-big{font-size:32px;font-weight:700;color:var(--td);line-height:1}
+.stat-lbl2{font-size:11px;color:var(--m);margin-top:6px;font-weight:600}
+.stat-divider{width:1px;background:var(--br)}
+/* CONFIRM ROW */
+.cf-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid var(--br);font-size:13px}
+.cf-row span{color:var(--m)}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--tl);color:var(--td);padding:10px 12px;text-align:right;font-weight:600;border-bottom:1px solid var(--br)}
+.tbl td{padding:10px 12px;border-bottom:.5px solid var(--br);vertical-align:middle}
+.tbl tr:hover td{background:#F9FEFE}
+.btn-del{background:#FEE2E2!important;color:var(--err)!important;border-color:#FECACA!important}
+.btn-del:hover{background:#FECACA!important}
+/* DOC CARD */
+.doc-card{display:flex;align-items:center;gap:12px;padding:14px;background:var(--s);border:1px solid var(--br);border-radius:var(--r);cursor:pointer;transition:all .2s}
+.doc-card:hover{border-color:var(--t);box-shadow:0 4px 14px rgba(26,138,138,.12);transform:translateY(-1px)}
+/* GCARD PARTS */
+.gcard-icon{font-size:22px;color:var(--t)}
+.gcard-name{font-weight:600;font-size:13px}
+/* DATE CHIP SELECTED STATE */
+.dc.sel,.tc.sel{background:var(--td)!important;border-color:var(--td)!important;color:#fff!important}
+/* PAGE DISPLAY */
+.page{display:none}
+/* ATAB/DTAB DISPLAY */
+.atab,.dtab{display:block}
+`;
+document.head.appendChild(extraStyle);
+
+// URL param for direct doctor booking
+// URL param ?doc=username — يُعالَج بعد تهيئة Supabase في window load
+function checkUrlParam() {
+  const params = new URLSearchParams(location.search);
+  const docUser = params.get('doc');
+  if (!docUser || !db) return;
+  db.from('doctors').select('*').eq('username', docUser).maybeSingle().then(({data}) => {
+    if (data) { S.doc=data; S.grp=null; showPage('pg-dt'); renderDtDocInfo(); loadDatePicker(); }
+  });
+}
+
+// showPage المبدئي — الصفحة الرئيسية
+showPage('pg-home');
+
+</script>
+</body>
+</html>
